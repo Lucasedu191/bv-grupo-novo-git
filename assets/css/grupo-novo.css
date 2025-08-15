@@ -1,0 +1,45 @@
+/* Layout básico da página paralela */
+.bvgn-container { max-width: 980px; margin: 0 auto; }
+.bvgn-imagem { display:block; max-width:100%; height:auto; margin-bottom:12px; }
+.bvgn-titulo { margin: 8px 0 12px; }
+.bvgn-descricao { margin-bottom: 12px; }
+.bvgn-variacao { display:block; padding:8px 12px; border:1px solid #ddd; border-radius:8px; margin-bottom:8px; }
+.bvgn-variacao input { margin-right:8px; }
+.bvgn-taxa { display:block; margin:6px 0; }
+.bvgn-taxa input { margin-right:8px; }
+.bvgn-totais { margin-top:12px; padding-top:8px; border-top:1px dashed #ccc; }
+.bvgn-total { font-size:1.2rem; margin-top:4px; }
+
+/* ===== NOVO: Mensagem de validação das datas ===== */
+#bv-date-msg {
+  font-size: 0.9rem;
+  margin-top: 4px;
+  color: #b45309; /* tom de alerta */
+  display: none;
+}
+#bv-date-msg.on {
+  display: block;
+}
+
+/* Opcional: alinhar inputs de data em linha no desktop */
+.bvgn-agendamento label {
+  display: inline-block;
+  margin-right: 12px;
+}
+
+/* ===== BVGN Modal ===== */
+.bvgn-modal { position: fixed; inset: 0; display: block; opacity: 0; pointer-events: none; transition: opacity .2s ease; z-index: 9999; }
+.bvgn-modal[aria-hidden="false"] { opacity: 1; pointer-events: auto; }
+.bvgn-modal__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.5); }
+.bvgn-modal__dialog { position: relative; margin: 5vh auto; max-width: 520px; background: #fff; border-radius: 10px; padding: 20px; z-index: 1; }
+.bvgn-modal__close { position: absolute; top: 8px; right: 10px; background: transparent; border: 0; font-size: 22px; line-height: 1; cursor: pointer; }
+.bvgn-modal__title { margin: 0 0 6px; font-size: 20px; font-weight: 700; }
+.bvgn-modal__subtitle { margin: 0 0 16px; color: #666; }
+.bvgn-form__group { margin-bottom: 12px; }
+.bvgn-form__group label { display: block; font-weight: 600; margin-bottom: 6px; }
+.bvgn-form__group input, .bvgn-form__group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+.bvgn-form__actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+.bvgn-btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 14px; border-radius: 8px; border: 0; cursor: pointer; }
+.bvgn-btn--primario { background: #111; color: #fff; }
+.bvgn-btn--texto { background: transparent; color: #111; }
+.bvgn-modal-open { overflow: hidden; }

@@ -1,0 +1,8 @@
+{
+  "name": "bv/grupo-novo",
+  "description": "Plugin de página de produto paralela com geração de cotação HTML/PDF",
+  "type": "wordpress-plugin",
+  "require": {
+    "dompdf/dompdf": "^2.0"
+  }
+}
