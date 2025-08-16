@@ -231,35 +231,35 @@ function dateToISO(d){
     updateVarDesc($cx); 
 
     // botão de cotação (seu original)
-    $cx.on('click', '.bvgn-botao-cotacao', function(e){
-      e.preventDefault();
-      const carga = {
-        action: 'bvgn_gerar_arquivo',
-        _wpnonce: BVGN.nonce,
-        produtoId: $cx.data('produto-id'),
-        informacoes: $cx.find('.bvgn-informacoes').val() || '',
-        variacaoRotulo: $cx.find('.bvgn-variacao input:checked').data('rotulo') || '',
-        datas: {
-          inicio: $cx.find('.bvgn-data-inicio').val() || '',
-          fim:    $cx.find('.bvgn-data-fim').val() || ''
-        },
-        taxas: $cx.find('.bvgn-taxa input:checked').map(function(){
-          return { rotulo: $(this).data('rotulo'), preco: $(this).data('preco') };
-        }).get(),
-        totais: $cx.data('bvgnTotais'),
-        formato: $(this).data('formato'),
-        telefone: $(this).data('telefone') || (BVGN && BVGN.phone) || ''
-      };
+    // $cx.on('click', '.bvgn-botao-cotacao', function(e){
+    //   e.preventDefault();
+    //   const carga = {
+    //     action: 'bvgn_gerar_arquivo',
+    //     _wpnonce: BVGN.nonce,
+    //     produtoId: $cx.data('produto-id'),
+    //     informacoes: $cx.find('.bvgn-informacoes').val() || '',
+    //     variacaoRotulo: $cx.find('.bvgn-variacao input:checked').data('rotulo') || '',
+    //     datas: {
+    //       inicio: $cx.find('.bvgn-data-inicio').val() || '',
+    //       fim:    $cx.find('.bvgn-data-fim').val() || ''
+    //     },
+    //     taxas: $cx.find('.bvgn-taxa input:checked').map(function(){
+    //       return { rotulo: $(this).data('rotulo'), preco: $(this).data('preco') };
+    //     }).get(),
+    //     totais: $cx.data('bvgnTotais'),
+    //     formato: $(this).data('formato'),
+    //     telefone: ($(this).data('telefone') || (BVGN && BVGN.phone) || '')
+    //   };
 
-      $.post(BVGN.ajaxUrl, carga, function(r){
-        if(!r || !r.success){ alert('Erro ao gerar cotacao.'); return; }
-        const url = r.data.url;
-        const tel = (carga.telefone ||'').replace(/\D/g,'');
-        const msg = encodeURIComponent('Ola! Segue minha cotacao: ' + url);
-        const wa  = 'https://wa.me/'+tel+'?text='+msg;
-        window.open(wa, '_blank');
-      });
-    });
+    //   $.post(BVGN.ajaxUrl, carga, function(r){
+    //     if(!r || !r.success){ alert('Erro ao gerar cotacao.'); return; }
+    //     const url = r.data.url;
+    //     const tel = (carga.telefone ||'').replace(/\D/g,'');
+    //     const msg = encodeURIComponent('Ola! Segue minha cotacao: ' + url);
+    //     const wa  = 'https://wa.me/'+tel+'?text='+msg;
+    //     window.open(wa, '_blank');
+    //   });
+    // });
     
 
   }
