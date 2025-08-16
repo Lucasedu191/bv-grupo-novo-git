@@ -70,26 +70,58 @@ add_action('init', function(){
   if (!file_exists(BVGN_DIR_ARQUIVOS)) wp_mkdir_p(BVGN_DIR_ARQUIVOS);
 });
 
-add_action('wp_enqueue_scripts', function(){
+add_action('wp_enqueue_scripts', function () {
   if ( ! is_singular() ) return;
 
+  // segurança: post pode ser null em alguns contextos
   global $post;
-  $tem_grupo   = ( $post && has_shortcode($post->post_content, 'grupo_novo') );
-  $tem_popup   = ( $post && has_shortcode($post->post_content, 'gn_botao_cotacao_popup') );
-  $e_produto   = function_exists('is_product') && is_product();
+  $has_post  = ( $post && isset($post->post_content) );
+
+  $tem_grupo = $has_post && has_shortcode($post->post_content, 'grupo_novo');
+  $tem_popup = $has_post && has_shortcode($post->post_content, 'gn_botao_cotacao_popup');
+  $e_produto = function_exists('is_product') && is_product();
 
   if ( $tem_grupo || $tem_popup || $e_produto ) {
-    wp_enqueue_style('bvgn-css', BVGN_URL.'assets/css/grupo-novo.css', [], '0.3.1');
-    wp_enqueue_script('bvgn-js',  BVGN_URL.'assets/js/grupo-novo.js', ['jquery'], '0.3.1', true);
+    // calc de versões pelos arquivos (fallback para '1.0.0' se não existir)
+    $ver_css    = ( defined('BVGN_DIR') && file_exists(BVGN_DIR.'assets/css/grupo-novo.css') )
+                  ? filemtime(BVGN_DIR.'assets/css/grupo-novo.css') : '1.0.0';
+    $ver_js     = ( defined('BVGN_DIR') && file_exists(BVGN_DIR.'assets/js/grupo-novo.js') )
+                  ? filemtime(BVGN_DIR.'assets/js/grupo-novo.js')    : '1.0.0';
+    $ver_modal  = ( defined('BVGN_DIR') && file_exists(BVGN_DIR.'assets/js/bvgn-modal.js') )
+                  ? filemtime(BVGN_DIR.'assets/js/bvgn-modal.js')    : '1.0.0';
 
-    // carrega o JS do modal apenas quando o shortcode do popup estiver presente ou em páginas de produto
+    // CSS principal (contém @import dos blocos)
+    wp_enqueue_style(
+      'bvgn-css',
+      BVGN_URL . 'assets/css/grupo-novo.css',
+      [],
+      $ver_css
+    );
+
+    // JS principal
+    wp_enqueue_script(
+      'bvgn-js',
+      BVGN_URL . 'assets/js/grupo-novo.js',
+      ['jquery'],
+      $ver_js,
+      true
+    );
+
+    // Modal JS (só quando precisa)
     if ( $tem_popup || $e_produto ) {
-      wp_enqueue_script('bvgn-modal', BVGN_URL.'assets/js/bvgn-modal.js', [], '0.3.1', true);
+      wp_enqueue_script(
+        'bvgn-modal',
+        BVGN_URL . 'assets/js/bvgn-modal.js',
+        [],
+        $ver_modal,
+        true
+      );
     }
 
-    wp_localize_script('bvgn-js','BVGN',[
+    // Variáveis para o JS
+    wp_localize_script('bvgn-js', 'BVGN', [
       'ajaxUrl' => admin_url('admin-ajax.php'),
-      'nonce'   => wp_create_nonce('bvgn_nonce')
+      'nonce'   => wp_create_nonce('bvgn_nonce'),
     ]);
   }
 });

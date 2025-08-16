@@ -1,0 +1,65 @@
+/* ===============================
+   INÍCIO — BVGN Totais
+   =============================== */
+
+/* Cartão dos totais (subtotal, taxas, total) */
+.bvgn-container .bvgn-totais{
+  margin-top: 20px;
+  padding: 16px;
+  border: 2px dashed #e5e7eb;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,.05);
+}
+
+/* Título opcional */
+.bvgn-container .bvgn-totais .bvgn-totais-titulo{
+  font-size:.95rem; font-weight:800; letter-spacing:.3px;
+  color:#1f2937; text-transform:uppercase;
+  margin: 0 0 10px;
+}
+
+/* Linhas (rótulo à esquerda, valor à direita) */
+.bvgn-container .bvgn-totais .bvgn-linha{
+  display:grid; grid-template-columns:1fr auto;
+  gap:10px 14px; align-items:center;
+  padding:8px 0; border-bottom:1px solid #e5e7eb;
+}
+
+/* Última linha sem borda */
+.bvgn-container .bvgn-totais .bvgn-linha:last-child{
+  border-bottom:none; padding-bottom:0;
+}
+
+/* Rótulos e valores */
+.bvgn-container .bvgn-totais .lbl{
+  color:#6b7280; font-weight:700; text-transform:uppercase; letter-spacing:.3px;
+}
+.bvgn-container .bvgn-totais .val{
+  font-weight:800; color:#1f2937; white-space:nowrap;
+}
+
+/* Destaque para o TOTAL GERAL */
+.bvgn-container .bvgn-totais .bvgn-total{
+  grid-column:1 / -1;
+  display:grid; grid-template-columns:1fr auto;
+  gap:10px 14px; align-items:center;
+  margin-top:6px; padding-top:10px;
+  font-size:1.15rem; font-weight:900;
+  color:#1f2937;
+}
+
+/* Notas/observações abaixo dos totais (opcional) */
+.bvgn-container .bvgn-totais .bvgn-nota{
+  margin-top:10px; font-size:.9rem; color:#6b7280;
+}
+
+/* Responsivo */
+@media (max-width: 640px){
+  .bvgn-container .bvgn-totais{ padding:14px; }
+  .bvgn-container .bvgn-totais .bvgn-total{ font-size:1.05rem; }
+}
+
+/* ===============================
+   FIM — BVGN Totais
+   =============================== */

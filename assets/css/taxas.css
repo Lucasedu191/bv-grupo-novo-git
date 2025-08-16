@@ -1,0 +1,63 @@
+/* ===============================
+   INÍCIO — BVGN Taxas
+   =============================== */
+
+/* Container geral das taxas */
+.bvgn-container .bvgn-taxas {
+  margin: 16px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Cada taxa em formato pill */
+.bvgn-container .bvgn-taxa {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,.05);
+  user-select: none;
+}
+
+/* Estado hover */
+.bvgn-container .bvgn-taxa:hover {
+  border-color: #0ea5e9;
+  box-shadow: 0 6px 16px rgba(0,0,0,.1);
+}
+
+/* Estado selecionado (quando plugin adicionar .selected) */
+.bvgn-container .bvgn-taxa.selected {
+  border-color: #0ea5e9;
+  background: #e0f2fe;
+  color: #0ea5e9;
+}
+
+/* Checkbox escondido, mas clicável */
+.bvgn-container .bvgn-taxa input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Mobile: pílulas empilhadas */
+@media (max-width: 600px) {
+  .bvgn-container .bvgn-taxas {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .bvgn-container .bvgn-taxa {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ===============================
+   FIM — BVGN Taxas
+   =============================== */
