@@ -1,8 +1,87 @@
-/* Layout básico da página paralela */
-.bvgn-container { max-width: 980px; margin: 0 auto; }
-.bvgn-imagem { display:block; max-width:100%; height:auto; margin-bottom:12px; }
-.bvgn-titulo { margin: 8px 0 12px; }
-.bvgn-descricao { margin-bottom: 12px; }
+/* GRID BASE */
+.bvgn-container .bvgn-grid{
+  display:grid;
+  grid-template-columns: minmax(0, 520px) minmax(0, 1fr); /* imagem ~520px, conteúdo flexível */
+  gap:28px;
+  align-items:start;
+}
 
+/* COLUNA ESQ: IMAGEM */
+.bvgn-container .bvgn-media{
+  position:relative;
+}
+.bvgn-container .bvgn-media .bvgn-imagem{
+  display:block;
+  width:100%;
+  height:auto;                 /* mantém proporção original */
+  border-radius:14px;
+}
 
+/* COLUNA DIR: CONTEÚDO */
+.bvgn-container .bvgn-info{
+  min-width:0;                 /* evita overflow de grid */
+}
+.bvgn-container .bvgn-titulo{ margin:0 0 8px; font-size:1.25rem; font-weight:800; }
+.bvgn-container .bvgn-descricao{ color:#374151; line-height:1.55; margin:0 0 14px; }
 
+/* Blocos internos bem separados (variações, taxas, datas, totais, obs, botão) */
+.bvgn-container .bvgn-variacoes,
+.bvgn-container .bvgn-taxas,
+.bvgn-container .bvgn-agendamento,
+.bvgn-container .bvgn-totais,
+.bvgn-container .bvgn-informacoes,
+.bvgn-container .bvgn-botao-cotacao{
+  margin-top:14px;
+}
+
+/* Aparência dos cards (opcional) */
+.bvgn-container .bvgn-variacoes,
+.bvgn-container .bvgn-taxas,
+.bvgn-container .bvgn-agendamento,
+.bvgn-container .bvgn-totais{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  padding:14px;
+  box-shadow:0 6px 16px rgba(0,0,0,.05);
+}
+
+/* Observações */
+.bvgn-container .bvgn-informacoes{
+  width:100%;
+  padding:12px 14px;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  resize:vertical;
+}
+
+/* Botão */
+.bvgn-container .bvgn-botao-cotacao{
+  display:inline-block;
+  padding:12px 16px;
+  border-radius:12px;
+  background:#111827;
+  color:#fff;
+  font-weight:700;
+  border:0;
+  cursor:pointer;
+}
+
+/* Responsivo (empilha no mobile) */
+@media (max-width: 992px){
+  .bvgn-container .bvgn-grid{
+    grid-template-columns: 1fr;
+    gap:20px;
+  }
+  /* Garante ordem: imagem primeiro, conteúdo depois */
+  .bvgn-container .bvgn-media{ order:0; }
+  .bvgn-container .bvgn-info{ order:1; }
+}
+
+/* Utilitário: se algum produto precisar inverter (info esquerda, imagem direita),
+   adicione a classe .bvgn--invert no .bvgn-container */
+.bvgn-container.bvgn--invert .bvgn-grid{
+  grid-template-columns: minmax(0, 1fr) minmax(0, 520px);
+}
+.bvgn-container.bvgn--invert .bvgn-media{ order:2; }
+.bvgn-container.bvgn--invert .bvgn-info{ order:1; }
