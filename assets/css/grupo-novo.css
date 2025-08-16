@@ -178,3 +178,26 @@ body.single-product .elementor .bvgn-container .bvgn-col-full > *{
     max-width: 640px !important;
   }
 }
+
+/* ===== Variações em 2 colunas ===== */
+.bvgn-variacoes-opcoes{
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 12px !important;
+}
+
+.bvgn-variacoes-opcoes .bvgn-variacao{
+  margin: 0 !important;
+  padding: 12px 14px !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04) !important;
+}
+
+/* Mobile = 1 coluna */
+@media (max-width: 640px){
+  .bvgn-variacoes-opcoes{
+    grid-template-columns: 1fr !important;
+  }
+}
