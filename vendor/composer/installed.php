@@ -3,7 +3,7 @@
         'name' => 'bv/grupo-novo',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'a587ba2d9e2821d116e4b0aee291c671adaeac65',
+        'reference' => 'd7bad42253c5d40a8cfebf383f01dc83a1f7f2fd',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'bv/grupo-novo' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'a587ba2d9e2821d116e4b0aee291c671adaeac65',
+            'reference' => 'd7bad42253c5d40a8cfebf383f01dc83a1f7f2fd',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

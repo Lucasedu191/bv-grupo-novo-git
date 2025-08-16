@@ -2,24 +2,55 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 7.0.5
+ * Version: 7.0.4
  * Author: Lucas
+ * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
-require __DIR__ . '/vendor/autoload.php';
-use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
-$bvgn_update = PucFactory::buildUpdateChecker(
-  'https://github.com/Lucasedu191/bv-grupo-novo-git',
-  __FILE__,
-  plugin_basename(__FILE__) // slug dinâmico = sempre casa com a pasta ativa
-);
+if (!defined('ABSPATH')) exit;
 
+// === Carrega PUC (Composer OU pasta embutida) ===
+$puccComposer = __DIR__ . '/vendor/autoload.php';
+$puccEmbedded = __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
+if (file_exists($puccComposer)) {
+    require $puccComposer; // precisa ter instalado yahnis-elsts/plugin-update-checker
+} elseif (file_exists($puccEmbedded)) {
+    require $puccEmbedded; // lib copiada dentro do plugin
+} else {
+    error_log('[BVGN] Plugin Update Checker não encontrado; updates automáticos desativados.');
+}
 
-$bvgn_update->setReleaseAsset(true);
+// === Descobre qual namespace da lib está disponível (v5 ou v5p6) ===
+$factory = null;
+if (class_exists('\YahnisElsts\PluginUpdateChecker\v5\PucFactory')) {
+    $factory = '\YahnisElsts\PluginUpdateChecker\v5\PucFactory';
+} elseif (class_exists('\YahnisElsts\PluginUpdateChecker\v5p6\PucFactory')) {
+    $factory = '\YahnisElsts\PluginUpdateChecker\v5p6\PucFactory';
+}
 
-// Se o branch padrão é main:
-$bvgn_update->setBranch('main');
+// === Configura o update checker (se a lib existir) ===
+if ($factory) {
+    $bvgn_update = $factory::buildUpdateChecker(
+        'https://github.com/Lucasedu191/bv-grupo-novo-git',
+        __FILE__,
+        'bv-grupo-novo' // mantenha igual ao nome da pasta do plugin
+    );
 
+    // Branch padrão (se o repo usa "main")
+    if (method_exists($bvgn_update, 'setBranch')) {
+        $bvgn_update->setBranch('main');
+    }
+
+    // Usar assets anexados na Release (substitui o inexistente setReleaseAsset)
+    $api = $bvgn_update->getVcsApi();
+    if ($api && method_exists($api, 'enableReleaseAssets')) {
+        $api->enableReleaseAssets();
+    }
+
+    // Se repo for privado:
+    // $bvgn_update->setAuthentication('ghp_xxx...');
+}
+//fim do PUC
 if (!defined('ABSPATH')) exit;
 
 define('BVGN_CAMINHO', plugin_dir_path(__FILE__));
