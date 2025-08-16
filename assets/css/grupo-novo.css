@@ -161,3 +161,38 @@ body.single-product .elementor .bvgn-container .bvgn-agendamento{
     grid-template-columns: 1fr !important;
   }
 }
+
+/* DEBUG opcional: remova depois */
+/* body.single-product .elementor .bvgn-container .bvgn-grid{ outline: 3px dashed magenta !important; } */
+
+/* ---- Tudo (taxas, agenda, totais, obs, botão) na COLUNA DA DIREITA ---- */
+body.single-product .elementor .bvgn-container .bvgn-grid
+:is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais, .bvgn-informacoes, .bvgn-botao-cotacao){
+  grid-column: 2 !important;
+  width: 100% !important;
+  margin-top: 16px !important;
+}
+
+/* alguns temas envolvem os blocos em wrappers; cobre o caso também */
+body.single-product .elementor .bvgn-container .bvgn-grid
+:is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais, .bvgn-informacoes, .bvgn-botao-cotacao) *[class^="bvgn-"],
+body.single-product .elementor .bvgn-container .bvgn-grid
+:is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais, .bvgn-informacoes, .bvgn-botao-cotacao) > *{
+  grid-column: auto !important; /* evita herdar 1/-1 de estilos antigos */
+}
+
+/* Agendamento: 1 coluna (campos empilhados) */
+body.single-product .elementor .bvgn-container .bvgn-grid .bvgn-agendamento{
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 12px !important;
+  padding: 0 !important;
+}
+
+/* Mobile continua full-width se quiser (opcional) */
+@media (max-width: 1024px){
+  body.single-product .elementor .bvgn-container .bvgn-grid
+  :is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais, .bvgn-informacoes, .bvgn-botao-cotacao){
+    grid-column: 1 / -1 !important;
+  }
+}
