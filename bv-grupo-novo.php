@@ -11,8 +11,8 @@ use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 // ===== Atualizador via GitHub =====
 $bvgn_update = PucFactory::buildUpdateChecker(
-  'https://github.com/SEU-USUARIO/bv-grupo-novo', // URL do seu repositório
-  __FILE__,                                        // arquivo principal do plugin
+  'https://github.com/Lucasedu191/bv-grupo-novo-git', 
+  __FILE__,                                        
   'bv-grupo-novo'                                  // slug único do plugin
 );
 
