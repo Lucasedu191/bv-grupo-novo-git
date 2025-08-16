@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 7.0.1
+ * Version: 7.0.3
  * Author: Lucas
  */
 require __DIR__ . '/vendor/autoload.php';
@@ -12,8 +12,8 @@ use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 // ===== Atualizador via GitHub =====
 $bvgn_update = PucFactory::buildUpdateChecker(
   'https://github.com/Lucasedu191/bv-grupo-novo-git', 
-  __FILE__,                                        
-  'bv-grupo-novo'                                  // slug único do plugin
+ __FILE__,
+  plugin_basename(__FILE__)                                 // slug único do plugin
 );
 
 // Se usa Releases do GitHub, ative:
