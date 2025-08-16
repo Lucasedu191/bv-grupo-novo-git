@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 7.1.0
+ * Version: 7.1.1
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -90,21 +90,24 @@ add_action('wp_enqueue_scripts', function () {
     $ver_modal  = ( defined('BVGN_DIR') && file_exists(BVGN_DIR.'assets/js/bvgn-modal.js') )
                   ? filemtime(BVGN_DIR.'assets/js/bvgn-modal.js')    : '1.0.0';
 
-    // CSS principal (contém @import dos blocos)
-    wp_enqueue_style(
-      'bvgn-css',
-      BVGN_URL . 'assets/css/grupo-novo.css',
-      [],
-      $ver_css
-    );
+    // helper para versão por mtime
+    $ver = function($rel){
+      $p = BVGN_DIR.ltrim($rel,'/');
+      return file_exists($p) ? filemtime($p) : '1.0.0';
+    };
+
+    // Enfileira cada CSS separadamente (sem @import)
+    wp_enqueue_style('bvgn-base',        BVGN_URL.'assets/css/base.css',        [], $ver('assets/css/base.css'));
+    wp_enqueue_style('bvgn-variacoes',   BVGN_URL.'assets/css/variacoes.css',   ['bvgn-base'], $ver('assets/css/variacoes.css'));
+    wp_enqueue_style('bvgn-taxas',       BVGN_URL.'assets/css/taxas.css',       ['bvgn-base'], $ver('assets/css/taxas.css'));
+    wp_enqueue_style('bvgn-agendamento', BVGN_URL.'assets/css/agendamento.css', ['bvgn-base'], $ver('assets/css/agendamento.css'));
+    wp_enqueue_style('bvgn-totais',      BVGN_URL.'assets/css/totais.css',      ['bvgn-base'], $ver('assets/css/totais.css'));
+    wp_enqueue_style('bvgn-modal',       BVGN_URL.'assets/css/modal.css',       ['bvgn-base'], $ver('assets/css/modal.css'));
+
 
     
 
-    // item 1: CSS inline (só carrega se o estilo acima for enfileirado)
-    wp_add_inline_style(
-      'bvgn-css',
-      '.bvgn-container{outline:4px solid magenta!important;}'
-    );
+    
 
     // JS principal
     wp_enqueue_script(
@@ -132,7 +135,7 @@ add_action('wp_enqueue_scripts', function () {
       'nonce'   => wp_create_nonce('bvgn_nonce'),
     ]);
   }
-},99);
+});
 
 
 // Template do plugin (desligado por padrão)

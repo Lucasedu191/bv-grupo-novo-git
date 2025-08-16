@@ -72,6 +72,8 @@
   color: #6b7280;
 }
 
+.elementor .bvgn-container .bvgn-totais .bvgn-linha { display: grid !important; }
+
 /* Responsivo */
 @media (max-width: 640px) {
   .elementor .bvgn-container .bvgn-totais { padding: 14px; }
