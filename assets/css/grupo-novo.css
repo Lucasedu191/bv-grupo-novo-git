@@ -196,3 +196,91 @@ body.single-product .elementor .bvgn-container .bvgn-grid .bvgn-agendamento{
     grid-column: 1 / -1 !important;
   }
 }
+
+
+/* ===== Polimento da coluna direita (Woo look) ===== */
+
+/* controla a largura visual do "painel" direito pra nada ficar espremido ou muito largo */
+body.single-product .elementor .bvgn-container .bvgn-grid{
+  grid-template-columns: minmax(0, 1.6fr) minmax(420px, 540px) !important; /* 60/40 com painel mais confortável */
+}
+
+/* ajusta espaçamento vertical entre os blocos da coluna direita */
+body.single-product .elementor .bvgn-container .bvgn-grid
+  :is(.bvgn-titulo, .bvgn-descricao, .bvgn-variacoes,
+      .bvgn-taxas, .bvgn-agendamento, .bvgn-totais,
+      .bvgn-informacoes, .bvgn-botao-cotacao){
+  margin-top: 14px !important;
+}
+
+/* cartões da coluna direita com aparência uniforme */
+body.single-product .elementor .bvgn-container
+  :is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais){
+  background:#fff !important;
+  border:1px solid #e9edf3 !important;
+  border-radius:14px !important;
+  box-shadow:0 6px 18px rgba(0,0,0,.05) !important;
+  padding:16px !important;
+}
+
+/* TÍTULO e descrição bem próximos */
+body.single-product .elementor .bvgn-container .bvgn-titulo{ margin-bottom:6px !important; }
+body.single-product .elementor .bvgn-container .bvgn-descricao{ margin-bottom:10px !important; }
+
+/* VARIAÇÕES: cards compactos, sem “buracos” */
+body.single-product .elementor .bvgn-container .bvgn-variacoes{ padding:6px 0 0 !important; }
+body.single-product .elementor .bvgn-container .bvgn-variacoes-opcoes{ gap:10px !important; }
+body.single-product .elementor .bvgn-container .bvgn-variacao{
+  padding:10px 12px !important;
+  border:1px solid #e9edf3 !important;
+  background:#fff !important;
+  border-radius:12px !important;
+  box-shadow:0 4px 12px rgba(0,0,0,.04) !important;
+}
+
+/* TAXAS em coluna com “pílulas” uniformes */
+body.single-product .elementor .bvgn-container .bvgn-taxas{
+  border-style: solid !important;  /* tira o dashed */
+}
+body.single-product .elementor .bvgn-container .bvgn-taxas .bvgn-taxa{
+  display:flex !important; align-items:center !important; gap:10px !important;
+  padding:10px 12px !important; margin:10px 0 0 0 !important;
+  border:1px solid #e9edf3 !important; border-radius:10px !important; background:#f9fbff !important;
+}
+
+/* AGENDAMENTO empilhado (1 coluna) com inputs largos e clean */
+body.single-product .elementor .bvgn-container .bvgn-agendamento{
+  display:grid !important; grid-template-columns: 1fr !important; gap:12px !important;
+}
+body.single-product .elementor .bvgn-container .bvgn-agendamento label{
+  font-weight:700 !important; color:#111827 !important; margin-bottom:4px !important;
+}
+body.single-product .elementor .bvgn-container .bvgn-agendamento input{
+  width:100% !important; min-height:46px !important; padding:12px 14px !important;
+  border-radius:12px !important; border:1px solid #e6e9ee !important; background:#fff !important;
+}
+
+/* TOTAIS com hierarquia visual */
+body.single-product .elementor .bvgn-container .bvgn-totais .bvgn-linha{
+  display:grid !important; grid-template-columns:1fr auto !important; gap:8px !important;
+}
+
+/* OBSERVAÇÕES e BOTÃO preenchendo a largura do painel */
+body.single-product .elementor .bvgn-container .bvgn-informacoes{
+  min-height:90px !important; padding:12px 14px !important;
+  border:1px solid #e6e9ee !important; border-radius:12px !important; background:#fff !important;
+}
+body.single-product .elementor .bvgn-container .bvgn-botao-cotacao{
+  width:100% !important; padding:14px 18px !important; border-radius:12px !important;
+  background:#111827 !important; color:#fff !important; font-weight:800 !important; border:0 !important;
+}
+
+/* MOBILE: tudo em 1 coluna larga como já estava */
+@media (max-width: 1024px){
+  body.single-product .elementor .bvgn-container .bvgn-grid{
+    grid-template-columns: 1fr !important; gap: 20px !important;
+  }
+  body.single-product .elementor .bvgn-container .bvgn-variacao{
+    flex-basis: 100% !important; min-width: 0 !important;
+  }
+}
