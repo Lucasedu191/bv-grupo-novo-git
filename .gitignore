@@ -1,0 +1,30 @@
+# ==========================
+# WordPress Plugin Gitignore
+# ==========================
+
+# Composer
+/composer.lock
+
+# Node (se um dia usar)
+/node_modules/
+/npm-debug.log
+/yarn-error.log
+/package-lock.json
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs / editores
+/.vscode/
+/.idea/
+/*.sublime-project
+/*.sublime-workspace
+
+# Logs
+*.log
+
+# Backups e temporários
+*.bak
+*.tmp
+*.swp
