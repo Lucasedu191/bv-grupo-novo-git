@@ -1,14 +1,31 @@
-/* ===== OVERRIDE FORTE — Woo-style ===== */
+/* ================================
+   BVGN — Layout Woo-style (final)
+   Funciona com o shortcode atual (.bvgn-media + .bvgn-info)
+   ================================ */
+
+/* Container base */
+body.single-product .elementor .bvgn-container{
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(12px, 2.5vw, 28px);
+}
+body.single-product .elementor .bvgn-container *{ box-sizing: border-box; }
 
 /* GRID: 2 colunas (img | infos) */
 body.single-product .elementor .bvgn-container .bvgn-grid{
   display: grid !important;
-  grid-template-columns: minmax(0, 1.6fr) minmax(360px, 520px) !important;
+  grid-template-columns: minmax(0, 1.6fr) minmax(380px, 540px) !important; /* 60/40 */
   gap: clamp(18px, 2.6vw, 36px) !important;
   align-items: start !important;
 }
 
-/* IMAGEM MAIOR À ESQUERDA */
+/* Faz os filhos de .bvgn-info virarem itens do grid (sem mudar o shortcode) */
+body.single-product .elementor .bvgn-container .bvgn-info{
+  display: contents !important;
+  min-width: 0 !important;
+}
+
+/* IMAGEM – cartão à esquerda */
 body.single-product .elementor .bvgn-container .bvgn-media{
   grid-column: 1 !important;
   background:#fff !important;
@@ -23,13 +40,12 @@ body.single-product .elementor .bvgn-container .bvgn-imagem{
   border-radius:14px !important;
 }
 
-/* TÍTULO, DESCRIÇÃO E VARIAÇÕES EMPILHADOS NA DIREITA */
+/* DIREITA — título, descrição e variações empilhados */
 body.single-product .elementor .bvgn-container .bvgn-titulo,
 body.single-product .elementor .bvgn-container .bvgn-descricao,
 body.single-product .elementor .bvgn-container .bvgn-variacoes{
   grid-column: 2 !important;
 }
-
 body.single-product .elementor .bvgn-container .bvgn-titulo{
   margin: 2px 0 6px !important;
   font-size: clamp(22px, 2.3vw, 28px) !important;
@@ -37,13 +53,14 @@ body.single-product .elementor .bvgn-container .bvgn-titulo{
   letter-spacing:.2px !important;
 }
 body.single-product .elementor .bvgn-container .bvgn-descricao{
-  margin: 0 0 14px !important;
+  margin: 0 0 12px !important;
   color:#3f4652 !important;
   line-height:1.55 !important;
 }
+body.single-product .elementor .bvgn-container .bvgn-descricao p{ margin:0 0 8px !important; }
 
-/* VARIAÇÕES: 2 colunas, espaçamento menor */
-body.single-product .elementor .bvgn-container .bvgn-variacoes{ padding: 8px 0 0 !important; }
+/* VARIAÇÕES — 2 colunas compactas (desktop) */
+body.single-product .elementor .bvgn-container .bvgn-variacoes{ padding-top:6px !important; }
 body.single-product .elementor .bvgn-container .bvgn-variacoes-opcoes{
   display:flex !important; flex-wrap:wrap !important; gap:10px !important;
 }
@@ -58,33 +75,43 @@ body.single-product .elementor .bvgn-container .bvgn-variacao:has(input[type=rad
   border-color:#1f2937 !important; box-shadow:0 6px 14px rgba(0,0,0,.06) !important;
 }
 
-/* TAXAS: UMA COLUNA FULL-WIDTH (abaixo do painel) */
+/* ===== FAIXA FULL — taxas, agenda, totais, observações, botão ===== */
+/* ocupam a largura toda, centralizados com largura confortável */
 body.single-product .elementor .bvgn-container .bvgn-taxas,
 body.single-product .elementor .bvgn-container .bvgn-agendamento,
 body.single-product .elementor .bvgn-container .bvgn-totais,
 body.single-product .elementor .bvgn-container .bvgn-informacoes,
 body.single-product .elementor .bvgn-container .bvgn-botao-cotacao{
-  grid-column: 1 / -1 !important;   /* ocupa a largura toda */
-  margin-top: 16px !important;
+  grid-column: 1 / -1 !important;          /* sai da coluna direita */
+  max-width: 560px !important;              /* painel confortável */
+  width: 100% !important;
+  margin: 16px auto 0 !important;           /* centraliza */
 }
-body.single-product .elementor .bvgn-container .bvgn-taxas{
+
+/* cartões bonitos */
+body.single-product .elementor .bvgn-container .bvgn-taxas,
+body.single-product .elementor .bvgn-container .bvgn-agendamento,
+body.single-product .elementor .bvgn-container .bvgn-totais{
+  background:#fff !important;
+  border:1px solid #e9edf3 !important;
+  border-radius:14px !important;
+  box-shadow:0 6px 18px rgba(0,0,0,.05) !important;
   padding:16px !important;
-  border:2px dashed #e5e7eb !important;
-  border-radius:14px !important; background:#fff !important;
-  box-shadow:0 4px 12px rgba(0,0,0,.05) !important;
 }
+
+/* taxas empilhadas (pílulas) */
 body.single-product .elementor .bvgn-container .bvgn-taxas .bvgn-taxa{
   display:flex !important; align-items:center !important; gap:10px !important;
   padding:10px 12px !important; margin:10px 0 0 0 !important;
-  border:1px solid #e9edf3 !important; border-radius:10px !important; background:#fafbff !important;
+  border:1px solid #e9edf3 !important; border-radius:10px !important; background:#f9fbff !important;
 }
 
-/* CAMPOS DE DATA MAIS “CLICÁVEIS” */
+/* agendamento 1 coluna */
 body.single-product .elementor .bvgn-container .bvgn-agendamento{
-  display:grid !important; grid-template-columns: repeat(2, minmax(260px, 1fr)) !important; gap:14px !important;
+  display:grid !important; grid-template-columns: 1fr !important; gap:12px !important;
 }
-@media (max-width: 820px){
-  body.single-product .elementor .bvgn-container .bvgn-agendamento{ grid-template-columns:1fr !important; }
+body.single-product .elementor .bvgn-container .bvgn-agendamento label{
+  font-weight:700 !important; color:#111827 !important; margin-bottom:4px !important;
 }
 body.single-product .elementor .bvgn-container .bvgn-agendamento input[type="date"],
 body.single-product .elementor .bvgn-container .bvgn-agendamento input[type="text"],
@@ -93,7 +120,12 @@ body.single-product .elementor .bvgn-container .bvgn-agendamento input[type="tim
   border-radius:12px !important; border:1px solid #e6e9ee !important; background:#fff !important;
 }
 
-/* OBSERVAÇÕES + BOTÃO */
+/* totais com rótulo/valor */
+body.single-product .elementor .bvgn-container .bvgn-totais .bvgn-linha{
+  display:grid !important; grid-template-columns:1fr auto !important; gap:8px !important;
+}
+
+/* observações e botão */
 body.single-product .elementor .bvgn-container .bvgn-informacoes{
   min-height:90px !important; padding:12px 14px !important;
   border:1px solid #e6e9ee !important; border-radius:12px !important; background:#fff !important;
@@ -101,218 +133,25 @@ body.single-product .elementor .bvgn-container .bvgn-informacoes{
 body.single-product .elementor .bvgn-container .bvgn-botao-cotacao{
   width:100% !important; padding:14px 18px !important; border-radius:12px !important;
   border:0 !important; background:#111827 !important; color:#fff !important; font-weight:800 !important;
+  transition: transform .06s, opacity .2s !important;
 }
+body.single-product .elementor .bvgn-container .bvgn-botao-cotacao:hover{ opacity:.95 !important; }
+body.single-product .elementor .bvgn-container .bvgn-botao-cotacao:active{ transform: translateY(1px) !important; }
 
-/* RESPONSIVO: 1 coluna no mobile */
-@media (max-width: 1024px){
-  body.single-product .elementor .bvgn-container .bvgn-grid{ grid-template-columns: 1fr !important; gap:20px !important; }
-  body.single-product .elementor .bvgn-container .bvgn-variacao{ flex-basis:100% !important; min-width:0 !important; }
-}
-
-/* ===== Empilhar infos em UMA coluna (lado direito) ===== */
-body.single-product .elementor .bvgn-container
-.bvgn-taxas,
-body.single-product .elementor .bvgn-container
-.bvgn-agendamento,
-body.single-product .elementor .bvgn-container
-.bvgn-totais,
-body.single-product .elementor .bvgn-container
-.bvgn-informacoes,
-body.single-product .elementor .bvgn-container
-.bvgn-botao-cotacao{
-  grid-column: 2 !important;   /* fica na coluna da direita */
-  width: 100% !important;
-  margin-top: 16px !important;
-}
-
-/* Agendamento: 1 coluna (campos empilhados) */
-body.single-product .elementor .bvgn-container .bvgn-agendamento{
-  display: grid !important;
-  grid-template-columns: 1fr !important;
-  gap: 12px !important;
-  padding: 0 !important;
-}
-
-/* Mobile continua 1 coluna full-width */
-@media (max-width: 1024px){
-  body.single-product .elementor .bvgn-container
-  .bvgn-taxas,
-  body.single-product .elementor .bvgn-container
-  .bvgn-agendamento,
-  body.single-product .elementor .bvgn-container
-  .bvgn-totais,
-  body.single-product .elementor .bvgn-container
-  .bvgn-informacoes,
-  body.single-product .elementor .bvgn-container
-  .bvgn-botao-cotacao{
-    grid-column: 1 / -1 !important; /* ocupa toda a largura no mobile */
-  }
-}
-
-/* Agendamento: 2 colunas no desktop, 1 no mobile */
-body.single-product .elementor .bvgn-container .bvgn-agendamento{
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(200px, 1fr)) !important;
-  gap: 12px !important;
-  padding: 0 !important;
-}
-@media (max-width: 820px){
-  body.single-product .elementor .bvgn-container .bvgn-agendamento{
-    grid-template-columns: 1fr !important;
-  }
-}
-
-/* DEBUG opcional: remova depois */
-/* body.single-product .elementor .bvgn-container .bvgn-grid{ outline: 3px dashed magenta !important; } */
-
-/* ---- Tudo (taxas, agenda, totais, obs, botão) na COLUNA DA DIREITA ---- */
-body.single-product .elementor .bvgn-container .bvgn-grid
-:is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais, .bvgn-informacoes, .bvgn-botao-cotacao){
-  grid-column: 2 !important;
-  width: 100% !important;
-  margin-top: 16px !important;
-}
-
-/* alguns temas envolvem os blocos em wrappers; cobre o caso também */
-body.single-product .elementor .bvgn-container .bvgn-grid
-:is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais, .bvgn-informacoes, .bvgn-botao-cotacao) *[class^="bvgn-"],
-body.single-product .elementor .bvgn-container .bvgn-grid
-:is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais, .bvgn-informacoes, .bvgn-botao-cotacao) > *{
-  grid-column: auto !important; /* evita herdar 1/-1 de estilos antigos */
-}
-
-/* Agendamento: 1 coluna (campos empilhados) */
-body.single-product .elementor .bvgn-container .bvgn-grid .bvgn-agendamento{
-  display: grid !important;
-  grid-template-columns: 1fr !important;
-  gap: 12px !important;
-  padding: 0 !important;
-}
-
-/* Mobile continua full-width se quiser (opcional) */
-@media (max-width: 1024px){
-  body.single-product .elementor .bvgn-container .bvgn-grid
-  :is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais, .bvgn-informacoes, .bvgn-botao-cotacao){
-    grid-column: 1 / -1 !important;
-  }
-}
-
-
-/* ===== Polimento da coluna direita (Woo look) ===== */
-
-/* controla a largura visual do "painel" direito pra nada ficar espremido ou muito largo */
-body.single-product .elementor .bvgn-container .bvgn-grid{
-  grid-template-columns: minmax(0, 1.6fr) minmax(420px, 540px) !important; /* 60/40 com painel mais confortável */
-}
-
-/* ajusta espaçamento vertical entre os blocos da coluna direita */
-body.single-product .elementor .bvgn-container .bvgn-grid
-  :is(.bvgn-titulo, .bvgn-descricao, .bvgn-variacoes,
-      .bvgn-taxas, .bvgn-agendamento, .bvgn-totais,
-      .bvgn-informacoes, .bvgn-botao-cotacao){
-  margin-top: 14px !important;
-}
-
-/* cartões da coluna direita com aparência uniforme */
-body.single-product .elementor .bvgn-container
-  :is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais){
-  background:#fff !important;
-  border:1px solid #e9edf3 !important;
-  border-radius:14px !important;
-  box-shadow:0 6px 18px rgba(0,0,0,.05) !important;
-  padding:16px !important;
-}
-
-/* TÍTULO e descrição bem próximos */
-body.single-product .elementor .bvgn-container .bvgn-titulo{ margin-bottom:6px !important; }
-body.single-product .elementor .bvgn-container .bvgn-descricao{ margin-bottom:10px !important; }
-
-/* VARIAÇÕES: cards compactos, sem “buracos” */
-body.single-product .elementor .bvgn-container .bvgn-variacoes{ padding:6px 0 0 !important; }
-body.single-product .elementor .bvgn-container .bvgn-variacoes-opcoes{ gap:10px !important; }
-body.single-product .elementor .bvgn-container .bvgn-variacao{
-  padding:10px 12px !important;
-  border:1px solid #e9edf3 !important;
-  background:#fff !important;
-  border-radius:12px !important;
-  box-shadow:0 4px 12px rgba(0,0,0,.04) !important;
-}
-
-/* TAXAS em coluna com “pílulas” uniformes */
-body.single-product .elementor .bvgn-container .bvgn-taxas{
-  border-style: solid !important;  /* tira o dashed */
-}
-body.single-product .elementor .bvgn-container .bvgn-taxas .bvgn-taxa{
-  display:flex !important; align-items:center !important; gap:10px !important;
-  padding:10px 12px !important; margin:10px 0 0 0 !important;
-  border:1px solid #e9edf3 !important; border-radius:10px !important; background:#f9fbff !important;
-}
-
-/* AGENDAMENTO empilhado (1 coluna) com inputs largos e clean */
-body.single-product .elementor .bvgn-container .bvgn-agendamento{
-  display:grid !important; grid-template-columns: 1fr !important; gap:12px !important;
-}
-body.single-product .elementor .bvgn-container .bvgn-agendamento label{
-  font-weight:700 !important; color:#111827 !important; margin-bottom:4px !important;
-}
-body.single-product .elementor .bvgn-container .bvgn-agendamento input{
-  width:100% !important; min-height:46px !important; padding:12px 14px !important;
-  border-radius:12px !important; border:1px solid #e6e9ee !important; background:#fff !important;
-}
-
-/* TOTAIS com hierarquia visual */
-body.single-product .elementor .bvgn-container .bvgn-totais .bvgn-linha{
-  display:grid !important; grid-template-columns:1fr auto !important; gap:8px !important;
-}
-
-/* OBSERVAÇÕES e BOTÃO preenchendo a largura do painel */
-body.single-product .elementor .bvgn-container .bvgn-informacoes{
-  min-height:90px !important; padding:12px 14px !important;
-  border:1px solid #e6e9ee !important; border-radius:12px !important; background:#fff !important;
-}
-body.single-product .elementor .bvgn-container .bvgn-botao-cotacao{
-  width:100% !important; padding:14px 18px !important; border-radius:12px !important;
-  background:#111827 !important; color:#fff !important; font-weight:800 !important; border:0 !important;
-}
-
-/* MOBILE: tudo em 1 coluna larga como já estava */
+/* =======================
+   RESPONSIVO
+   ======================= */
 @media (max-width: 1024px){
   body.single-product .elementor .bvgn-container .bvgn-grid{
-    grid-template-columns: 1fr !important; gap: 20px !important;
+    grid-template-columns: 1fr !important; gap:20px !important;
   }
   body.single-product .elementor .bvgn-container .bvgn-variacao{
     flex-basis: 100% !important; min-width: 0 !important;
   }
-}
-/* ===== Empilhar abaixo do grid, centralizados ===== */
-/* tira esses blocos da coluna direita e coloca em 1/-1 */
-body.single-product .elementor .bvgn-container .bvgn-grid
-  > :is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais, .bvgn-informacoes, .bvgn-botao-cotacao){
-  grid-column: 1 / -1 !important;           /* ocupa as duas colunas */
-  max-width: 560px !important;               /* largura confortável */
-  margin: 16px auto 0 !important;            /* centraliza */
-}
-
-/* se houver wrappers internos, garante que não forçem coluna 2 */
-body.single-product .elementor .bvgn-container .bvgn-grid
-  > :is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais, .bvgn-informacoes, .bvgn-botao-cotacao) *[class^="bvgn-"]{
-  grid-column: auto !important;
-}
-
-/* Agendamento em 1 coluna (empilhado) */
-body.single-product .elementor .bvgn-container .bvgn-grid > .bvgn-agendamento{
-  display: grid !important;
-  grid-template-columns: 1fr !important;
-  gap: 12px !important;
-  padding: 0 !important;
-}
-
-/* No mobile continua ocupando toda a largura (já centralizado) */
-@media (max-width: 1024px){
-  body.single-product .elementor .bvgn-container .bvgn-grid
-    > :is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais, .bvgn-informacoes, .bvgn-botao-cotacao){
+  /* full já centralizado — ocupa 100% no mobile */
+  body.single-product .elementor .bvgn-container
+    :is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais, .bvgn-informacoes, .bvgn-botao-cotacao){
     max-width: 100% !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+    margin-left: 0 !important; margin-right: 0 !important;
   }
 }
