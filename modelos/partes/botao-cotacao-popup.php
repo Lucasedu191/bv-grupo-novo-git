@@ -12,7 +12,7 @@ $nonce          = isset($a['nonce']) ? $a['nonce'] : '';
 ?>
 <button type="button"
         class="<?php echo esc_attr($classe); ?> js-bvgn-open-modal"
-        data-bvgn-modal="bvgn-cotacao-enviar">
+        data-bvgn-modal="bvgn-cotacao-modal">
   <?php echo esc_html($rotulo); ?>
 </button>
 <?php
@@ -24,5 +24,5 @@ if ( ! defined('BVGN_MODAL_INCLUDED') ) {
     'produto_titulo' => $produto_titulo,
     'nonce'          => $nonce,
   ];
-  include BVGN_CAMINHO.'modelos/partes/modal-cotacao.php';
+  include BVGN_CAMINHO . 'modelos/partes/modal-cotacao.php';
 }
