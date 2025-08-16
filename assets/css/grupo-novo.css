@@ -1,200 +1,110 @@
-/* ===============================
-   BVGN — Layout produto (Woo-style)
-   =============================== */
+/* ===== OVERRIDE FORTE — Woo-style ===== */
 
-/* Container base */
-.bvgn-container{
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: clamp(12px, 2.5vw, 28px);
+/* GRID: 2 colunas (img | infos) */
+body.single-product .elementor .bvgn-container .bvgn-grid{
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.6fr) minmax(360px, 520px) !important;
+  gap: clamp(18px, 2.6vw, 36px) !important;
+  align-items: start !important;
 }
 
-/* evita heranças do tema/Elementor dentro do shortcode */
-.elementor .bvgn-container * { box-sizing: border-box; }
-
-/* GRID principal — imagem à esquerda | infos à direita */
-.bvgn-container .bvgn-grid{
-  display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(360px, 520px); /* 60/40 aprox */
-  gap: clamp(18px, 2.6vw, 36px);
-  align-items: start;
+/* IMAGEM MAIOR À ESQUERDA */
+body.single-product .elementor .bvgn-container .bvgn-media{
+  grid-column: 1 !important;
+  background:#fff !important;
+  border:1px solid #eef2f7 !important;
+  border-radius:18px !important;
+  box-shadow:0 12px 26px rgba(0,0,0,.05) !important;
+  padding: clamp(10px, 1.4vw, 18px) !important;
+}
+body.single-product .elementor .bvgn-container .bvgn-imagem{
+  width:100% !important; height:auto !important;
+  max-height:560px !important; object-fit:contain !important;
+  border-radius:14px !important;
 }
 
-/* IMAGEM (esquerda) */
-.bvgn-container .bvgn-media{
-  background:#fff;
-  border:1px solid #eef2f7;
-  border-radius:18px;
-  box-shadow:0 12px 26px rgba(0,0,0,.05);
-  padding: clamp(10px, 1.4vw, 18px);
-  grid-column: 1; /* sempre na 1ª coluna */
-}
-.bvgn-container .bvgn-imagem{
-  display:block;
-  width:100%;
-  height:auto;
-  max-height:560px;            /* maior que antes */
-  border-radius:14px;
-  object-fit:contain;
+/* TÍTULO, DESCRIÇÃO E VARIAÇÕES EMPILHADOS NA DIREITA */
+body.single-product .elementor .bvgn-container .bvgn-titulo,
+body.single-product .elementor .bvgn-container .bvgn-descricao,
+body.single-product .elementor .bvgn-container .bvgn-variacoes{
+  grid-column: 2 !important;
 }
 
-/* PAINEL (direita) usa os filhos no grid */
-.bvgn-container .bvgn-info{
-  display: contents; /* filhos “sobem” para o grid */
-  min-width: 0;
+body.single-product .elementor .bvgn-container .bvgn-titulo{
+  margin: 2px 0 6px !important;
+  font-size: clamp(22px, 2.3vw, 28px) !important;
+  font-weight: 800 !important;
+  letter-spacing:.2px !important;
+}
+body.single-product .elementor .bvgn-container .bvgn-descricao{
+  margin: 0 0 14px !important;
+  color:#3f4652 !important;
+  line-height:1.55 !important;
 }
 
-/* Blocos que ficam na coluna da direita (acima das taxas) */
-.bvgn-container .bvgn-titulo,
-.bvgn-container .bvgn-descricao,
-.bvgn-container .bvgn-variacoes{
-  grid-column: 2;
+/* VARIAÇÕES: 2 colunas, espaçamento menor */
+body.single-product .elementor .bvgn-container .bvgn-variacoes{ padding: 8px 0 0 !important; }
+body.single-product .elementor .bvgn-container .bvgn-variacoes-opcoes{
+  display:flex !important; flex-wrap:wrap !important; gap:10px !important;
+}
+body.single-product .elementor .bvgn-container .bvgn-variacao{
+  flex: 1 1 calc(50% - 10px) !important;
+  min-width: 260px !important;
+  margin:0 !important; padding:10px 12px !important;
+  border:1px solid #e9edf3 !important; background:#fff !important;
+  border-radius:12px !important; box-shadow:0 4px 12px rgba(0,0,0,.04) !important;
+}
+body.single-product .elementor .bvgn-container .bvgn-variacao:has(input[type=radio]:checked){
+  border-color:#1f2937 !important; box-shadow:0 6px 14px rgba(0,0,0,.06) !important;
 }
 
-/* Blocos que ocupam largura total (abaixo) */
-.bvgn-container .bvgn-taxas,
-.bvgn-container .bvgn-agendamento,
-.bvgn-container .bvgn-totais,
-.bvgn-container .bvgn-informacoes,
-.bvgn-container .bvgn-botao-cotacao{
-  grid-column: 1 / -1;
-  margin-top: 16px;
+/* TAXAS: UMA COLUNA FULL-WIDTH (abaixo do painel) */
+body.single-product .elementor .bvgn-container .bvgn-taxas,
+body.single-product .elementor .bvgn-container .bvgn-agendamento,
+body.single-product .elementor .bvgn-container .bvgn-totais,
+body.single-product .elementor .bvgn-container .bvgn-informacoes,
+body.single-product .elementor .bvgn-container .bvgn-botao-cotacao{
+  grid-column: 1 / -1 !important;   /* ocupa a largura toda */
+  margin-top: 16px !important;
+}
+body.single-product .elementor .bvgn-container .bvgn-taxas{
+  padding:16px !important;
+  border:2px dashed #e5e7eb !important;
+  border-radius:14px !important; background:#fff !important;
+  box-shadow:0 4px 12px rgba(0,0,0,.05) !important;
+}
+body.single-product .elementor .bvgn-container .bvgn-taxas .bvgn-taxa{
+  display:flex !important; align-items:center !important; gap:10px !important;
+  padding:10px 12px !important; margin:10px 0 0 0 !important;
+  border:1px solid #e9edf3 !important; border-radius:10px !important; background:#fafbff !important;
 }
 
-/* ----- Título/descrição (ritmo curto) ----- */
-.bvgn-container .bvgn-titulo{
-  margin: 2px 0 6px;
-  font-size: clamp(22px, 2.3vw, 28px);
-  font-weight: 800;
-  letter-spacing:.2px;
-}
-.bvgn-container .bvgn-descricao{
-  margin: 0 0 14px;
-  color:#3f4652;
-  line-height: 1.55;
-}
-.bvgn-container .bvgn-descricao p{ margin:0 0 8px; }
-
-/* ===============================
-   Variações — 2 colunas compactas
-   =============================== */
-.bvgn-container .bvgn-variacoes{ padding: 8px 0 0; }
-
-.bvgn-container .bvgn-variacoes-opcoes{
-  display:flex;
-  flex-wrap:wrap;
-  gap: 10px;                  /* menor espaçamento */
-}
-
-.bvgn-container .bvgn-variacao{
-  flex: 1 1 calc(50% - 10px);
-  min-width: 260px;
-  margin: 0;
-  padding: 10px 12px;         /* compacto */
-  border:1px solid #e9edf3;
-  background:#fff;
-  border-radius:12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,.04);
-}
-
-/* estado “selecionado” (se já existir classe/aria, ajuste aqui) */
-.bvgn-container .bvgn-variacao.is-active,
-.bvgn-container .bvgn-variacao:has(input[type=radio]:checked){
-  border-color:#1f2937;
-  box-shadow: 0 6px 14px rgba(0,0,0,.06);
-}
-
-/* ===============================
-   Taxas — 1 coluna (full-width)
-   =============================== */
-.bvgn-container .bvgn-taxas{
-  padding:16px;
-  border: 2px dashed #e5e7eb;
-  border-radius: 14px;
-  background:#fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,.05);
-}
-
-/* cada taxa em linha inteira (coluna única) */
-.bvgn-container .bvgn-taxas .bvgn-taxa{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 12px;
-  border:1px solid #e9edf3;
-  border-radius:10px;
-  background:#fafbff;
-  margin: 10px 0 0 0;     /* empilha verticalmente */
-}
-.bvgn-container .bvgn-taxas .bvgn-taxa input{ transform: translateY(1px); }
-.bvgn-container .bvgn-taxas .bvgn-taxa .lbl{ font-weight:600; color:#111827; }
-
-/* ===============================
-   Agendamento (inputs mais “clicáveis”)
-   =============================== */
-.bvgn-container .bvgn-agendamento{
-  display:grid;
-  grid-template-columns: repeat(2, minmax(260px, 1fr));
-  gap:14px;
-  padding:0; /* alinhado ao restante */
+/* CAMPOS DE DATA MAIS “CLICÁVEIS” */
+body.single-product .elementor .bvgn-container .bvgn-agendamento{
+  display:grid !important; grid-template-columns: repeat(2, minmax(260px, 1fr)) !important; gap:14px !important;
 }
 @media (max-width: 820px){
-  .bvgn-container .bvgn-agendamento{ grid-template-columns: 1fr; }
+  body.single-product .elementor .bvgn-container .bvgn-agendamento{ grid-template-columns:1fr !important; }
 }
-.bvgn-container .bvgn-agendamento label{
-  margin:0; font-weight:700; color:#111827;
-}
-.bvgn-container .bvgn-agendamento input[type="date"],
-.bvgn-container .bvgn-agendamento input[type="text"],
-.bvgn-container .bvgn-agendamento input[type="time"]{
-  display:block; width:100%; margin-top:6px;
-  min-height:46px; padding:12px 14px;
-  border-radius:12px; border:1px solid #e6e9ee; background:#fff;
-  cursor:text;
-}
-.bvgn-container .bvgn-agendamento input[type="date"]::-webkit-calendar-picker-indicator{ cursor:pointer; }
-
-/* ===============================
-   Totais / Observações / Botão
-   =============================== */
-.bvgn-container .bvgn-totais{ padding:16px; }
-
-.bvgn-container .bvgn-informacoes{
-  width:100%;
-  min-height:90px;
-  padding:12px 14px;
-  border:1px solid #e6e9ee;
-  border-radius:12px;
-  background:#fff;
-  resize:vertical;
+body.single-product .elementor .bvgn-container .bvgn-agendamento input[type="date"],
+body.single-product .elementor .bvgn-container .bvgn-agendamento input[type="text"],
+body.single-product .elementor .bvgn-container .bvgn-agendamento input[type="time"]{
+  width:100% !important; min-height:46px !important; padding:12px 14px !important;
+  border-radius:12px !important; border:1px solid #e6e9ee !important; background:#fff !important;
 }
 
-.bvgn-container .bvgn-botao-cotacao{
-  width:100%;
-  padding:14px 18px;
-  border-radius:12px;
-  border:0;
-  background:#111827;
-  color:#fff;
-  font-weight:800;
-  cursor:pointer;
-  transition: transform .06s ease-in-out, opacity .2s;
+/* OBSERVAÇÕES + BOTÃO */
+body.single-product .elementor .bvgn-container .bvgn-informacoes{
+  min-height:90px !important; padding:12px 14px !important;
+  border:1px solid #e6e9ee !important; border-radius:12px !important; background:#fff !important;
 }
-.bvgn-container .bvgn-botao-cotacao:hover{ opacity:.95; }
-.bvgn-container .bvgn-botao-cotacao:active{ transform: translateY(1px); }
+body.single-product .elementor .bvgn-container .bvgn-botao-cotacao{
+  width:100% !important; padding:14px 18px !important; border-radius:12px !important;
+  border:0 !important; background:#111827 !important; color:#fff !important; font-weight:800 !important;
+}
 
-/* ===============================
-   Responsivo
-   =============================== */
+/* RESPONSIVO: 1 coluna no mobile */
 @media (max-width: 1024px){
-  .bvgn-container .bvgn-grid{
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  .bvgn-container .bvgn-info{ display:block; }
-  .bvgn-container .bvgn-variacao{ flex-basis: 100%; min-width: 0; }
-}
-@media (min-width: 1280px){
-  /* opcional: 3 colunas de variação em telas bem largas */
-  .bvgn-container .bvgn-variacao{ flex-basis: calc(33.333% - 10px); min-width: 280px; }
+  body.single-product .elementor .bvgn-container .bvgn-grid{ grid-template-columns: 1fr !important; gap:20px !important; }
+  body.single-product .elementor .bvgn-container .bvgn-variacao{ flex-basis:100% !important; min-width:0 !important; }
 }
