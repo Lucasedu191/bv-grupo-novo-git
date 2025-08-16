@@ -15,6 +15,6 @@ $tipo = $a['type'] ?? 'diario';
   </div>
 <?php else: ?>
   <div class="bvgn-agendamento bvgn-agendamento--mensal" data-bvgn-tipo="mensal">
-    <em>Plano mensal: não é necessário selecionar datas.</em>
+    <em>Plano Mensal: Não é necessário selecionar datas.</em>
   </div>
 <?php endif; ?>
