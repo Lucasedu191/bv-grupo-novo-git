@@ -1,112 +1,113 @@
-/* ===== Ajustes finos do layout ===== */
-
-/* 1) Grid mais generoso p/ a imagem (esq) e painel (dir) */
-.bvgn-container .bvgn-grid{
-  grid-template-columns: minmax(0, 1.4fr) minmax(380px, 520px);
+/* ===== BVGN — Layout produto ===== */
+.bvgn-container{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(8px, 2vw, 20px);
 }
 
-/* 2) Imagem maior e cartão mais clean */
+/* evita heranças do tema/Elementor dentro do shortcode */
+.elementor .bvgn-container * { box-sizing: border-box; }
+
+/* GRID */
+.bvgn-container .bvgn-grid{
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(360px, 480px); /* img maior | painel enxuto */
+  gap: clamp(16px, 2.4vw, 32px);
+  align-items: start;
+}
+
+/* IMAGEM (esquerda) */
 .bvgn-container .bvgn-media{
-  background:#fff;
-  border:1px solid #eef1f5;
-  border-radius:18px;
-  box-shadow:0 10px 24px rgba(0,0,0,.05);
-  padding: clamp(6px, 1vw, 14px);
-  grid-column:1;
+  background: #fff;
+  border: 1px solid #eef1f5;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.05);
+  padding: clamp(8px, 1.2vw, 16px);
+  grid-column: 1; /* garante que fique sempre na 1ª coluna */
 }
 .bvgn-container .bvgn-imagem{
-  display:block; width:100%;
-  height:auto; max-height: 460px; /* aumenta sem estourar */
+  display:block; width:100%; height:auto;
+  border-radius: 12px;
   object-fit: contain;
-  border-radius:14px;
 }
 
-/* 3) Cola descrição no título */
-.bvgn-container .bvgn-titulo{ margin:0 0 4px; }
-.bvgn-container .bvgn-descricao{ margin: 0 0 10px; }
-.bvgn-container .bvgn-descricao p{ margin: 0 0 8px; }
-
-/* 4) Variações lado a lado (2 colunas) */
-.bvgn-container .bvgn-variacoes-opcoes{
-  display:flex; flex-wrap:wrap; gap:12px;
-}
-.bvgn-container .bvgn-variacao{
-  flex: 1 1 calc(50% - 12px);
-  min-width: 260px;          /* evita “apertar” demais */
-  margin:0;                  /* zera margens herdadas */
-}
-@media (max-width: 720px){
-  .bvgn-container .bvgn-variacao{ flex-basis: 100%; min-width: 0; }
+/* PAINEL (direita) */
+.bvgn-container .bvgn-info{
+  display: contents; /* filhos sobem para o grid */
+  min-width: 0;
 }
 
-/* 5) Blocos abaixo da variação = largura total */
-.bvgn-container .bvgn-info{ display: contents; }
+/* Blocos que ficam na coluna da direita */
 .bvgn-container .bvgn-titulo,
 .bvgn-container .bvgn-descricao,
-.bvgn-container .bvgn-variacoes{ grid-column: 2; }
+.bvgn-container .bvgn-variacoes{
+  grid-column: 2;
+}
+
+/* Blocos que ocupam largura total */
 .bvgn-container .bvgn-taxas,
 .bvgn-container .bvgn-agendamento,
 .bvgn-container .bvgn-totais,
 .bvgn-container .bvgn-informacoes,
-.bvgn-container .bvgn-botao-cotacao{ grid-column: 1 / -1; }
-
-/* 6) Taxas (checkbox) — tamanho confortável + cor do tema */
-.bvgn-container .bvgn-taxa input[type="checkbox"]{
-  width:18px; height:18px;
-  accent-color:#111827;    /* moderno, sem JS */
-  cursor:pointer;
-}
-.bvgn-container .bvgn-taxa{
-  display:inline-flex; align-items:center; gap:8px;
-  padding:10px 12px; margin:6px 8px 6px 0;
-  border:1px dashed #e5e7eb; border-radius:999px;
-  background:#fbfdff;
-}
-
-/* 7) Agendamento — campo de data moderno e totalmente clicável */
-.bvgn-container .bvgn-agendamento{
-  display:grid; grid-template-columns: repeat(2, minmax(240px, 1fr)); gap:14px;
-}
-@media (max-width: 720px){
-  .bvgn-container .bvgn-agendamento{ grid-template-columns: 1fr; }
-}
-.bvgn-container .bvgn-agendamento label{
-  display:block; margin:0; font-weight:600; color:#111827;
-}
-.bvgn-container .bvgn-agendamento input[type="date"]{
-  display:block;
-  width:100%;
-  margin-top:6px;
-  padding:12px 14px;
-  min-height:44px;
-  border:1px solid #e5e7eb; border-radius:12px;
-  background:#fff;
-  cursor:text;              /* indica área clicável */
-}
-.bvgn-container .bvgn-agendamento input[type="date"]::-webkit-calendar-picker-indicator{
-  cursor:pointer; opacity:.9;
-}
-.bvgn-container .bvgn-agendamento input[type="date"]:focus{
-  outline:none; border-color:#3b82f6;
-  box-shadow:0 0 0 3px rgba(59,130,246,.15);
-}
-
-/* 8) Botão principal alinhado com o layout */
 .bvgn-container .bvgn-botao-cotacao{
+  grid-column: 1 / -1; /* vai de ponta a ponta */
   margin-top:14px;
-  width:100%; padding:14px 18px; border-radius:12px; border:0;
+}
+
+/* Título/descrição */
+.bvgn-container .bvgn-titulo{ 
+  margin: 0 0 6px; 
+  font-size: clamp(20px, 2.2vw, 26px); 
+  font-weight: 800; 
+}
+.bvgn-container .bvgn-descricao{ 
+  color:#4b5563; line-height:1.55; 
+  margin: 0 0 14px; 
+}
+
+/* Observações + Botão */
+.bvgn-container .bvgn-informacoes{
+  width:100%; padding:12px 14px;
+  border:1px solid #e5e7eb; border-radius:12px; 
+  resize:vertical; background:#fff;
+}
+.bvgn-container .bvgn-botao-cotacao{
+  width:100%; padding:12px 16px; border-radius:12px; border:0;
   background:#111827; color:#fff; font-weight:800; cursor:pointer;
   transition: transform .06s ease-in-out, opacity .2s;
 }
 .bvgn-container .bvgn-botao-cotacao:hover{ opacity:.95; }
 .bvgn-container .bvgn-botao-cotacao:active{ transform: translateY(1px); }
 
-/* 9) Responsivo geral */
+/* ===== Variações: layout em flex, espaçamento menor ===== */
+
+/* container das opções: duas colunas com wrap */
+.bvgn-container .bvgn-variacoes-opcoes{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;              /* espaçamento menor */
+}
+
+/* cada opção ocupa ~50% (menos o gap) */
+.bvgn-container .bvgn-variacao{
+  flex: 1 1 calc(50% - 10px);
+  min-width: 260px;       /* evita ficar apertado demais */
+  margin: 0;              /* remove qualquer margem antiga */
+  padding: 10px 12px;     /* um pouco menos de respiro */
+}
+
+/* empilha no mobile */
+@media (max-width: 720px){
+  .bvgn-container .bvgn-variacao{
+    flex-basis: 100%;
+    min-width: 0;
+  }
+}
+
+/* Responsivo */
 @media (max-width: 1024px){
   .bvgn-container .bvgn-grid{
     grid-template-columns: 1fr; gap: 18px;
   }
-  .bvgn-container .bvgn-titulo,
-  .bvgn-container .bvgn-descricao,
-  .bvgn-container .bvgn-variacoes{ grid-column: auto; }
+  .bvgn-container .bvgn-info{ display:block; }
 }
