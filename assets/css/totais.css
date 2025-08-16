@@ -74,6 +74,23 @@
 
 .elementor .bvgn-container .bvgn-totais .bvgn-linha { display: grid !important; }
 
+/* botao  */
+
+.bvgn-botao-cotacao {
+  background: #262492;   /* cor de fundo */
+  color: #fff;        /* cor do texto */
+  padding: 12px 24px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background .2s ease;
+}
+.bvgn-botao-cotacao:hover {
+  background: #333;
+}
+
+
 /* Responsivo */
 @media (max-width: 640px) {
   .elementor .bvgn-container .bvgn-totais { padding: 14px; }
