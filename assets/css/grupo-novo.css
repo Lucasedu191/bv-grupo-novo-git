@@ -108,3 +108,56 @@ body.single-product .elementor .bvgn-container .bvgn-botao-cotacao{
   body.single-product .elementor .bvgn-container .bvgn-grid{ grid-template-columns: 1fr !important; gap:20px !important; }
   body.single-product .elementor .bvgn-container .bvgn-variacao{ flex-basis:100% !important; min-width:0 !important; }
 }
+
+/* ===== Empilhar infos em UMA coluna (lado direito) ===== */
+body.single-product .elementor .bvgn-container
+.bvgn-taxas,
+body.single-product .elementor .bvgn-container
+.bvgn-agendamento,
+body.single-product .elementor .bvgn-container
+.bvgn-totais,
+body.single-product .elementor .bvgn-container
+.bvgn-informacoes,
+body.single-product .elementor .bvgn-container
+.bvgn-botao-cotacao{
+  grid-column: 2 !important;   /* fica na coluna da direita */
+  width: 100% !important;
+  margin-top: 16px !important;
+}
+
+/* Agendamento: 1 coluna (campos empilhados) */
+body.single-product .elementor .bvgn-container .bvgn-agendamento{
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 12px !important;
+  padding: 0 !important;
+}
+
+/* Mobile continua 1 coluna full-width */
+@media (max-width: 1024px){
+  body.single-product .elementor .bvgn-container
+  .bvgn-taxas,
+  body.single-product .elementor .bvgn-container
+  .bvgn-agendamento,
+  body.single-product .elementor .bvgn-container
+  .bvgn-totais,
+  body.single-product .elementor .bvgn-container
+  .bvgn-informacoes,
+  body.single-product .elementor .bvgn-container
+  .bvgn-botao-cotacao{
+    grid-column: 1 / -1 !important; /* ocupa toda a largura no mobile */
+  }
+}
+
+/* Agendamento: 2 colunas no desktop, 1 no mobile */
+body.single-product .elementor .bvgn-container .bvgn-agendamento{
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(200px, 1fr)) !important;
+  gap: 12px !important;
+  padding: 0 !important;
+}
+@media (max-width: 820px){
+  body.single-product .elementor .bvgn-container .bvgn-agendamento{
+    grid-template-columns: 1fr !important;
+  }
+}
