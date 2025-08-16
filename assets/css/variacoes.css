@@ -40,6 +40,23 @@
   transition: transform .08s, box-shadow .2s, border-color .2s, background .2s, color .2s;
 }
 
+/* inicio ajuste */
+
+/* cada opção (label) como card */
+ .bvgn-variacao{
+  flex: 1 1 calc(50% - var(--bv-gap)); /* 2 por linha padrão */
+  min-width: 180px;
+  padding: 14px 18px;
+  border: var(--bv-b) solid var(--bv-border);
+  border-radius: var(--bv-radius);
+  background: #fff; color: var(--bv-text);
+  font-weight: 700; text-align: center;
+  cursor: pointer; user-select: none;
+  box-shadow: var(--bv-shadow);
+  transition: transform .08s, box-shadow .2s, border-color .2s, background .2s, color .2s;
+}
+/* fim ajuste */
+
 /* esconder o radio, mantendo acessibilidade via <label> */
 .bvgn-container .bvgn-variacao > input[type="radio"]{
   position: absolute; inset: 0;
