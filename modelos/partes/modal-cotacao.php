@@ -9,10 +9,8 @@ $nonce          = isset($modal_data['nonce']) ? $modal_data['nonce'] : '';
 ?>
 <div class="bvgn-modal" id="bvgn-cotacao-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="bvgn-cotacao-titulo">
   <div class="bvgn-modal__backdrop js-bvgn-close-modal" data-bvgn-modal="bvgn-cotacao-modal" tabindex="-1"></div>
-
   <div class="bvgn-modal__dialog" role="document">
     <button type="button" class="bvgn-modal__close js-bvgn-close-modal" data-bvgn-modal="bvgn-cotacao-modal" aria-label="Fechar">×</button>
-
     <h3 id="bvgn-cotacao-titulo" class="bvgn-modal__title">Gerar cotação</h3>
     <?php if ($produto_titulo): ?>
       <p class="bvgn-modal__subtitle"><?php echo esc_html($produto_titulo); ?></p>
@@ -27,9 +25,14 @@ $nonce          = isset($modal_data['nonce']) ? $modal_data['nonce'] : '';
         <input type="text" id="bvgn_nome" name="nome" required>
       </div>
 
+      <!-- <div class="bvgn-form__group">
+        <label for="bvgn_telefone">Telefone</label>
+        <input type="tel" id="bvgn_telefone" name="telefone" inputmode="tel">
+      </div> -->
+
       <div class="bvgn-form__group">
         <label for="bvgn_whats">WhatsApp</label>
-        <input type="tel" id="bvgn_whats" name="whatsapp" inputmode="tel" required>
+        <input type="tel" id="bvgn_whats" name="whatsapp" inputmode="tel">
       </div>
 
       <div class="bvgn-form__group">

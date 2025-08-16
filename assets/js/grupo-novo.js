@@ -231,7 +231,7 @@ function dateToISO(d){
     updateVarDesc($cx); 
 
     // botão de cotação (seu original)
-    $cx.on('click', '.bvgn-botao-cotacao-enviar', function(e){
+    $cx.on('click', '.bvgn-botao-cotacao', function(e){
       e.preventDefault();
       const carga = {
         action: 'bvgn_gerar_arquivo',
@@ -248,13 +248,13 @@ function dateToISO(d){
         }).get(),
         totais: $cx.data('bvgnTotais'),
         formato: $(this).data('formato'),
-        telefone: ($(this).data('telefone') || (BVGN && BVGN.phone) || '')
+        telefone:  $(this).data('telefone')
       };
 
       $.post(BVGN.ajaxUrl, carga, function(r){
         if(!r || !r.success){ alert('Erro ao gerar cotacao.'); return; }
         const url = r.data.url;
-        const tel = (carga.telefone ||'').replace(/\D/g,'');
+        const tel = (carga.telefone||'').replace(/\D/g,'');
         const msg = encodeURIComponent('Ola! Segue minha cotacao: ' + url);
         const wa  = 'https://wa.me/'+tel+'?text='+msg;
         window.open(wa, '_blank');
@@ -272,6 +272,7 @@ function dateToISO(d){
     // Botão de cotação — fluxo de modal
     $cx.on('click', '.bvgn-botao-cotacao', function(e){
       e.preventDefault();
+
       const tipo = getTipo($cx);
       if(tipo === 'diario'){
         if(!$cx.find('.bvgn-data-inicio').val() || !$cx.find('.bvgn-data-fim').val()){
