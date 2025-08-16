@@ -323,3 +323,10 @@ body.single-product .elementor .bvgn-container .bvgn-col-full > *{
   color: #111827;
   font-weight: 500;
 }
+
+/* Remove o quadradinho antigo do tema */
+label.bvgn-taxa::before,
+label.bvgn-taxa::after {
+  content: none !important;
+  display: none !important;
+}
