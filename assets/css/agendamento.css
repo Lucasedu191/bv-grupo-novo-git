@@ -1,22 +1,31 @@
 /* ===============================
-   INÍCIO — BVGN Agendamento
+   INÍCIO — BVGN Agendamento (refatorado)
    =============================== */
 
-/* Bloco geral */
-.bvgn-container .bvgn-agendamento {
+/* Cartão/base */
+.elementor .bvgn-container .bvgn-agendamento{
   margin-top: 20px;
   padding: 16px;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   background: #f9fafb;
   box-shadow: 0 4px 12px rgba(0,0,0,.04);
+}
+
+/* Diária: grade 2 colunas (datas) */
+.elementor .bvgn-container .bvgn-agendamento.bvgn-agendamento--diaria{
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px 20px;
 }
 
+/* Mensal: não exibe (seu HTML já vem com display:none inline; aqui garantimos) */
+.elementor .bvgn-container .bvgn-agendamento.bvgn-agendamento--mensal{
+  display: none !important;
+}
+
 /* Labels */
-.bvgn-container .bvgn-agendamento label {
+.elementor .bvgn-container .bvgn-agendamento label{
   display: block;
   margin: 0 0 6px;
   font-weight: 700;
@@ -24,9 +33,10 @@
   font-size: 0.95rem;
 }
 
-/* Inputs de data */
-.bvgn-container .bvgn-agendamento input[type="date"],
-.bvgn-container .bvgn-agendamento input[type="text"] {
+/* Inputs (date/text/picker) */
+.elementor .bvgn-container .bvgn-agendamento input[type="date"],
+.elementor .bvgn-container .bvgn-agendamento input[type="text"],
+.elementor .bvgn-container .bvgn-agendamento input.picker__input{
   width: 100%;
   border: 1px solid #dfe6ee;
   border-radius: 999px;
@@ -36,26 +46,28 @@
   transition: box-shadow .2s, border-color .2s, background .2s;
 }
 
-.bvgn-container .bvgn-agendamento input:focus {
+.elementor .bvgn-container .bvgn-agendamento input[type="date"]:focus,
+.elementor .bvgn-container .bvgn-agendamento input[type="text"]:focus,
+.elementor .bvgn-container .bvgn-agendamento input.picker__input:focus{
   outline: 0;
   border-color: #0d6efd;
   background: #fff;
   box-shadow: 0 0 0 4px rgba(13,110,253,.12);
 }
 
-/* Mensagem de validação */
-#bv-date-msg {
+/* Mensagem de validação (escopada) */
+.elementor .bvgn-container .bvgn-agendamento #bv-date-msg{
   font-size: 0.9rem;
   margin-top: 4px;
-  color: #b45309; /* tom de alerta */
+  color: #b45309;
   display: none;
 }
-#bv-date-msg.on {
+.elementor .bvgn-container .bvgn-agendamento #bv-date-msg.on{
   display: block;
 }
 
 /* Preço (quando exibido dentro do bloco de agendamento) */
-.bvgn-container .bvgn-agendamento .bvgn-preco {
+.elementor .bvgn-container .bvgn-agendamento .bvgn-preco{
   grid-column: 1 / -1;
   font-size: 1.15rem;
   font-weight: 700;
@@ -63,14 +75,14 @@
   margin-top: 8px;
 }
 
-/* Mobile: empilha os campos */
-@media (max-width: 720px) {
-  .bvgn-container .bvgn-agendamento {
+/* Mobile: diária vira 1 coluna */
+@media (max-width: 720px){
+  .elementor .bvgn-container .bvgn-agendamento.bvgn-agendamento--diaria{
     grid-template-columns: 1fr;
     gap: 14px;
   }
 }
 
 /* ===============================
-   FIM — BVGN Agendamento
+   FIM — BVGN Agendamento (refatorado)
    =============================== */

@@ -1,9 +1,9 @@
 /* ===============================
-   INÍCIO — BVGN Base (estrutura geral)
+   INÍCIO — BVGN Base (estrutura geral) — refatorado
    =============================== */
 
 /* Container principal */
-.bvgn-container {
+.elementor .bvgn-container{
   max-width: 980px;
   margin: 0 auto;
   padding: 20px;
@@ -11,7 +11,7 @@
 }
 
 /* Imagem do produto/grupo */
-.bvgn-imagem {
+.elementor .bvgn-container .bvgn-imagem{
   display: block;
   max-width: 100%;
   height: auto;
@@ -21,7 +21,7 @@
 }
 
 /* Título */
-.bvgn-titulo {
+.elementor .bvgn-container .bvgn-titulo{
   font-size: 1.5rem;
   font-weight: 800;
   margin: 8px 0 12px;
@@ -29,15 +29,24 @@
 }
 
 /* Descrição */
-.bvgn-descricao {
+.elementor .bvgn-container .bvgn-descricao{
   font-size: 1rem;
   color: #4b5563;
   margin-bottom: 16px;
   line-height: 1.5;
 }
 
+/* Resets suaves dentro do bloco de descrição */
+.elementor .bvgn-container .bvgn-descricao p{ margin: 0 0 12px; }
+.elementor .bvgn-container .bvgn-descricao ul,
+.elementor .bvgn-container .bvgn-descricao ol{
+  margin: 8px 0 12px 18px;
+  padding: 0;
+}
+.elementor .bvgn-container .bvgn-descricao li{ margin: 4px 0; }
+
 /* Informações extras (campo observações) */
-.bvgn-informacoes textarea {
+.elementor .bvgn-container .bvgn-informacoes textarea{
   width: 100%;
   min-height: 80px;
   border: 1px solid #e5e7eb;
@@ -49,30 +58,22 @@
   resize: vertical;
   transition: border-color .2s, box-shadow .2s;
 }
-.bvgn-informacoes textarea:focus {
+.elementor .bvgn-container .bvgn-informacoes textarea:focus{
   outline: 0;
   border-color: #0d6efd;
   box-shadow: 0 0 0 4px rgba(13,110,253,.12);
 }
 
 /* Espaço entre blocos (quando renderizados em sequência) */
-.bvgn-container > * + * {
-  margin-top: 20px;
-}
+.elementor .bvgn-container > * + *{ margin-top: 20px; }
 
 /* Mobile */
 @media (max-width: 640px){
-  .bvgn-container {
-    padding: 14px;
-  }
-  .bvgn-titulo {
-    font-size: 1.3rem;
-  }
-  .bvgn-descricao {
-    font-size: .95rem;
-  }
+  .elementor .bvgn-container{ padding: 14px; }
+  .elementor .bvgn-container .bvgn-titulo{ font-size: 1.3rem; }
+  .elementor .bvgn-container .bvgn-descricao{ font-size: .95rem; }
 }
 
 /* ===============================
-   FIM — BVGN Base (estrutura geral)
+   FIM — BVGN Base (estrutura geral) — refatorado
    =============================== */
