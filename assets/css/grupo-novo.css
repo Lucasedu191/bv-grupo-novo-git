@@ -262,3 +262,10 @@ body.single-product .elementor .bvgn-container .bvgn-col-full > *{
   color: #374151;
   font-weight: 500;
 }
+
+/* Esconde totalmente o checkbox original */
+.bvgn-taxa input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
