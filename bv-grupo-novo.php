@@ -2,12 +2,22 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 7.1.4
+ * Version: 7.1.5
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
 
 if (!defined('ABSPATH')) exit;
+
+// --- Constantes seguras (fallback) ---
+// Caminhos/URLs do plugin (não dependem de nada externo)
+if (!defined('BVGN_DIR')) define('BVGN_DIR', trailingslashit(plugin_dir_path(__FILE__)));
+if (!defined('BVGN_URL')) define('BVGN_URL', trailingslashit(plugin_dir_url(__FILE__)));
+
+// Mantém compat com nomes antigos usados no código
+if (!defined('BVGN_CAMINHO'))        define('BVGN_CAMINHO', BVGN_DIR);
+if (!defined('BVGN_DIR_ARQUIVOS'))   define('BVGN_DIR_ARQUIVOS', BVGN_DIR.'arquivos/');
+if (!defined('BVGN_USAR_TEMPLATE'))  define('BVGN_USAR_TEMPLATE', false);
 
 // === Carrega PUC (Composer OU pasta embutida) ===
 $puccComposer = __DIR__ . '/vendor/autoload.php';
