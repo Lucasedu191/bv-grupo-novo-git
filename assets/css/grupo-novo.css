@@ -284,3 +284,35 @@ body.single-product .elementor .bvgn-container .bvgn-botao-cotacao{
     flex-basis: 100% !important; min-width: 0 !important;
   }
 }
+/* ===== Empilhar abaixo do grid, centralizados ===== */
+/* tira esses blocos da coluna direita e coloca em 1/-1 */
+body.single-product .elementor .bvgn-container .bvgn-grid
+  > :is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais, .bvgn-informacoes, .bvgn-botao-cotacao){
+  grid-column: 1 / -1 !important;           /* ocupa as duas colunas */
+  max-width: 560px !important;               /* largura confortável */
+  margin: 16px auto 0 !important;            /* centraliza */
+}
+
+/* se houver wrappers internos, garante que não forçem coluna 2 */
+body.single-product .elementor .bvgn-container .bvgn-grid
+  > :is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais, .bvgn-informacoes, .bvgn-botao-cotacao) *[class^="bvgn-"]{
+  grid-column: auto !important;
+}
+
+/* Agendamento em 1 coluna (empilhado) */
+body.single-product .elementor .bvgn-container .bvgn-grid > .bvgn-agendamento{
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 12px !important;
+  padding: 0 !important;
+}
+
+/* No mobile continua ocupando toda a largura (já centralizado) */
+@media (max-width: 1024px){
+  body.single-product .elementor .bvgn-container .bvgn-grid
+    > :is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais, .bvgn-informacoes, .bvgn-botao-cotacao){
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
