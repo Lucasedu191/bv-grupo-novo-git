@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 7.1.3
+ * Version: 7.1.4
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -82,30 +82,39 @@ add_action('wp_enqueue_scripts', function () {
   $e_produto = function_exists('is_product') && is_product();
 
   if ( $tem_grupo || $tem_popup || $e_produto ) {
-    // calc de versões pelos arquivos (fallback para '1.0.0' se não existir)
-    $ver_css    = ( defined('BVGN_DIR') && file_exists(BVGN_DIR.'assets/css/grupo-novo.css') )
-                  ? filemtime(BVGN_DIR.'assets/css/grupo-novo.css') : '1.0.0';
-    $ver_js     = ( defined('BVGN_DIR') && file_exists(BVGN_DIR.'assets/js/grupo-novo.js') )
-                  ? filemtime(BVGN_DIR.'assets/js/grupo-novo.js')    : '1.0.0';
-    $ver_modal  = ( defined('BVGN_DIR') && file_exists(BVGN_DIR.'assets/js/bvgn-modal.js') )
-                  ? filemtime(BVGN_DIR.'assets/js/bvgn-modal.js')    : '1.0.0';
+    // ===== CSS: enfileirar cada arquivo (sem @import)
+    $css_url = trailingslashit(BVGN_URL) . 'assets/css/';
+    $css_dir = trailingslashit(BVGN_DIR) . 'assets/css/';
 
-    // CSS principal (contém @import dos blocos)
+    $ver = function($file) use ($css_dir){
+      $p = $css_dir . $file;
+      return file_exists($p) ? filemtime($p) : '1.0.0';
+    };
+
+    // Base primeiro
+    wp_enqueue_style('bvgn-base',        $css_url.'base.css',        [],                     $ver('base.css'));
+    // Blocos
+    wp_enqueue_style('bvgn-variacoes',   $css_url.'variacoes.css',   ['bvgn-base'],          $ver('variacoes.css'));
+    wp_enqueue_style('bvgn-taxas',       $css_url.'taxas.css',       ['bvgn-base'],          $ver('taxas.css'));
+    wp_enqueue_style('bvgn-agendamento', $css_url.'agendamento.css', ['bvgn-base'],          $ver('agendamento.css'));
+    wp_enqueue_style('bvgn-totais',      $css_url.'totais.css',      ['bvgn-base'],          $ver('totais.css'));
+    wp_enqueue_style('bvgn-modal-css',   $css_url.'modal.css',       ['bvgn-base'],          $ver('modal.css'));
+
+    // Opcional: CSS geral (sem @import) por último
     wp_enqueue_style(
       'bvgn-css',
-      BVGN_URL . 'assets/css/grupo-novo.css',
-      [],
-      $ver_css
+      $css_url.'grupo-novo.css',
+      ['bvgn-base','bvgn-variacoes','bvgn-taxas','bvgn-agendamento','bvgn-totais','bvgn-modal-css'],
+      $ver('grupo-novo.css')
     );
+
+    // ===== JS principal (inalterado)
+    $ver_js    = ( defined('BVGN_DIR') && file_exists(BVGN_DIR.'assets/js/grupo-novo.js') )
+                 ? filemtime(BVGN_DIR.'assets/js/grupo-novo.js')    : '1.0.0';
+    $ver_modal = ( defined('BVGN_DIR') && file_exists(BVGN_DIR.'assets/js/bvgn-modal.js') )
+                 ? filemtime(BVGN_DIR.'assets/js/bvgn-modal.js')    : '1.0.0';
 
     
-
-    // item 1: CSS inline (só carrega se o estilo acima for enfileirado)
-    wp_add_inline_style(
-      'bvgn-css',
-      '.bvgn-container{outline:4px solid magenta!important;}'
-    );
-
     // JS principal
     wp_enqueue_script(
       'bvgn-js',

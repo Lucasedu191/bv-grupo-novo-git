@@ -4,30 +4,5 @@
 .bvgn-titulo { margin: 8px 0 12px; }
 .bvgn-descricao { margin-bottom: 12px; }
 
-/* ===============================
-   BVGN — Grupo Novo (CSS principal)
-   Este arquivo apenas organiza os imports
-   =============================== */
 
-/* Layout/base */
-@import url('base.css');
-
-/* Bloco: Variações */
-@import url('variacoes.css');
-
-/* Bloco: Taxas */
-@import url('taxas.css');
-
-/* Bloco: Agendamento */
-@import url('agendamento.css');
-
-/* Bloco: Totais */
-@import url('totais.css');
-
-/* Bloco: Modal / Formulário */
-@import url('modal.css');
-
-/* ===============================
-   FIM — BVGN Grupo Novo
-   =============================== */
 
