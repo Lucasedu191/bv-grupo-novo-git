@@ -12,7 +12,7 @@ $nonce          = isset($a['nonce']) ? $a['nonce'] : '';
 ?>
 <button type="button"
         class="<?php echo esc_attr($classe); ?> js-bvgn-open-modal"
-        data-bvgn-modal="bvgn-cotacao-modal">
+        data-bvgn-modal="bvgn-cotacao-enviar">
   <?php echo esc_html($rotulo); ?>
 </button>
 <?php
