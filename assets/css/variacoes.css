@@ -28,6 +28,7 @@
 
 /* cada opção (label) como card */
 .bvgn-container .bvgn-variacao{
+  position: relative;
   flex: 1 1 calc(50% - var(--bv-gap)); /* 2 por linha padrão */
   min-width: 180px;
   padding: 14px 18px;
