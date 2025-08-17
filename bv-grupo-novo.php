@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 8.0.9
+ * Version: 8.1.0
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -82,6 +82,21 @@ add_action('init', function(){
 
 add_action('wp_enqueue_scripts', function () {
 
+  // Cabeçalho de agendamento
+    wp_enqueue_style(
+      'bvgn-cabecalho',
+      BVGN_URL . 'assets/css/cabecalho.css',
+      [],
+      filemtime(BVGN_DIR . 'assets/css/cabecalho.css')
+    );
+
+    wp_enqueue_script(
+      'bvgn-cabecalho',
+      BVGN_URL . 'assets/js/cabecalho.js',
+      [],
+      filemtime(BVGN_DIR . 'assets/js/cabecalho.js'),
+      true
+    );
 
   // CSS do Flatpickr calendário cabecalho
     wp_enqueue_style(
@@ -164,21 +179,7 @@ add_action('wp_enqueue_scripts', function () {
         true
       );
     }
-    // Cabeçalho de agendamento
-    wp_enqueue_style(
-      'bvgn-cabecalho',
-      BVGN_URL . 'assets/css/cabecalho.css',
-      [],
-      filemtime(BVGN_DIR . 'assets/css/cabecalho.css')
-    );
-
-    wp_enqueue_script(
-      'bvgn-cabecalho',
-      BVGN_URL . 'assets/js/cabecalho.js',
-      [],
-      filemtime(BVGN_DIR . 'assets/js/cabecalho.js'),
-      true
-    );
+    
 
     // Variáveis para o JS
     wp_localize_script('bvgn-js', 'BVGN', [
