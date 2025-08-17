@@ -9,26 +9,27 @@ document.addEventListener('DOMContentLoaded', function () {
   const max = new Date();
   max.setDate(hoje.getDate() + 30);
 
-  // Inicializa o Flatpickr para o campo de início
-  flatpickr(inicioEl, {
-    dateFormat: 'Y-m-d',
-    minDate: hoje,
-    maxDate: max,
-    defaultDate: hoje,
-    onChange: function (selectedDates) {
-      if (selectedDates.length) {
-        fimPicker.set('minDate', selectedDates[0]);
-      }
-    }
-  });
+  // Inicializa primeiro o fim (porque o início depende dele)
+const fimPicker = flatpickr(fimEl, {
+  dateFormat: 'Y-m-d',
+  minDate: hoje,
+  maxDate: max,
+  defaultDate: new Date(hoje.getTime() + 86400000), // amanhã
+});
 
-  // Flatpickr para o campo de fim
-  const fimPicker = flatpickr(fimEl, {
-    dateFormat: 'Y-m-d',
-    minDate: hoje,
-    maxDate: max,
-    defaultDate: new Date(hoje.getTime() + 86400000), // amanhã
-  });
+// Agora inicializa o início e usa o fimPicker corretamente
+flatpickr(inicioEl, {
+  dateFormat: 'Y-m-d',
+  minDate: hoje,
+  maxDate: max,
+  defaultDate: hoje,
+  onChange: function (selectedDates) {
+    if (selectedDates.length) {
+      fimPicker.set('minDate', selectedDates[0]);
+    }
+  }
+});
+
 
   btn.addEventListener('click', () => {
     const inicio = new Date(inicioEl.value);
