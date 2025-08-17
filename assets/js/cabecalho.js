@@ -1,35 +1,48 @@
 document.addEventListener('DOMContentLoaded', function () {
+  console.log('[BVGN] DOM carregado');
+
   const inicioEl = document.getElementById('bvgn-inicio');
   const fimEl = document.getElementById('bvgn-fim');
   const btn = document.getElementById('bvgn-buscar-grupos');
 
-  if (!btn || !inicioEl || !fimEl) return;
+  console.log('[BVGN] Campos encontrados:', { inicioEl, fimEl, btn });
+
+  if (!btn || !inicioEl || !fimEl) {
+    console.warn('[BVGN] Algum campo obrigatório não foi encontrado.');
+    return;
+  }
 
   const hoje = new Date();
   const max = new Date();
   max.setDate(hoje.getDate() + 30);
 
-  // Inicializa primeiro o fim (porque o início depende dele)
-const fimPicker = flatpickr(fimEl, {
-  dateFormat: 'Y-m-d',
-  minDate: hoje,
-  maxDate: max,
-  defaultDate: new Date(hoje.getTime() + 86400000), // amanhã
-});
+  try {
+    // Inicializa fim primeiro
+    const fimPicker = flatpickr(fimEl, {
+      dateFormat: 'Y-m-d',
+      minDate: hoje,
+      maxDate: max,
+      defaultDate: new Date(hoje.getTime() + 86400000),
+    });
+    console.log('[BVGN] Flatpickr fim inicializado');
 
-// Agora inicializa o início e usa o fimPicker corretamente
-flatpickr(inicioEl, {
-  dateFormat: 'Y-m-d',
-  minDate: hoje,
-  maxDate: max,
-  defaultDate: hoje,
-  onChange: function (selectedDates) {
-    if (selectedDates.length) {
-      fimPicker.set('minDate', selectedDates[0]);
-    }
+    // Depois o início
+    flatpickr(inicioEl, {
+      dateFormat: 'Y-m-d',
+      minDate: hoje,
+      maxDate: max,
+      defaultDate: hoje,
+      onChange: function (selectedDates) {
+        if (selectedDates.length) {
+          fimPicker.set('minDate', selectedDates[0]);
+          console.log('[BVGN] Data de início alterada:', selectedDates[0]);
+        }
+      }
+    });
+    console.log('[BVGN] Flatpickr início inicializado');
+  } catch (e) {
+    console.error('[BVGN] Erro ao inicializar o Flatpickr:', e);
   }
-});
-
 
   btn.addEventListener('click', () => {
     const inicio = new Date(inicioEl.value);
