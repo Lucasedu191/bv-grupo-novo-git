@@ -1,44 +1,135 @@
 .bvgn-agendamento-form {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  padding: 16px;
+  gap: 16px;
+  align-items: flex-end;
   justify-content: center;
-  background: #f9fafb;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  max-width: 960px;
+  margin: 0 auto;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
-.bvgn-agendamento-form input[type="date"],
-.bvgn-agendamento-form button {
-  padding: 10px 14px;
-  font-size: 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  outline: none;
-  transition: border 0.2s ease;
+.bvgn-campo {
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  flex: 1;
 }
 
-.bvgn-agendamento-form input[type="date"]:focus,
-.bvgn-agendamento-form button:focus {
-  border-color: #2563eb;
-}
-
-.bvgn-agendamento-form button {
-  background-color: #2563eb;
-  color: #fff;
-  cursor: pointer;
-  border: none;
+.bvgn-campo label {
+  font-size: 0.875rem;
+  color: #163c67;
   font-weight: bold;
+  margin-bottom: 6px;
 }
 
-.bvgn-agendamento-form button:hover {
-  background-color: #1e40af;
+.bvgn-campo input[type="text"],
+.bvgn-campo .bvgn-campo-disabled {
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 2px solid #163c67;
+  border-radius: 8px;
+  background-color: #ffffff;
+  transition: border-color 0.3s ease;
 }
 
-@media (max-width: 600px) {
+.bvgn-campo input[type="text"]:hover,
+.bvgn-campo input[type="text"]:focus {
+  border-color: #6ce9fb;
+  outline: none;
+}
+
+.bvgn-campo .bvgn-campo-disabled {
+  color: #163c67;
+  background-color: #f1f5f9;
+  cursor: default;
+}
+
+.bvgn-botao button {
+  padding: 12px 18px;
+  background: #163c67;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+.bvgn-botao button:hover {
+  background: #6ce9fb;
+  color: #163c67;
+}
+
+@media (max-width: 700px) {
   .bvgn-agendamento-form {
     flex-direction: column;
     align-items: stretch;
   }
+
+  .bvgn-botao button {
+    width: 100%;
+  }
+}
+
+/* === FLATPICKR CUSTOMIZADO BV LOCADORA === */
+
+.flatpickr-calendar {
+  font-family: inherit;
+  border: 1px solid #163c67;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.flatpickr-months {
+  background-color: #163c67;
+  color: #fff;
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  color: #fff;
+  fill: #fff;
+}
+
+.flatpickr-weekdays {
+  background-color: #e6f9fe;
+  color: #163c67;
+}
+
+.flatpickr-day {
+  border-radius: 6px;
+  color: #163c67;
+}
+
+.flatpickr-day:hover {
+  background: #6ce9fb;
+  border-color: #6ce9fb;
+  color: #163c67;
+}
+
+.flatpickr-day.today {
+  border: 2px solid #163c67;
+  font-weight: bold;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+  background: #163c67;
+  color: white;
+}
+
+.flatpickr-day.inRange {
+  background: #6ce9fb;
+  color: #163c67;
+}
+
+.flatpickr-time input {
+  border: 1px solid #163c67;
+  border-radius: 4px;
+  padding: 4px;
 }
