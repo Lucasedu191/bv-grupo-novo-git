@@ -238,25 +238,55 @@ function dateToISO(d){
 
     // Botão de cotação — fluxo de modal
     $cx.on('click', '.bvgn-botao-cotacao', function(e){
-      e.preventDefault();
+    e.preventDefault();
 
-      const tipo = getTipo($cx);
-      if(tipo === 'diario'){
-        if(!$cx.find('.bvgn-data-inicio').val() || !$cx.find('.bvgn-data-fim').val()){
-          alert('Selecione as datas de início e fim.');
-          return;
-        }
-      }
-      const $var = $cx.find('.bvgn-variacao input:checked');
-      if(!$var.length){
-        alert('Selecione uma variação.');
+    console.log('[BVGN] Clique no botão .bvgn-botao-cotacao');
+
+    const tipo = getTipo($cx);
+    console.log('[BVGN] Tipo selecionado:', tipo);
+
+    const $var = $cx.find('.bvgn-variacao input:checked');
+    if (!$var.length) {
+      alert('Selecione uma variação.');
+      console.warn('[BVGN] Nenhuma variação selecionada.');
+      return;
+    }
+
+    if (tipo === 'diario') {
+      const inicio = $cx.find('.bvgn-data-inicio').val();
+      const fim = $cx.find('.bvgn-data-fim').val();
+      console.log('[BVGN] Datas selecionadas:', { inicio, fim });
+
+      if (!inicio || !fim) {
+        alert('Selecione as datas de início e fim.');
+        console.warn('[BVGN] Datas incompletas.');
         return;
       }
 
-      // abre o modal
-      document.getElementById('bvgn-cotacao-modal')?.setAttribute('aria-hidden', 'false');
+      const dias = diferencaDiasSeguro(inicio, fim);
+      const min = parseInt($var.data('min-days') || 1, 10);
+      const max = parseInt($var.data('max-days') || min, 10);
+      console.log('[BVGN] Dias calculados:', dias, 'Min:', min, 'Max:', max);
+
+      if (dias < min || dias > max) {
+        alert(`O período deve ter entre ${min} e ${max} dias.`);
+        console.warn('[BVGN] Dias fora do intervalo permitido.');
+        return;
+      }
+    }
+
+    console.log('[BVGN] Abrindo modal...');
+    const modalEl = document.getElementById('bvgn-cotacao-modal');
+
+    if (modalEl) {
+      modalEl.setAttribute('aria-hidden', 'false');
       document.documentElement.classList.add('bvgn-modal-open');
-    });
+      console.log('[BVGN] Modal aberto com sucesso!');
+    } else {
+      console.error('[BVGN] Modal não encontrado no DOM.');
+    }
+  });
+
   });
 });
 
