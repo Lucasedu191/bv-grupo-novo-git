@@ -5,10 +5,13 @@
 .bvgn-modal {
   position: fixed;
   inset: 0;
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5); /* fundo escuro */
   opacity: 0;
   pointer-events: none;
-  transition: opacity .2s ease;
+  transition: opacity 0.2s ease;
   z-index: 9999;
 }
 .bvgn-modal[aria-hidden="false"] {
@@ -23,17 +26,9 @@
 }
 
 .bvgn-modal__dialog {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 520px;
-  width: calc(100% - 20px);
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  z-index: 1;
-  box-shadow: 0 12px 30px rgba(0,0,0,.18);
+  width: 100%;
+  max-width: 500px;
+  margin: 0 14px;
 }
 
 .bvgn-modal__content {
