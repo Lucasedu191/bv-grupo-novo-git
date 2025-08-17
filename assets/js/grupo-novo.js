@@ -253,9 +253,9 @@ function dateToISO(d){
         return;
       }
 
-      // abre o modal (ajuste o seletor se necessário)
-      document.querySelector('[data-bvgn-modal="bvgn-cotacao-modal"]')
-              ?.dispatchEvent(new Event('click', { bubbles: true }));
+      // abre o modal
+      document.getElementById('bvgn-cotacao-modal')?.setAttribute('aria-hidden', 'false');
+      document.documentElement.classList.add('bvgn-modal-open');
     });
   });
 });
