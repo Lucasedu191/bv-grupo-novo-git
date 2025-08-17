@@ -11,17 +11,18 @@
   visibility: hidden;
   pointer-events: none;
   z-index: 999999;            /* acima de tudo */
+  transition: opacity 0.3s ease;
 }
 
-.bvgn-modal.is-open{
+
+.bvgn-modal[aria-hidden="false"] {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
 }
-
-.bvgn-modal[aria-hidden="false"] {
-  opacity: 1;
-  pointer-events: auto;
+/* Evita scroll ao abrir */
+html.bvgn-modal-open {
+  overflow: hidden;
 }
 
 .bvgn-modal__backdrop {
