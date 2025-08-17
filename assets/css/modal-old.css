@@ -1,5 +1,5 @@
 /* ===============================
-   BVGN — Modal de Cotação (refinado)
+   BVGN — Modal de Cotação (isolado)
    =============================== */
 
 .bvgn-modal {
@@ -36,7 +36,6 @@
   box-shadow: 0 12px 30px rgba(0,0,0,.18);
 }
 
-/* Botão fechar */
 .bvgn-modal__close {
   position: absolute;
   top: 8px;
@@ -49,23 +48,20 @@
   color: #111;
 }
 
-/* Título e subtítulo */
 .bvgn-modal__title {
-  margin-block: 0 6px;
+  margin: 0 0 6px;
   font-size: 20px;
   font-weight: 800;
   color: #111;
 }
 .bvgn-modal__subtitle {
-  margin-bottom: 16px;
+  margin: 0 0 16px;
   color: #666;
   font-size: 14px;
 }
 
-/* Grupo de campos */
-.bvgn-form__group {
-  margin-bottom: 12px;
-}
+/* Form */
+.bvgn-form__group { margin-bottom: 12px; }
 .bvgn-form__group label {
   display: block;
   font-weight: 600;
@@ -89,15 +85,12 @@
   box-shadow: 0 0 0 4px rgba(13,110,253,.12);
 }
 
-/* Ações do formulário */
 .bvgn-form__actions {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
   margin-top: 8px;
 }
-
-/* Botões */
 .bvgn-btn {
   display: inline-flex;
   align-items: center;
@@ -118,24 +111,19 @@
   transform: translateY(-1px);
   box-shadow: 0 12px 24px rgba(13,110,253,.24);
 }
-.bvgn-btn--texto {
-  background: transparent;
-  color: #111;
-}
+.bvgn-btn--texto { background: transparent; color: #111; }
 
-/* Evita scroll ao abrir */
-.bvgn-modal-open {
-  overflow: hidden;
-}
+/* Sem scroll da página quando o modal abre (adicione/remova essa classe no <body> via JS) */
+.bvgn-modal-open { overflow: hidden; }
 
-/* Foco visível (acessibilidade) */
+/* Acessibilidade */
 .bvgn-btn:focus-visible,
 .bvgn-modal__close:focus-visible {
   outline: 3px solid rgba(13,110,253,.5);
   outline-offset: 2px;
 }
 
-/* Animação de entrada */
+/* Animação suave de entrada */
 .bvgn-modal[aria-hidden="false"] .bvgn-modal__dialog {
   animation: bvgnModalIn .28s ease;
 }
@@ -146,7 +134,7 @@
 
 /* Mobile */
 @media (max-width: 560px){
-  .bvgn-modal__dialog {
+  .bvgn-modal__dialog{
     top: 5%;
     left: 50%;
     transform: translateX(-50%);
@@ -154,3 +142,6 @@
     padding: 16px;
   }
 }
+/* ===============================
+   FIM — BVGN Modal (Form de Cotação) 
+   =============================== */

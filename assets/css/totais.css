@@ -1,153 +1,81 @@
 /* ===============================
-   INÍCIO — BVGN Totais (refatorado)
+   BVGN — Taxas (layout moderno, isolado)
    =============================== */
 
-/* Cartão dos totais (subtotal, taxas, total) */
-.elementor .bvgn-container .bvgn-totais {
-  margin-top: 20px;
-  padding: 16px;
-  border: 2px dashed #e5e7eb;
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,.05);
-}
-
-/* Título opcional */
-.elementor .bvgn-container .bvgn-totais .bvgn-totais-titulo {
-  font-size: .95rem;
-  font-weight: 800;
-  letter-spacing: .3px;
-  color: #1f2937;
-  text-transform: uppercase;
-  margin: 0 0 10px;
-}
-
-/* Linhas (rótulo à esquerda, valor à direita) */
-.elementor .bvgn-container .bvgn-totais .bvgn-linha {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px 14px;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-/* Última linha sem borda */
-.elementor .bvgn-container .bvgn-totais .bvgn-linha:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-/* Rótulos e valores */
-.elementor .bvgn-container .bvgn-totais .lbl {
-  color: #6b7280;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .3px;
-}
-.elementor .bvgn-container .bvgn-totais .val {
-  font-weight: 800;
-  color: #1f2937;
-  white-space: nowrap;
-}
-
-/* Destaque para o TOTAL GERAL */
-.elementor .bvgn-container .bvgn-totais .bvgn-total {
+/* Container geral */
+.bvgn-taxas {
   grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px 14px;
+  max-width: 560px;
+  width: 100%;
+  margin: 16px auto 0;
+  padding: 16px;
+
+  background: #fff;
+  border: 1px solid #e9edf3;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.05);
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Cada taxa como um card com checkbox estilizado */
+.bvgn-taxa {
+  position: relative;
+  display: flex;
   align-items: center;
-  margin-top: 6px;
-  padding-top: 10px;
-  font-size: 1.15rem;
-  font-weight: 900;
-  color: #1f2937;
-}
-
-/* Notas/observações abaixo dos totais (opcional) */
-.elementor .bvgn-container .bvgn-totais .bvgn-nota {
-  margin-top: 10px;
-  font-size: .9rem;
-  color: #6b7280;
-}
-
-.elementor .bvgn-container .bvgn-totais .bvgn-linha { display: grid !important; }
-
-/* botao  */
-
-.bvgn-botao-cotacao {
-  background: #262492;   /* cor de fundo */
-  color: #fff;        /* cor do texto */
-  padding: 12px 24px;
-  border-radius: 6px;
-  border: none;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f9fafb;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   cursor: pointer;
-  font-weight: bold;
-  transition: background .2s ease;
+  transition: all .2s ease;
 }
-.bvgn-botao-cotacao:hover {
-  background: #333;
-}
-
-
-/* Responsivo */
-@media (max-width: 640px) {
-  .elementor .bvgn-container .bvgn-totais { padding: 14px; }
-  .elementor .bvgn-container .bvgn-totais .bvgn-total { font-size: 1.05rem; }
+.bvgn-taxa:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
 }
 
-
-/* ================================
-   BVGN — Totais (cartão e linhas)
-   ================================ */
-
-body.single-product .elementor .bvgn-container .bvgn-totais{
-  grid-column: 1 / -1 !important;
-  max-width: 560px !important;
-  width: 100% !important;
-  margin: 16px auto 0 !important;
-
-  background:#fff !important;
-  border:1px solid #e9edf3 !important;
-  border-radius:14px !important;
-  box-shadow:0 6px 18px rgba(0,0,0,.05) !important;
-  padding:16px !important;
+/* Checkbox oculto */
+.bvgn-taxa input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
 }
 
-/* linhas rótulo/valor */
-body.single-product .elementor .bvgn-container .bvgn-totais .bvgn-linha{
-  display:grid !important; grid-template-columns:1fr auto !important; gap:8px !important;
+/* Checkbox visual com label */
+.bvgn-taxa .lbl {
+  font-size: .95rem;
+  color: #111827;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+}
+.bvgn-taxa .lbl::before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #9ca3af;
+  border-radius: 6px;
+  margin-right: 10px;
+  background: #fff;
+  transition: all .2s ease;
 }
 
-/* ===============================
-   FIM — BVGN Totais (refatorado)
-   =============================== */
-
-   /* ================================
-   BVGN — Observações e Botão de Cotação
-   ================================ */
-
-body.single-product .elementor .bvgn-container .bvgn-informacoes,
-body.single-product .elementor .bvgn-container .bvgn-botao-cotacao{
-  grid-column: 1 / -1 !important;
-  max-width: 560px !important;
-  width: 100% !important;
-  margin: 16px auto 0 !important;
+/* Quando marcado */
+.bvgn-taxa input[type="checkbox"]:checked + .lbl::before {
+  background: #2563eb;
+  border-color: #2563eb;
+  box-shadow: inset 0 0 0 3px #fff;
 }
 
-/* Observações */
-body.single-product .elementor .bvgn-container .bvgn-informacoes{
-  min-height:90px !important; padding:12px 14px !important;
-  border:1px solid #e6e9ee !important; border-radius:12px !important; background:#fff !important;
+/* Remove estilos herdados de temas */
+label.bvgn-taxa::before,
+label.bvgn-taxa::after {
+  content: none !important;
+  display: none !important;
 }
-
-/* Botão de cotação */
-body.single-product .elementor .bvgn-container .bvgn-botao-cotacao{
-  width:100% !important; padding:14px 18px !important; border-radius:12px !important;
-  border:0 !important; background:#111827 !important; color:#fff !important; font-weight:800 !important;
-  transition: transform .06s, opacity .2s !important;
-}
-body.single-product .elementor .bvgn-container .bvgn-botao-cotacao:hover{ opacity:.95 !important; }
-body.single-product .elementor .bvgn-container .bvgn-botao-cotacao:active{ transform: translateY(1px) !important; }
-
