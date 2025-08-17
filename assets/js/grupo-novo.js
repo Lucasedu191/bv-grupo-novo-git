@@ -203,70 +203,33 @@ function dateToISO(d){
 
   // ====== eventos ======
   function ligarEventos($cx){
-    // qualquer mudança que afete o total
-    $cx.on('change input', '.bvgn-variacao input, .bvgn-taxa input, .bvgn-data-inicio, .bvgn-data-fim', function(e){
-      const $t = $(e.target);
+  // qualquer mudança que afete o total
+  $cx.on('change input', '.bvgn-variacao input, .bvgn-taxa input, .bvgn-data-inicio, .bvgn-data-fim', function(e){
+    const $t = $(e.target);
 
-      // se mudou variação → aplicar regras de dias
-      if($t.is('.bvgn-variacao input')){
-        aplicarRegrasECalcular($cx);
-        updateVarDesc($cx); 
-        return;
-      }
+    // se mudou variação → aplicar regras de dias
+    if($t.is('.bvgn-variacao input')){
+      aplicarRegrasECalcular($cx);
+      updateVarDesc($cx); 
+      return;
+    }
 
-      // se mudou data → normaliza e recalcula
-      if($t.is('.bvgn-data-inicio, .bvgn-data-fim')){
-        normalizeDatesToRule($cx);
-        calcular($cx);
-        return;
-      }
-
-      // demais (taxas etc.)
+    // se mudou data → normaliza e recalcula
+    if($t.is('.bvgn-data-inicio, .bvgn-data-fim')){
+      normalizeDatesToRule($cx);
       calcular($cx);
-      updateVarDesc($cx);
-    });
+      return;
+    }
 
-    // inicial
-    aplicarRegrasECalcular($cx);
-    updateVarDesc($cx); 
+    // demais (taxas etc.)
+    calcular($cx);
+    updateVarDesc($cx);
+  });
 
-    // botão de cotação (seu original)
-    $cx.on('click', '.bvgn-botao-cotacao', function(e){
-      e.preventDefault();
-      const carga = {
-        action: 'bvgn_gerar_arquivo',
-        _wpnonce: BVGN.nonce,
-        produtoId: $cx.data('produto-id'),
-        informacoes: $cx.find('.bvgn-informacoes').val() || '',
-        variacaoRotulo: $cx.find('.bvgn-variacao input:checked').data('rotulo') || '',
-        datas: {
-          inicio: $cx.find('.bvgn-data-inicio').val() || '',
-          fim:    $cx.find('.bvgn-data-fim').val() || ''
-        },
-        taxas: $cx.find('.bvgn-taxa input:checked').map(function(){
-          return { rotulo: $(this).data('rotulo'), preco: $(this).data('preco') };
-        }).get(),
-        totais: $cx.data('bvgnTotais'),
-        formato: $(this).data('formato'),
-        
-      };
-
-      $.post(BVGN.ajaxUrl, carga, function(r){
-        if(!r || !r.success){ alert('Erro ao gerar cotacao.'); return; }
-        const url = r.data.url;
-        const tel = ($('#bvgn_whats').val() || '').replace(/\D/g, '');
-        if (!tel) {
-          alert('Preencha seu número de WhatsApp.');
-          return;
-        }
-        const msg = encodeURIComponent('Ola! Segue minha cotacao: ' + url);
-        const wa  = 'https://wa.me/'+tel+'?text='+msg;
-        window.open(wa, '_blank');
-      });
-    });
-    
-
-  }
+  // inicial
+  aplicarRegrasECalcular($cx);
+  updateVarDesc($cx); 
+}
 
   $(function(){
   $('.bvgn-container').each(function(){
