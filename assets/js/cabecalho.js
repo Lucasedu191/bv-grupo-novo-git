@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('DOMContentLoaded', function () {
   const inicioEl = document.getElementById('bvgn-inicio');
   const fimEl = document.getElementById('bvgn-fim');
   const btn = document.getElementById('bvgn-buscar-grupos');
@@ -9,14 +9,26 @@ document.addEventListener('DOMContentLoaded', function(){
   const max = new Date();
   max.setDate(hoje.getDate() + 30);
 
-  const hojeStr = hoje.toISOString().split('T')[0];
-  const maxStr = max.toISOString().split('T')[0];
+  // Inicializa o Flatpickr para o campo de início
+  flatpickr(inicioEl, {
+    dateFormat: 'Y-m-d',
+    minDate: hoje,
+    maxDate: max,
+    defaultDate: hoje,
+    onChange: function (selectedDates) {
+      if (selectedDates.length) {
+        fimPicker.set('minDate', selectedDates[0]);
+      }
+    }
+  });
 
-  // Limites nos inputs
-  inicioEl.setAttribute('min', hojeStr);
-  fimEl.setAttribute('min', hojeStr);
-  inicioEl.setAttribute('max', maxStr);
-  fimEl.setAttribute('max', maxStr);
+  // Flatpickr para o campo de fim
+  const fimPicker = flatpickr(fimEl, {
+    dateFormat: 'Y-m-d',
+    minDate: hoje,
+    maxDate: max,
+    defaultDate: new Date(hoje.getTime() + 86400000), // amanhã
+  });
 
   btn.addEventListener('click', () => {
     const inicio = new Date(inicioEl.value);
@@ -37,18 +49,16 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     if (dias > 30) {
-      // Redirecionar para planos mensais
-      window.location.href = '/planos-mensais'; // ajuste se necessário
+      window.location.href = '/planos-mensais';
       return;
     }
 
-    // Salvar e redirecionar
     localStorage.setItem('bvgn_agendamento', JSON.stringify({
       inicio: inicioEl.value,
       fim: fimEl.value,
       local: local
     }));
 
-    window.location.href = '/planos-diarios'; // ajuste se necessário
+    window.location.href = '/planos-diarios';
   });
 });
