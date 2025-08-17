@@ -125,7 +125,7 @@ class BVGN_ShortcodesPT {
   // agendamento no cabeçalho (shortcode)
 public static function agendamento_header($atts = [], $content = '') {
   ob_start();
-  include BVGN_CAMINHO . 'includes/cabecalho-agendamento.php';
+  include BVGN_CAMINHO . 'inclui/cabecalho-agendamento.php';
   return ob_get_clean();
 }
 }
