@@ -23,8 +23,10 @@
 }
 
 .elementor .bvgn-modal__dialog {
-  position: relative;
-  margin: 5vh auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   max-width: 520px;
   background: #fff;
   border-radius: 12px;
@@ -126,6 +128,21 @@
 .elementor .bvgn-modal__close:focus-visible {
   outline: 3px solid rgba(13,110,253,.5);
   outline-offset: 2px;
+}
+
+.elementor .bvgn-modal[aria-hidden="false"] .bvgn-modal__dialog {
+  animation: modalFadeIn .3s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    transform: translate(-50%, -46%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
 }
 
 /* Mobile */
