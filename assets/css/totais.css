@@ -97,6 +97,57 @@
   .elementor .bvgn-container .bvgn-totais .bvgn-total { font-size: 1.05rem; }
 }
 
+
+/* ================================
+   BVGN — Totais (cartão e linhas)
+   ================================ */
+
+body.single-product .elementor .bvgn-container .bvgn-totais{
+  grid-column: 1 / -1 !important;
+  max-width: 560px !important;
+  width: 100% !important;
+  margin: 16px auto 0 !important;
+
+  background:#fff !important;
+  border:1px solid #e9edf3 !important;
+  border-radius:14px !important;
+  box-shadow:0 6px 18px rgba(0,0,0,.05) !important;
+  padding:16px !important;
+}
+
+/* linhas rótulo/valor */
+body.single-product .elementor .bvgn-container .bvgn-totais .bvgn-linha{
+  display:grid !important; grid-template-columns:1fr auto !important; gap:8px !important;
+}
+
 /* ===============================
    FIM — BVGN Totais (refatorado)
    =============================== */
+
+   /* ================================
+   BVGN — Observações e Botão de Cotação
+   ================================ */
+
+body.single-product .elementor .bvgn-container .bvgn-informacoes,
+body.single-product .elementor .bvgn-container .bvgn-botao-cotacao{
+  grid-column: 1 / -1 !important;
+  max-width: 560px !important;
+  width: 100% !important;
+  margin: 16px auto 0 !important;
+}
+
+/* Observações */
+body.single-product .elementor .bvgn-container .bvgn-informacoes{
+  min-height:90px !important; padding:12px 14px !important;
+  border:1px solid #e6e9ee !important; border-radius:12px !important; background:#fff !important;
+}
+
+/* Botão de cotação */
+body.single-product .elementor .bvgn-container .bvgn-botao-cotacao{
+  width:100% !important; padding:14px 18px !important; border-radius:12px !important;
+  border:0 !important; background:#111827 !important; color:#fff !important; font-weight:800 !important;
+  transition: transform .06s, opacity .2s !important;
+}
+body.single-product .elementor .bvgn-container .bvgn-botao-cotacao:hover{ opacity:.95 !important; }
+body.single-product .elementor .bvgn-container .bvgn-botao-cotacao:active{ transform: translateY(1px) !important; }
+

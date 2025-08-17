@@ -1,8 +1,8 @@
 /* ===============================
-   INÍCIO — BVGN Modal (Form de Cotação) — refatorado
+   BVGN — Modal de Cotação (isolado)
    =============================== */
 
-.elementor .bvgn-modal {
+.bvgn-modal {
   position: fixed;
   inset: 0;
   display: block;
@@ -11,23 +11,24 @@
   transition: opacity .2s ease;
   z-index: 9999;
 }
-.elementor .bvgn-modal[aria-hidden="false"] {
+.bvgn-modal[aria-hidden="false"] {
   opacity: 1;
   pointer-events: auto;
 }
 
-.elementor .bvgn-modal__backdrop {
+.bvgn-modal__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,.5);
+  background: rgba(0, 0, 0, .62);
 }
 
-.elementor .bvgn-modal__dialog {
+.bvgn-modal__dialog {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: 520px;
+  width: calc(100% - 20px);
   background: #fff;
   border-radius: 12px;
   padding: 20px;
@@ -35,7 +36,7 @@
   box-shadow: 0 12px 30px rgba(0,0,0,.18);
 }
 
-.elementor .bvgn-modal__close {
+.bvgn-modal__close {
   position: absolute;
   top: 8px;
   right: 10px;
@@ -47,30 +48,28 @@
   color: #111;
 }
 
-.elementor .bvgn-modal__title {
+.bvgn-modal__title {
   margin: 0 0 6px;
   font-size: 20px;
   font-weight: 800;
   color: #111;
 }
-
-.elementor .bvgn-modal__subtitle {
+.bvgn-modal__subtitle {
   margin: 0 0 16px;
   color: #666;
   font-size: 14px;
 }
 
-.elementor .bvgn-form__group {
-  margin-bottom: 12px;
-}
-.elementor .bvgn-form__group label {
+/* Form */
+.bvgn-form__group { margin-bottom: 12px; }
+.bvgn-form__group label {
   display: block;
   font-weight: 600;
   margin-bottom: 6px;
   color: #222;
 }
-.elementor .bvgn-form__group input,
-.elementor .bvgn-form__group textarea {
+.bvgn-form__group input,
+.bvgn-form__group textarea {
   width: 100%;
   padding: 10px 12px;
   border: 1px solid #ddd;
@@ -79,21 +78,20 @@
   background: #fff;
   transition: border-color .2s, box-shadow .2s;
 }
-.elementor .bvgn-form__group input:focus,
-.elementor .bvgn-form__group textarea:focus {
+.bvgn-form__group input:focus,
+.bvgn-form__group textarea:focus {
   outline: 0;
   border-color: #0d6efd;
   box-shadow: 0 0 0 4px rgba(13,110,253,.12);
 }
 
-.elementor .bvgn-form__actions {
+.bvgn-form__actions {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
   margin-top: 8px;
 }
-
-.elementor .bvgn-btn {
+.bvgn-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -104,52 +102,39 @@
   font-weight: 700;
   transition: transform .06s, box-shadow .2s, opacity .2s;
 }
-.elementor .bvgn-btn--primario {
+.bvgn-btn--primario {
   background: #0d6efd;
   color: #fff;
   box-shadow: 0 10px 20px rgba(13,110,253,.18);
 }
-.elementor .bvgn-btn--primario:hover {
+.bvgn-btn--primario:hover {
   transform: translateY(-1px);
   box-shadow: 0 12px 24px rgba(13,110,253,.24);
 }
-.elementor .bvgn-btn--texto {
-  background: transparent;
-  color: #111;
-}
+.bvgn-btn--texto { background: transparent; color: #111; }
 
-/* Impede scroll da página quando o modal abre */
-.elementor .bvgn-modal-open {
-  overflow: hidden;
-}
+/* Sem scroll da página quando o modal abre (adicione/remova essa classe no <body> via JS) */
+.bvgn-modal-open { overflow: hidden; }
 
-/* Acessibilidade: foco visível nos botões */
-.elementor .bvgn-btn:focus-visible,
-.elementor .bvgn-modal__close:focus-visible {
+/* Acessibilidade */
+.bvgn-btn:focus-visible,
+.bvgn-modal__close:focus-visible {
   outline: 3px solid rgba(13,110,253,.5);
   outline-offset: 2px;
 }
 
-.elementor .bvgn-modal[aria-hidden="false"] .bvgn-modal__dialog {
-  animation: modalFadeIn .3s ease;
+/* Animação suave de entrada */
+.bvgn-modal[aria-hidden="false"] .bvgn-modal__dialog {
+  animation: bvgnModalIn .28s ease;
 }
-
-@keyframes modalFadeIn {
-  from {
-    transform: translate(-50%, -46%);
-    opacity: 0;
-  }
-  to {
-    transform: translate(-50%, -50%);
-    opacity: 1;
-  }
+@keyframes bvgnModalIn {
+  from { transform: translate(-50%, -46%); opacity: 0; }
+  to   { transform: translate(-50%, -50%); opacity: 1; }
 }
 
 /* Mobile */
 @media (max-width: 560px){
-  .elementor .bvgn-modal__dialog {
-    width: calc(100% - 20px);
-    max-width: none;
+  .bvgn-modal__dialog{
     top: 5%;
     left: 50%;
     transform: translateX(-50%);
@@ -157,7 +142,6 @@
     padding: 16px;
   }
 }
-
 /* ===============================
-   FIM — BVGN Modal (Form de Cotação) — refatorado
+   FIM — BVGN Modal (Form de Cotação) 
    =============================== */

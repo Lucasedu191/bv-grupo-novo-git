@@ -83,6 +83,36 @@
   }
 }
 
+/* ================================
+   BVGN — Agendamento (inputs e cartão)
+   ================================ */
+
+body.single-product .elementor .bvgn-container .bvgn-agendamento{
+  grid-column: 1 / -1 !important;
+  max-width: 560px !important;
+  width: 100% !important;
+  margin: 16px auto 0 !important;
+
+  background:#fff !important;
+  border:1px solid #e9edf3 !important;
+  border-radius:14px !important;
+  box-shadow:0 6px 18px rgba(0,0,0,.05) !important;
+  padding:16px !important;
+
+  display:grid !important; grid-template-columns: 1fr !important; gap:12px !important;
+}
+
+body.single-product .elementor .bvgn-container .bvgn-agendamento label{
+  font-weight:700 !important; color:#111827 !important; margin-bottom:4px !important;
+}
+body.single-product .elementor .bvgn-container .bvgn-agendamento input[type="date"],
+body.single-product .elementor .bvgn-container .bvgn-agendamento input[type="text"],
+body.single-product .elementor .bvgn-container .bvgn-agendamento input[type="time"]{
+  width:100% !important; min-height:46px !important; padding:12px 14px !important;
+  border-radius:12px !important; border:1px solid #e6e9ee !important; background:#fff !important;
+}
+
+
 /* ===============================
    FIM — BVGN Agendamento (refatorado)
    =============================== */

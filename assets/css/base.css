@@ -74,6 +74,91 @@
   .elementor .bvgn-container .bvgn-descricao{ font-size: .95rem; }
 }
 
+
+/* ================================
+   BVGN — Layout base (container, grid, imagem, título/descrição)
+   ================================ */
+
+/* Container base */
+body.single-product .elementor .bvgn-container{
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(12px, 2.5vw, 28px);
+}
+body.single-product .elementor .bvgn-container *{ box-sizing: border-box; }
+
+/* GRID: 2 colunas (img | infos) */
+body.single-product .elementor .bvgn-container .bvgn-grid{
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.6fr) minmax(380px, 540px) !important; /* 60/40 */
+  gap: clamp(18px, 2.6vw, 36px) !important;
+  align-items: start !important;
+}
+
+/* Faz os filhos de .bvgn-info virarem itens do grid (sem mudar o shortcode) */
+body.single-product .elementor .bvgn-container .bvgn-info{
+  display: contents !important;
+  min-width: 0 !important;
+}
+
+/* IMAGEM – cartão à esquerda */
+body.single-product .elementor .bvgn-container .bvgn-media{
+  grid-column: 1 !important;
+  background:#fff !important;
+  border:1px solid #eef2f7 !important;
+  border-radius:18px !important;
+  box-shadow:0 12px 26px rgba(0,0,0,.05) !important;
+  padding: clamp(10px, 1.4vw, 18px) !important;
+}
+body.single-product .elementor .bvgn-container .bvgn-imagem{
+  width:100% !important; height:auto !important;
+  max-height:560px !important; object-fit:contain !important;
+  border-radius:14px !important;
+}
+
+/* DIREITA — título, descrição */
+body.single-product .elementor .bvgn-container .bvgn-titulo,
+body.single-product .elementor .bvgn-container .bvgn-descricao,
+body.single-product .elementor .bvgn-container .bvgn-variacoes{
+  grid-column: 2 !important;
+}
+body.single-product .elementor .bvgn-container .bvgn-titulo{
+  margin: 2px 0 6px !important;
+  font-size: clamp(22px, 2.3vw, 28px) !important;
+  font-weight: 800 !important;
+  letter-spacing:.2px !important;
+}
+body.single-product .elementor .bvgn-container .bvgn-descricao{
+  margin: 0 0 12px !important;
+  color:#3f4652 !important;
+  line-height:1.55 !important;
+}
+body.single-product .elementor .bvgn-container .bvgn-descricao p{ margin:0 0 8px !important; }
+
+/* ===== Coluna full inferior (grid próprio) ===== */
+body.single-product .elementor .bvgn-container .bvgn-col-full{
+  grid-column: 1 / -1 !important;     /* ocupa toda a largura do grid de cima */
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 16px !important;
+  justify-items: center !important;    /* centraliza os filhos */
+}
+
+/* cada bloco (taxas, agenda, totais, observações, botão) */
+body.single-product .elementor .bvgn-container .bvgn-col-full > *{
+  width: 100% !important;
+  max-width: 560px !important;         /* largura confortável da coluna */
+  margin: 0 !important;                /* remove margens que jogavam p/ esquerda */
+}
+
+/* opcional: ampliar a largura dessa coluna no desktop grande */
+@media (min-width: 1280px){
+  body.single-product .elementor .bvgn-container .bvgn-col-full > *{
+    max-width: 640px !important;
+  }
+}
+
+
 /* ===============================
    FIM — BVGN Base (estrutura geral) — refatorado
    =============================== */
