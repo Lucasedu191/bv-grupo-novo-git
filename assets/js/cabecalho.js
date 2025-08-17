@@ -1,78 +1,79 @@
+
 document.addEventListener('DOMContentLoaded', function () {
-  console.log('[BVGN] DOM carregado');
+  console.log('[BVGN] DOM carregado, aguardando campos...');
 
-  const inicioEl = document.getElementById('bvgn-cabecalho-inicio');
-  const fimEl = document.getElementById('bvgn-cabecalho-fim');
-  const btn = document.getElementById('bvgn-buscar-grupos');
+  const checkFields = setInterval(() => {
+    const inicioEl = document.getElementById('bvgn-cabecalho-inicio');
+    const fimEl = document.getElementById('bvgn-cabecalho-fim');
+    const btn = document.getElementById('bvgn-buscar-grupos');
 
-  console.log('[BVGN] Campos encontrados:', { inicioEl, fimEl, btn });
+    if (inicioEl && fimEl && btn) {
+      clearInterval(checkFields);
+      console.log('[BVGN] Campos encontrados:', { inicioEl, fimEl, btn });
 
-  if (!btn || !inicioEl || !fimEl) {
-    console.warn('[BVGN] Algum campo obrigatório não foi encontrado.');
-    return;
-  }
+      const hoje = new Date();
+      const maxGlobal = new Date();
+      maxGlobal.setMonth(maxGlobal.getMonth() + 6);
 
-  const hoje = new Date();
-  const maxGlobal = new Date();
-  maxGlobal.setMonth(maxGlobal.getMonth() + 6);
+      try {
+        flatpickr.localize(flatpickr.l10ns.pt);
 
-  try {
-    flatpickr.localize(flatpickr.l10ns.pt); // Traduz para pt
+        const fimPicker = flatpickr(fimEl, {
+          dateFormat: 'Y-m-d',
+          minDate: hoje,
+          maxDate: maxGlobal,
+          defaultDate: new Date(hoje.getTime() + 86400000)
+        });
+        console.log('[BVGN] Flatpickr fim inicializado');
 
-    const fimPicker = flatpickr(fimEl, {
-      dateFormat: 'Y-m-d',
-      minDate: hoje,
-      maxDate: maxGlobal,
-      defaultDate: new Date(hoje.getTime() + 86400000)
-    });
-    console.log('[BVGN] Flatpickr fim inicializado');
-
-    flatpickr(inicioEl, {
-      dateFormat: 'Y-m-d',
-      minDate: hoje,
-      maxDate: maxGlobal,
-      defaultDate: hoje,
-      onChange: function (selectedDates) {
-        if (selectedDates.length) {
-          fimPicker.set('minDate', selectedDates[0]);
-          console.log('[BVGN] Data de início alterada:', selectedDates[0]);
-        }
+        flatpickr(inicioEl, {
+          dateFormat: 'Y-m-d',
+          minDate: hoje,
+          maxDate: maxGlobal,
+          defaultDate: hoje,
+          onChange: function (selectedDates) {
+            if (selectedDates.length) {
+              fimPicker.set('minDate', selectedDates[0]);
+              console.log('[BVGN] Data de início alterada:', selectedDates[0]);
+            }
+          }
+        });
+        console.log('[BVGN] Flatpickr início inicializado');
+      } catch (e) {
+        console.error('[BVGN] Erro ao inicializar o Flatpickr:', e);
       }
-    });
-    console.log('[BVGN] Flatpickr início inicializado');
-  } catch (e) {
-    console.error('[BVGN] Erro ao inicializar o Flatpickr:', e);
-  }
 
-  btn.addEventListener('click', () => {
-    const inicio = new Date(inicioEl.value);
-    const fim = new Date(fimEl.value);
-    const local = document.getElementById('bvgn-cabecalho-local').textContent || 'Sede';
+      btn.addEventListener('click', () => {
+        const inicio = new Date(inicioEl.value);
+        const fim = new Date(fimEl.value);
+        const local = document.getElementById('bvgn-cabecalho-local').textContent || 'Sede';
 
-    if (!inicioEl.value || !fimEl.value) {
-      alert('Preencha as duas datas.');
-      return;
+        if (!inicioEl.value || !fimEl.value) {
+          alert('Preencha as duas datas.');
+          return;
+        }
+
+        const diffMs = fim - inicio;
+        const dias = diffMs / (1000 * 60 * 60 * 24);
+
+        if (dias < 0) {
+          alert('A data final deve ser depois da data inicial.');
+          return;
+        }
+
+        if (dias > 30) {
+          window.location.href = '/planos-mensais';
+          return;
+        }
+
+        localStorage.setItem('bvgn_agendamento', JSON.stringify({
+          inicio: inicioEl.value,
+          fim: fimEl.value,
+          local: local
+        }));
+
+        window.location.href = '/planos-diarios';
+      });
     }
-
-    const diffMs = fim - inicio;
-    const dias = diffMs / (1000 * 60 * 60 * 24);
-
-    if (dias < 0) {
-      alert('A data final deve ser depois da data inicial.');
-      return;
-    }
-
-    if (dias > 30) {
-      window.location.href = '/planos-mensais';
-      return;
-    }
-
-    localStorage.setItem('bvgn_agendamento', JSON.stringify({
-      inicio: inicioEl.value,
-      fim: fimEl.value,
-      local: local
-    }));
-
-    window.location.href = '/planos-diarios';
-  });
+  }, 100);
 });
