@@ -133,3 +133,29 @@
   border-radius: 4px;
   padding: 4px;
 }
+
+/* Estilo do cabeçalho do Flatpickr */
+.flatpickr-months {
+  background-color: #163c67;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px 8px 0 0;
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  color: #fff;
+  fill: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.flatpickr-months .flatpickr-prev-month:hover,
+.flatpickr-months .flatpickr-next-month:hover {
+  transform: scale(1.2);
+  color: #6ce9fb;
+  fill: #6ce9fb;
+}

@@ -1,17 +1,17 @@
 <div class="bvgn-agendamento-form">
   <div class="bvgn-campo">
     <label>Local de Retirada</label>
-    <div class="bvgn-campo-disabled">Sede</div>
+    <div class="bvgn-campo-disabled" id="bvgn-cabecalho-local">Sede</div>
   </div>
 
   <div class="bvgn-campo">
     <label>Data de Retirada</label>
-    <input type="text" id="bvgn-inicio" placeholder="Selecione a data">
+    <input type="text" id="bvgn-cabecalho-inicio" placeholder="Selecione a data">
   </div>
 
   <div class="bvgn-campo">
     <label>Data de Devolução</label>
-    <input type="text" id="bvgn-fim" placeholder="Selecione a data">
+    <input type="text" id="bvgn-cabecalho-fim" placeholder="Selecione a data">
   </div>
 
   <div class="bvgn-campo bvgn-botao">

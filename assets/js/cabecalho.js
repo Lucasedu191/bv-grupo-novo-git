@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
   console.log('[BVGN] DOM carregado');
 
-  const inicioEl = document.getElementById('bvgn-inicio');
-  const fimEl = document.getElementById('bvgn-fim');
+  const inicioEl = document.getElementById('bvgn-cabecalho-inicio');
+  const fimEl = document.getElementById('bvgn-cabecalho-fim');
   const btn = document.getElementById('bvgn-buscar-grupos');
 
   console.log('[BVGN] Campos encontrados:', { inicioEl, fimEl, btn });
@@ -13,24 +13,24 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   const hoje = new Date();
-  const max = new Date();
-  max.setDate(hoje.getDate() + 30);
+  const maxGlobal = new Date();
+  maxGlobal.setMonth(maxGlobal.getMonth() + 6);
 
   try {
-    // Inicializa fim primeiro
+    flatpickr.localize(flatpickr.l10ns.pt); // Traduz para pt
+
     const fimPicker = flatpickr(fimEl, {
       dateFormat: 'Y-m-d',
       minDate: hoje,
-      maxDate: max,
-      defaultDate: new Date(hoje.getTime() + 86400000),
+      maxDate: maxGlobal,
+      defaultDate: new Date(hoje.getTime() + 86400000)
     });
     console.log('[BVGN] Flatpickr fim inicializado');
 
-    // Depois o início
     flatpickr(inicioEl, {
       dateFormat: 'Y-m-d',
       minDate: hoje,
-      maxDate: max,
+      maxDate: maxGlobal,
       defaultDate: hoje,
       onChange: function (selectedDates) {
         if (selectedDates.length) {
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
   btn.addEventListener('click', () => {
     const inicio = new Date(inicioEl.value);
     const fim = new Date(fimEl.value);
-    const local = document.getElementById('bvgn-local').value;
+    const local = document.getElementById('bvgn-cabecalho-local').textContent || 'Sede';
 
     if (!inicioEl.value || !fimEl.value) {
       alert('Preencha as duas datas.');
