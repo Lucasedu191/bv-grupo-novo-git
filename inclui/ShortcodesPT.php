@@ -14,6 +14,7 @@ class BVGN_ShortcodesPT {
     add_shortcode('gn_informacoes', [__CLASS__,'informacoes']);  // textarea
     add_shortcode('gn_botao_cotacao', [__CLASS__,'botao_cotacao']); // format="html|pdf" phone="+55..."
     add_shortcode('gn_botao_cotacao_popup', [__CLASS__,'botao_cotacao_popup']); // botão + modal
+    add_shortcode('bvgn_agendamento_header', [__CLASS__, 'agendamento_header']); // calendario no cabeçalho
   }
 
   private static function resolver_produto_id($atts){
@@ -92,35 +93,40 @@ class BVGN_ShortcodesPT {
   }
 
   public static function botao_cotacao($atts){
+      $a = self::resolver_produto_id($atts);
+      $atts = shortcode_atts(['produto_id'=>0,'format'=>'html','phone'=>''], $atts);
+      $a['format'] = $atts['format'];
+      $a['phone']  = $atts['phone'];
+      ob_start(); $GLOBALS['a']=$a; include BVGN_CAMINHO.'modelos/partes/botao-cotacao.php'; return ob_get_clean();
+    }
+    public static function botao_cotacao_popup($atts){
+    // permite passar produto_id explicitamente, rótulo e classe do botão
+    $atts = shortcode_atts([
+      'produto_id' => 0,
+      'rotulo'     => 'Gerar cotação',
+      'classe'     => 'bvgn-btn bvgn-btn--primario',
+    ], $atts);
+
+    // resolve produto_id como nos demais
     $a = self::resolver_produto_id($atts);
-    $atts = shortcode_atts(['produto_id'=>0,'format'=>'html','phone'=>''], $atts);
-    $a['format'] = $atts['format'];
-    $a['phone']  = $atts['phone'];
-    ob_start(); $GLOBALS['a']=$a; include BVGN_CAMINHO.'modelos/partes/botao-cotacao.php'; return ob_get_clean();
+
+    // props do botão/modal
+    $a['rotulo'] = $atts['rotulo'];
+    $a['classe'] = $atts['classe'];
+    $a['produto_titulo'] = !empty($a['produto_id']) ? get_the_title($a['produto_id']) : '';
+    $a['nonce']  = wp_create_nonce('bvgn_cotacao_modal');
+
+    // render: botão que inclui o modal (template novo)
+    ob_start();
+    $GLOBALS['a'] = $a;
+    include BVGN_CAMINHO.'modelos/partes/botao-cotacao-popup.php';
+    return ob_get_clean();
   }
-  public static function botao_cotacao_popup($atts){
-  // permite passar produto_id explicitamente, rótulo e classe do botão
-  $atts = shortcode_atts([
-    'produto_id' => 0,
-    'rotulo'     => 'Gerar cotação',
-    'classe'     => 'bvgn-btn bvgn-btn--primario',
-  ], $atts);
-
-  // resolve produto_id como nos demais
-  $a = self::resolver_produto_id($atts);
-
-  // props do botão/modal
-  $a['rotulo'] = $atts['rotulo'];
-  $a['classe'] = $atts['classe'];
-  $a['produto_titulo'] = !empty($a['produto_id']) ? get_the_title($a['produto_id']) : '';
-  $a['nonce']  = wp_create_nonce('bvgn_cotacao_modal');
-
-  // render: botão que inclui o modal (template novo)
+  // agendamento no cabeçalho (shortcode)
+public static function agendamento_header($atts = [], $content = '') {
   ob_start();
-  $GLOBALS['a'] = $a;
-  include BVGN_CAMINHO.'modelos/partes/botao-cotacao-popup.php';
+  include BVGN_CAMINHO . 'includes/cabecalho-agendamento.php';
   return ob_get_clean();
 }
-
 }
 BVGN_ShortcodesPT::init();
