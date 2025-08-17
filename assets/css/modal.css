@@ -148,9 +148,13 @@
 /* Mobile */
 @media (max-width: 560px){
   .elementor .bvgn-modal__dialog {
-    margin: 4vh 10px;
+    width: calc(100% - 20px);
     max-width: none;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
     border-radius: 12px;
+    padding: 16px;
   }
 }
 
