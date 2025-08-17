@@ -248,13 +248,17 @@ function dateToISO(d){
         }).get(),
         totais: $cx.data('bvgnTotais'),
         formato: $(this).data('formato'),
-        telefone:  $(this).data('telefone')
+        
       };
 
       $.post(BVGN.ajaxUrl, carga, function(r){
         if(!r || !r.success){ alert('Erro ao gerar cotacao.'); return; }
         const url = r.data.url;
-        const tel = (carga.telefone||'').replace(/\D/g,'');
+        const tel = ($('#bvgn_whats').val() || '').replace(/\D/g, '');
+        if (!tel) {
+          alert('Preencha seu número de WhatsApp.');
+          return;
+        }
         const msg = encodeURIComponent('Ola! Segue minha cotacao: ' + url);
         const wa  = 'https://wa.me/'+tel+'?text='+msg;
         window.open(wa, '_blank');
