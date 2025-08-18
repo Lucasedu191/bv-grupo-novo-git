@@ -48,6 +48,27 @@
   padding-top: 8px;
 }
 
+.bvgn-totais-cotacao {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.bvgn-totais-cotacao .bvgn-totais {
+  flex: 1 1 60%;
+  margin: 0;
+}
+
+.bvgn-totais-cotacao .bvgn-cotacao {
+  flex: 1 1 36%;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Mobile */
 @media (max-width: 640px) {
   .bvgn-totais {
@@ -61,5 +82,14 @@
 
   .bvgn-total {
     font-size: 1.1rem;
+  }
+
+  .bvgn-totais-cotacao {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .bvgn-totais-cotacao .bvgn-cotacao {
+    justify-content: stretch;
   }
 }

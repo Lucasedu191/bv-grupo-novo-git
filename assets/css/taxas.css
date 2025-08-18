@@ -85,6 +85,19 @@ label.bvgn-taxa::after {
   display: none !important;
 }
 
+.bvgn-taxas-duplas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.bvgn-taxas-duplas .bvgn-taxas {
+  flex: 1 1 48%;
+  margin: 0;
+  max-width: 100%;
+}
+
 /* Mobile */
 @media (max-width: 640px) {
   .bvgn-taxas {
@@ -101,6 +114,14 @@ label.bvgn-taxa::after {
   }
 
   .bvgn-taxas .bvgn-taxa {
+    flex: 1 1 100%;
+  }
+   
+  .bvgn-taxas-duplas {
+    flex-direction: column;
+  }
+
+  .bvgn-taxas-duplas .bvgn-taxas {
     flex: 1 1 100%;
   }
 }
