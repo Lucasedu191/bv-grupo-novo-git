@@ -58,37 +58,37 @@ function dateToISO(d){
 }
   
   
-  function setMsg($cx, txt){
-    const $m = $cx.find('#bv-date-msg');
-    if(!$m.length) return;
-    if(txt){ $m.text(txt).addClass('on'); }
-    else { $m.text('').removeClass('on'); }
-  }
+function setMsg($cx, txt){
+  const $m = $cx.find('#bv-date-msg');
+  if(!$m.length) return;
+  if(txt){ $m.text(txt).addClass('on'); }
+  else { $m.text('').removeClass('on'); }
+}
 
   // Normaliza datas conforme min/max; retorna true se ajustou algo
-  function normalizeDatesToRule($cx){
-    const tipo = getTipo($cx);
-    if(tipo !== 'diario') { setMsg($cx, ''); return false; }
+function normalizeDatesToRule($cx){
+  const tipo = getTipo($cx);
+  if(tipo !== 'diario') { setMsg($cx, ''); return false; }
 
-    const { minDays, maxDays } = getRulesFromVar($cx);
-    const $s = $cx.find('.bvgn-data-inicio');
-    const $e = $cx.find('.bvgn-data-fim');
-    const sVal = $s.val(), eVal = $e.val();
+  const { minDays, maxDays } = getRulesFromVar($cx);
+  const $s = $cx.find('.bvgn-data-inicio');
+  const $e = $cx.find('.bvgn-data-fim');
+  const sVal = $s.val(), eVal = $e.val();
 
-    if (!sVal || !eVal) {
-      setMsg($cx, '');
-      return false;
-    }
+  if (!sVal || !eVal) {
+    setMsg($cx, '');
+    return false;
+  }
 
-    const dias = diferencaDiasSeguro(sVal, eVal);
-    if (dias < minDays || dias > maxDays) {
-      setMsg($cx, `O período deve ter entre ${minDays} e ${maxDays} dias.`);
-    } else {
-      setMsg($cx, '');
-    }
+  const dias = diferencaDiasSeguro(sVal, eVal);
+  if (dias < minDays || dias > maxDays) {
+    setMsg($cx, `O período deve ter entre ${minDays} e ${maxDays} dias.`);
+  } else {
+    setMsg($cx, '');
+  }
 
-    return false; // nunca altera as datas
-}
+
+
 
   // corrige fim < início
   const s = parseISODateLocal(sVal);
@@ -162,54 +162,9 @@ function dateToISO(d){
 
     $cx.find('.bvgn-subtotal .valor').text(subtotal.toFixed(2).replace('.', ','));
     $cx.find('.bvgn-total .valor').text(total.toFixed(2).replace('.', ','));
-    // — Preenchimento do novo template visual —
-
-    // Exibir o local de retirada
-    $cx.find('.bvgn-local').show();
-    $cx.find('#bvgn-local-view').text('Sede');
-
-    // Exibir o período de dias
-    $cx.find('.bvgn-dias').show();
-    $cx.find('#bvgn-days-view').text(`${qtd} dia${qtd > 1 ? 's' : ''}`);
-    $cx.find('#bvgn-days-raw').val(qtd);
-
-    // Exibir o valor total das taxas
-    $cx.find('.bvgn-taxas').show();
-    $cx.find('#bvgn-taxas').text(taxas.toFixed(2).replace('.', ','));
-    $cx.find('#bvgn-taxas-raw').val(taxas);
-
-    // Subtotal e total (valores crus já estão ali, mas reforçamos)
-    $cx.find('#bvgn-subtotal-raw').val(subtotal);
-    $cx.find('#bvgn-total-raw').val(total);
-
-    // Listar taxas detalhadas (opcional)
-    const taxasDetalhadas = [];
-    $cx.find('.bvgn-taxa input[type=checkbox]:checked').each(function(){
-      const rotulo = String($(this).data('rotulo') || '').trim();
-      const preco  = numero($(this).data('preco'));
-      taxasDetalhadas.push(`${rotulo} — R$ ${preco.toFixed(2).replace('.', ',')}`);
-    });
-
-    const $lista = $cx.find('#bvgn-taxas-itens');
-    $lista.empty();
-    taxasDetalhadas.forEach(t => {
-      $lista.append(`<li>${t}</li>`);
-    });
-    if (taxasDetalhadas.length) {
-      $cx.find('.bvgn-taxas-lista').show();
-    }
-
-    // Exibir plano selecionado (variação)
-    const $var = $cx.find('.bvgn-variacao input[type=radio]:checked');
-    if ($var.length) {
-      const rotulo = String($var.data('rotulo') || 'Plano selecionado');
-      const preco  = numero($var.data('preco') || base);
-      $cx.find('.bvgn-var').show();
-      $cx.find('#bvgn-var-view').text(`${rotulo} — R$ ${preco.toFixed(2).replace('.', ',')}`);
-    }
 
     $cx.data('bvgnTotais', { base, taxas, qtd, subtotal, total, tipo });
-}
+  }
 
 
   // ====== NOVO: aplicar regras quando mudar variação ou datas ======
@@ -284,8 +239,6 @@ function dateToISO(d){
       const e = $cx.find('.bvgn-data-fim').val();
       if (!s || !e) return;
 
-      $cx.find('.bvgn-variacao input[type=radio]').prop('checked', false);
-
       const dias = diferencaDiasSeguro(s, e);
 
       // Tenta encontrar variação compatível com os dias
@@ -304,7 +257,7 @@ function dateToISO(d){
       });
 
       if (!selecionado) {
-        alert('Nenhuma opção de carro está disponível para esse período.');
+        console.warn('[BVGN] Nenhuma variação compatível com os dias selecionados.');
       }
     });
   }
@@ -361,35 +314,27 @@ function dateToISO(d){
     }
 
     if (tipo === 'diario') {
-    const inicio = $cx.find('.bvgn-data-inicio').val();
-    const fim = $cx.find('.bvgn-data-fim').val();
-    console.log('[BVGN] Datas selecionadas:', { inicio, fim });
+      const inicio = $cx.find('.bvgn-data-inicio').val();
+      const fim = $cx.find('.bvgn-data-fim').val();
+      console.log('[BVGN] Datas selecionadas:', { inicio, fim });
 
-    if (!inicio || !fim) {
-      alert('Selecione as datas de início e fim.');
-      console.warn('[BVGN] Datas incompletas.');
-      return;
-    }
-
-    const dias = diferencaDiasSeguro(inicio, fim);
-    const $inputs = $cx.find('.bvgn-variacao input[type=radio]');
-    let varSelecionada = null;
-
-    $inputs.each(function(){
-      const min = parseInt($(this).data('min-days') || 1, 10);
-      const max = parseInt($(this).data('max-days') || min, 10);
-      if (dias >= min && dias <= max) {
-        varSelecionada = $(this);
-        return false; // break
+      if (!inicio || !fim) {
+        alert('Selecione as datas de início e fim.');
+        console.warn('[BVGN] Datas incompletas.');
+        return;
       }
-    });
 
-    if (!varSelecionada || !varSelecionada.prop('checked')) {
-      alert('Nenhuma opção de carro está disponível para esse período.');
-      console.warn('[BVGN] Nenhuma variação compatível ou selecionada.');
-      return;
+      const dias = diferencaDiasSeguro(inicio, fim);
+      const min = parseInt($var.data('min-days') || 1, 10);
+      const max = parseInt($var.data('max-days') || min, 10);
+      console.log('[BVGN] Dias calculados:', dias, 'Min:', min, 'Max:', max);
+
+      if (dias < min || dias > max) {
+        alert(`O período deve ter entre ${min} e ${max} dias.`);
+        console.warn('[BVGN] Dias fora do intervalo permitido.');
+        return;
+      }
     }
-  }
 
     console.log('[BVGN] Abrindo modal...');
     const modalEl = document.getElementById('bvgn-cotacao-modal');
