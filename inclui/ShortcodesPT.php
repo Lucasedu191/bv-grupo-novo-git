@@ -8,8 +8,9 @@ class BVGN_ShortcodesPT {
     add_shortcode('gn_titulo', [__CLASS__,'titulo']);
     add_shortcode('gn_descricao', [__CLASS__,'descricao']);
     add_shortcode('gn_variacoes', [__CLASS__,'variacoes']);      // type="auto|diario|mensal"
-    add_shortcode('gn_taxas', [__CLASS__,'taxas']);
     add_shortcode('gn_agendamento', [__CLASS__,'agendamento']);  // type="auto|diario|mensal"
+    add_shortcode('gn_taxas', [__CLASS__,'taxas']);
+    add_shortcode('gn_protecao', [__CLASS__, 'protecao']);
     add_shortcode('gn_totais', [__CLASS__,'totais']);            // type="auto|diario|mensal"
     add_shortcode('gn_informacoes', [__CLASS__,'informacoes']);  // textarea
     add_shortcode('gn_botao_cotacao', [__CLASS__,'botao_cotacao']); // format="html|pdf" phone="+55..."
@@ -72,6 +73,18 @@ class BVGN_ShortcodesPT {
     $a = self::resolver_produto_id($atts);
     ob_start(); $GLOBALS['a']=$a; include BVGN_CAMINHO.'modelos/partes/taxas.php'; return ob_get_clean();
   }
+  
+  public static function protecao($atts){
+  $a = self::resolver_produto_id($atts);
+  $a['type'] = self::resolver_tipo($a['produto_id'], $atts['type'] ?? 'auto');
+
+  if ($a['type'] !== 'diario') return ''; // só para produtos do tipo "diario"
+
+  ob_start();
+  $GLOBALS['a'] = $a;
+  include BVGN_CAMINHO . 'modelos/partes/taxa-variavel-diaria.php';
+  return ob_get_clean();
+}
 
   public static function agendamento($atts){
     $atts = shortcode_atts(['produto_id'=>0,'type'=>'auto'], $atts);

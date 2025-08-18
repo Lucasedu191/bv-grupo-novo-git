@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 8.2.6
+ * Version: 8.2.7
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -176,6 +176,20 @@ add_action('wp_enqueue_scripts', function () {
       $ver_js,
       true
     );
+
+    // Proteção JS (só quando tem [gn_protecao] no conteúdo)
+    if ( $has_post && has_shortcode($post->post_content, 'gn_protecao') ) {
+      $ver_protecao = ( defined('BVGN_DIR') && file_exists(BVGN_DIR.'assets/js/protecao.js') )
+                        ? filemtime(BVGN_DIR.'assets/js/protecao.js') : '1.0.0';
+
+      wp_enqueue_script(
+        'bvgn-protecao',
+        BVGN_URL . 'assets/js/protecao.js',
+        ['jquery'],
+        $ver_protecao,
+        true
+      );
+    }
 
     // Modal JS (só quando precisa)
     if ( $tem_popup || $e_produto ) {

@@ -97,3 +97,19 @@ label.bvgn-taxa::after {
     font-size: 0.95rem;
   }
 }
+
+
+/* ===============================
+   BVGN — Proteção 
+   =============================== */
+   .bvgn-protecao {
+  margin-bottom: 16px;
+}
+
+.bvgn-protecao .bvgn-taxa {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* fim do CSS isolado para taxas e proteção */
