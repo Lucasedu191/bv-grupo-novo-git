@@ -329,8 +329,8 @@ function calcular($cx){
           return `${y}-${m}-${d}`;
         }
 
-        const isoInicio = toISO(dados.inicio);
-        const isoFim = toISO(dados.fim);
+        const isoInicio = converterParaISO(dados.inicio);
+        const isoFim = converterParaISO(dados.fim);
 
         $('.bvgn-data-inicio').val(isoInicio);
         $('.bvgn-data-fim').val(isoFim);
