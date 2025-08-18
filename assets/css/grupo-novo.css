@@ -27,3 +27,11 @@
     margin-right: 0 !important;
   }
 }
+
+/* Força o layout boxed no desktop */
+body.single-product .elementor .bvgn-container {
+  max-width: 1240px !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}

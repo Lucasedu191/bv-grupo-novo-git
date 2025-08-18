@@ -101,8 +101,8 @@ class BVGN_ShortcodesPT {
   }
 
   public static function informacoes($atts){
-    $a = shortcode_atts(['placeholder'=>'Informacoes adicionais…'], $atts);
-    return '<textarea class="bvgn-informacoes" rows="4" placeholder="'.esc_attr($a['placeholder']).'"></textarea>';
+    
+    return '';
   }
 
   public static function botao_cotacao($atts){

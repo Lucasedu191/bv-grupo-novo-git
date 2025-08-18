@@ -4,20 +4,23 @@
 
 /* Container geral */
 .bvgn-taxas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
   grid-column: 1 / -1;
   max-width: 560px;
   width: 100%;
-  margin: 24px auto 0; /* espaço um pouco maior do que 16px */
+  margin: 24px auto 0;
   padding: 20px;
-
   background: #fff;
   border: 1px solid #e9edf3;
   border-radius: 14px;
   box-shadow: 0 6px 18px rgba(0,0,0,.05);
+}
 
-  display: flex;
-  flex-direction: column;
-  gap: 14px; /* leve aumento de espaçamento entre itens */
+.bvgn-taxas .bvgn-taxa {
+  flex: 1 1 calc(50% - 12px);
+  margin: 0;
 }
 
 /* Cada taxa como um card com checkbox estilizado */
@@ -95,6 +98,10 @@ label.bvgn-taxa::after {
 
   .bvgn-taxa .lbl {
     font-size: 0.95rem;
+  }
+
+  .bvgn-taxas .bvgn-taxa {
+    flex: 1 1 100%;
   }
 }
 

@@ -113,10 +113,11 @@
 /* Observações (ex: textarea) */
 
 .bvgn-informacoes {
-  grid-column: 1 / -1;
+  display: none;
+  /* grid-column: 1 / -1;
   max-width: 560px;
   width: 100%;
-  margin: 24px auto 0;
+  margin: 24px auto 0; */
 }
 
 .bvgn-informacoes textarea {
