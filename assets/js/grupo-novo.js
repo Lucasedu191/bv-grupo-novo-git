@@ -82,11 +82,11 @@ function normalizeDatesToRule($cx){
     }
 
     const dias = diferencaDiasSeguro(sVal, eVal);
-    if (dias < minDays || dias > maxDays) {
-      setMsg($cx, `O período deve ter entre ${minDays} e ${maxDays} dias.`);
-    } else {
-      setMsg($cx, '');
-    }
+    // if (dias < minDays || dias > maxDays) {
+    //   setMsg($cx, `O período deve ter entre ${minDays} e ${maxDays} dias.`);
+    // } else {
+    //   setMsg($cx, '');
+    // }
 
   // corrige fim < início
   const s = parseISODateLocal(sVal);
@@ -95,11 +95,11 @@ function normalizeDatesToRule($cx){
 
   const daysNow = diferencaDiasSeguro($s.val(), $e.val());
 
-  if(minDays === 1 && maxDays === 1){
-    $e.val($s.val());
-    setMsg($cx, 'Esta variação permite apenas 1 dia. Ajustamos a devolução.');
-    return true;
-  }
+  // if(minDays === 1 && maxDays === 1){
+  //   $e.val($s.val());
+  //   setMsg($cx, 'Esta variação permite apenas 1 dia. Ajustamos a devolução.');
+  //   return true;
+  // }
   if(daysNow < minDays){
     const base = parseISODateLocal($s.val());
     const forced = new Date(base.getTime());
