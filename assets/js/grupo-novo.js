@@ -10,6 +10,11 @@ function parseISODateLocal(str){
   if(!m) return null;
   return new Date(Number(m[1]), Number(m[2])-1, Number(m[3]), 0, 0, 0, 0);
 }
+// ajuta a converter DD-MM-YYYY para YYYY-MM-DD
+function converterParaISO(dataBr) {
+  const [dia, mes, ano] = dataBr.split('-');
+  return `${ano}-${mes}-${dia}`;
+}
 
 // Diferença em dias (inclusivo) sem fuso
 function diferencaDiasSeguro(inicioStr, fimStr){
@@ -338,6 +343,29 @@ function calcular($cx){
   }
   
   $('.bvgn-container').each(function(){
+
+    // =========================
+    // Preencher datas via localStorage (somente para tipo diário)
+    // =========================
+    try {
+      const agendamento = JSON.parse(localStorage.getItem('bvgn_agendamento'));
+      if (agendamento && agendamento.inicio && agendamento.fim) {
+        console.log('[BVGN] Datas preenchidas a partir do localStorage:', agendamento);
+
+        const tipo = getTipo($cx);
+        if (tipo === 'diario') {
+          $cx.find('.bvgn-data-inicio').val(converterParaISO(agendamento.inicio));
+          $cx.find('.bvgn-data-fim').val(converterParaISO(agendamento.fim));
+        }
+      }
+    } catch(e){
+      console.warn('[BVGN] Erro ao ler agendamento do localStorage', e);
+    }
+    // =========================
+    // fim preencher datas via localStorage
+    // =========================
+
+    
     const $cx = $(this);
     ligarEventos($cx);
 
