@@ -10,11 +10,7 @@ function parseISODateLocal(str){
   if(!m) return null;
   return new Date(Number(m[1]), Number(m[2])-1, Number(m[3]), 0, 0, 0, 0);
 }
-// ajuta a converter DD-MM-YYYY para YYYY-MM-DD
-function converterParaISO(dataBr) {
-  const [d, m, a] = dataBr.split('-');
-  return `${a}-${m}-${d}`;
-}
+
 
 // Diferença em dias (inclusivo) sem fuso
 function diferencaDiasSeguro(inicioStr, fimStr){
@@ -324,8 +320,14 @@ function calcular($cx){
       const dados = JSON.parse(agendamentoRaw);
       if (dados.inicio && dados.fim) {
         // converte DD-MM-YYYY para YYYY-MM-DD
-        function toISO(br) {
-          const [d, m, y] = br.split('-');
+        function toISO(dateStr) {
+          const parts = dateStr.split('-');
+          // Se já está em ISO (YYYY-MM-DD), retorna como está
+          if (parts[0].length === 4) {
+            return dateStr;
+          }
+          // Se está em DD-MM-YYYY, converte
+          const [d, m, y] = parts;
           return `${y}-${m}-${d}`;
         }
 
