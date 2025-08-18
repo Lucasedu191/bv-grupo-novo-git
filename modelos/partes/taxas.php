@@ -2,6 +2,8 @@
 $taxas = BVGN_IntegracoesPT::obter_taxas_para_produto($a['produto_id']);
 ?>
 <div class="bvgn-taxas">
+  <div class="bvgn-totais-titulo">Serviços Opcionais</div>
+
   <?php include __DIR__ . '/taxa-fixa-mensal.php'; ?>
 
   <?php foreach($taxas as $t): ?>

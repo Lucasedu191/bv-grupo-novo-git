@@ -43,7 +43,7 @@ $precoB = $protecao[$cor]['basica'];
 $precoP = $protecao[$cor]['premium'];
 ?>
 
-<div class="bvgn-protecao">
+<div class="bvgn-taxas">
   <div class="bvgn-totais-titulo">Proteção</div>
 
   <label class="bvgn-taxa">
@@ -64,3 +64,4 @@ $precoP = $protecao[$cor]['premium'];
     <span class="lbl">Proteção Premium — <?php echo wc_price($precoP); ?>/dia (isenta caução)</span>
   </label>
 </div>
+
