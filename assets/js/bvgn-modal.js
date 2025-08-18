@@ -157,6 +157,7 @@
           try { window.BVGN.onModalSubmit(payload); } catch(e){}
         }
         closeModal('bvgn-cotacao-modal');
+        localStorage.removeItem('bvgn_agendamento');
       });
     });
   }
