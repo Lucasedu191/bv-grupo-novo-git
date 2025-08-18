@@ -12,8 +12,8 @@ function parseISODateLocal(str){
 }
 // ajuta a converter DD-MM-YYYY para YYYY-MM-DD
 function converterParaISO(dataBr) {
-  const [dia, mes, ano] = dataBr.split('-');
-  return `${ano}-${mes}-${dia}`;
+  const [d, m, a] = dataBr.split('-');
+  return `${a}-${m}-${d}`;
 }
 
 // Diferença em dias (inclusivo) sem fuso
@@ -343,6 +343,8 @@ function calcular($cx){
   }
   
   $('.bvgn-container').each(function(){
+     const $cx = $(this);
+    ligarEventos($cx);
 
     // =========================
     // Preencher datas via localStorage (somente para tipo diário)
@@ -366,8 +368,7 @@ function calcular($cx){
     // =========================
 
     
-    const $cx = $(this);
-    ligarEventos($cx);
+   
 
     // Botão de cotação — fluxo de modal
     $cx.on('click', '.bvgn-botao-cotacao', function(e){
