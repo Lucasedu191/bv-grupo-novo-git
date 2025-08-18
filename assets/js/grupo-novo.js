@@ -100,22 +100,22 @@ function normalizeDatesToRule($cx){
   //   setMsg($cx, 'Esta variação permite apenas 1 dia. Ajustamos a devolução.');
   //   return true;
   // }
-  if(daysNow < minDays){
-    const base = parseISODateLocal($s.val());
-    const forced = new Date(base.getTime());
-    forced.setDate(base.getDate() + (minDays - 1));
-    $e.val(dateToISO(forced));
-    setMsg($cx, `Mínimo de ${minDays} dias. Ajustamos a devolução.`);
-    return true;
-  }
-  if(daysNow > maxDays){
-    const base = parseISODateLocal($s.val());
-    const forced = new Date(base.getTime());
-    forced.setDate(base.getDate() + (maxDays - 1));
-    $e.val(dateToISO(forced));
-    setMsg($cx, `Máximo de ${maxDays} dias. Ajustamos a devolução.`);
-    return true;
-  }
+  // if(daysNow < minDays){
+  //   const base = parseISODateLocal($s.val());
+  //   const forced = new Date(base.getTime());
+  //   forced.setDate(base.getDate() + (minDays - 1));
+  //   $e.val(dateToISO(forced));
+  //   setMsg($cx, `Mínimo de ${minDays} dias. Ajustamos a devolução.`);
+  //   return true;
+  // }
+  // if(daysNow > maxDays){
+  //   const base = parseISODateLocal($s.val());
+  //   const forced = new Date(base.getTime());
+  //   forced.setDate(base.getDate() + (maxDays - 1));
+  //   $e.val(dateToISO(forced));
+  //   setMsg($cx, `Máximo de ${maxDays} dias. Ajustamos a devolução.`);
+  //   return true;
+  // }
 
   setMsg($cx, '');
   return false;
