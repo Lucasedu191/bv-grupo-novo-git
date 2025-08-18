@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function () {
         flatpickr.localize(flatpickr.l10ns.pt);
 
         const fimPicker = flatpickr(fimEl, {
+          altInput: true,
+          altFormat: 'd/m/Y',
           dateFormat: 'Y-m-d',
           minDate: hoje,
           maxDate: maxGlobal,
@@ -27,6 +29,8 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('[BVGN] Flatpickr fim inicializado');
 
         flatpickr(inicioEl, {
+          altInput: true,
+          altFormat: 'd/m/Y',
           dateFormat: 'Y-m-d',
           minDate: hoje,
           maxDate: maxGlobal,

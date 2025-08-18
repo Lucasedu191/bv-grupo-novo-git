@@ -294,6 +294,27 @@ function normalizeDatesToRule($cx){
   }
   
   $('.bvgn-container').each(function(){
+
+    // =========================
+    // Preencher datas via localStorage (somente para tipo diário)
+    // =========================
+    try {
+      const agendamento = JSON.parse(localStorage.getItem('bvgn_agendamento'));
+      if (agendamento && agendamento.inicio && agendamento.fim) {
+        console.log('[BVGN] Datas preenchidas a partir do localStorage:', agendamento);
+
+        const tipo = getTipo($cx);
+        if (tipo === 'diario') {
+          $cx.find('.bvgn-data-inicio').val(agendamento.inicio);
+          $cx.find('.bvgn-data-fim').val(agendamento.fim);
+        }
+      }
+    } catch(e){
+      console.warn('[BVGN] Erro ao ler agendamento do localStorage', e);
+    }
+    // =========================
+    // fim preencher datas via localStorage
+    // =========================
     const $cx = $(this);
     ligarEventos($cx);
 
