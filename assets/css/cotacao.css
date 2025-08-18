@@ -1,0 +1,62 @@
+/* ===============================
+   BVGN — Cotação (bloco final)
+   =============================== */
+
+/* Container do botão ou bloco final */
+.bvgn-cotacao {
+  grid-column: 1 / -1;
+  max-width: 560px;
+  width: 100%;
+  margin: 32px auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Botão principal */
+.bvgn-cotacao .bvgn-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 14px 22px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  background: #0d6efd;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(13,110,253,.18);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bvgn-cotacao .bvgn-btn:hover {
+  background: #0b5ed7;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(13,110,253,.24);
+}
+
+/* Subtexto abaixo do botão (opcional) */
+.bvgn-cotacao .bvgn-subtexto {
+  font-size: 0.9rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .bvgn-cotacao {
+    padding: 0 16px;
+  }
+
+  .bvgn-cotacao .bvgn-btn {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .bvgn-cotacao .bvgn-subtexto {
+    font-size: 0.85rem;
+  }
+}

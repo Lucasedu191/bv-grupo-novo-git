@@ -5,7 +5,7 @@
 /* Cartão/base */
 .bvgn-agendamento {
   margin-top: 20px;
-  padding: 16px;
+  padding: 20px 24px; /* ⬅ padding mais generoso */
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   background: #f9fafb;
@@ -15,7 +15,7 @@
   width: 100%;
   margin-inline: auto;
   display: grid;
-  gap: 12px;
+  gap: 16px;
 }
 
 /* Diária: grade 2 colunas */
@@ -80,10 +80,24 @@
   margin-top: 8px;
 }
 
-/* Mobile: 1 coluna */
+/* Mobile: 1 coluna + ajustes */
 @media (max-width: 720px){
+  .bvgn-agendamento {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 16px;
+  }
+
   .bvgn-agendamento--diaria {
     grid-template-columns: 1fr;
     gap: 14px;
+  }
+
+  .bvgn-agendamento input[type="date"],
+  .bvgn-agendamento input[type="text"],
+  .bvgn-agendamento input[type="time"],
+  .bvgn-agendamento input.picker__input {
+    font-size: 16px;
+    padding: 12px 20px;
   }
 }

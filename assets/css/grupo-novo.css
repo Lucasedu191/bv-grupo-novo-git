@@ -4,23 +4,26 @@
 
 @media (max-width: 1024px){
   body.single-product .elementor .bvgn-container .bvgn-grid{
-    grid-template-columns: 1fr !important; gap:20px !important;
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
   }
-  body.single-product .elementor .bvgn-container .bvgn-variacao{
-    flex-basis: 100% !important; min-width: 0 !important;
+  body.single-product .elementor .bvgn-container .bvgn-variacao {
+    flex-basis: 100% !important;
+    min-width: 0 !important;
   }
+
   /* full já centralizado — ocupa 100% no mobile */
   body.single-product .elementor .bvgn-container
-    :is(.bvgn-taxas, .bvgn-agendamento, .bvgn-totais, .bvgn-informacoes, .bvgn-botao-cotacao){
+    :is(
+      .bvgn-taxas,
+      .bvgn-agendamento,
+      .bvgn-totais,
+      .bvgn-informacoes,
+      .bvgn-botao-cotacao,
+      .bvgn-cotacao
+    ) {
     max-width: 100% !important;
-    margin-left: 0 !important; margin-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 }
-
-/* (mantido no layout.css)
-@media (min-width: 1280px){
-  body.single-product .elementor .bvgn-container .bvgn-col-full > *{
-    max-width: 640px !important;
-  }
-}
-*/

@@ -14,9 +14,9 @@ $pid = $product ? $product->get_id() : 0;
   echo do_shortcode('[gn_imagem]');
   echo do_shortcode('[gn_titulo]');
   echo do_shortcode('[gn_descricao]');
+  echo do_shortcode('[gn_agendamento]');      // auto por categoria
   echo do_shortcode('[gn_variacoes]');        // auto por categoria
   echo do_shortcode('[gn_taxas]');
-  echo do_shortcode('[gn_agendamento]');      // auto por categoria
   echo do_shortcode('[gn_totais]');           // auto por categoria
   echo do_shortcode('[gn_informacoes placeholder="Observacoes do cliente..."]');
   echo do_shortcode('[gn_botao_cotacao format="html" phone="+5541XXXXXXXX"]');

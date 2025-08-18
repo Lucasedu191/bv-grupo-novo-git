@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 8.2.5
+ * Version: 8.2.6
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -150,6 +150,8 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('bvgn-agendamento', $css_url.'agendamento.css', ['bvgn-base'],          $ver('agendamento.css'));
     wp_enqueue_style('bvgn-totais',      $css_url.'totais.css',      ['bvgn-base'],          $ver('totais.css'));
     wp_enqueue_style('bvgn-modal-css',   $css_url.'modal.css',       ['bvgn-base'],          $ver('modal.css'));
+    wp_enqueue_style('bvgn-cotacao',     $css_url.'cotacao.css',     ['bvgn-base'],          $ver('cotacao.css'));
+
 
     // Opcional: CSS geral (sem @import) por último
     wp_enqueue_style(

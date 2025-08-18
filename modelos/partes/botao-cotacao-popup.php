@@ -16,11 +16,14 @@ $nonce          = isset($a['nonce']) ? $a['nonce'] : wp_create_nonce('bvgn_nonce
 ?>
 
 <!-- Botão que abre o modal -->
-<button type="button"
-        class="<?php echo esc_attr($classe); ?> bvgn-botao-cotacao"
-        data-formato="html">
-  <?php echo esc_html($rotulo); ?>
-</button>
+<div class="bvgn-cotacao">
+  <button type="button"
+          class="<?php echo esc_attr($classe); ?> js-bvgn-open-modal"
+          data-bvgn-modal="bvgn-cotacao-modal"
+          data-formato="html">
+    <?php echo esc_html($rotulo); ?>
+  </button>
+</div>
 
 <?php
 // Inclui o modal apenas uma vez por página
