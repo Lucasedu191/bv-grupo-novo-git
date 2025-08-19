@@ -10,6 +10,7 @@
 
   .bvgn-taxas-duplas .bvgn-taxas {
     flex: 1 1 48%;
+    padding: 10px;
   }
 
   .bvgn-totais-cotacao {
@@ -28,6 +29,7 @@
 
   .bvgn-taxas-duplas .bvgn-taxas {
     flex: 1 1 100%;
+    padding: 10px;
   }
 
   .bvgn-totais-cotacao {
@@ -51,6 +53,7 @@
 
   .bvgn-taxas-duplas .bvgn-taxas {
     flex: 1 1 100%;
+    padding: 10px;
   }
 
   .bvgn-totais-cotacao {

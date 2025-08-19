@@ -220,4 +220,14 @@
   }
 }
 
+@media (max-width: 640px) {
+  body.single-product .elementor-section.elementor-section-boxed > .elementor-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+  }
+}
+
 /* fim  ajuste do layout mobile para pegar 100% */
