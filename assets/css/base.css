@@ -205,6 +205,12 @@
   margin: 3px 0;
 }
 
+/* remove o espaço superior nas páginas de produto */
+.single-product.woocommerce .page_content_wrap {
+  padding-top: 10px !important; /* ajuste conforme desejar */
+}
+
+
 /* ajuste do layout mobile para pegar 100% */
 @media (max-width: 640px) {
   .page_content_wrap .content_wrap,
@@ -218,6 +224,9 @@
     padding: 0 !important;
     box-sizing: border-box !important;
   }
+  /* remove o espaço superior nas páginas de produto */
+  .single-product.woocommerce .page_content_wrap {
+    padding-top: 10px !important;
 }
 
 @media (max-width: 640px) {
