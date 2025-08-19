@@ -81,6 +81,8 @@
 .bvgn-taxas.bvgn-cards-3 .bvgn-taxa {
     flex: 1 1 calc(33.333% - 16px);
     max-width: calc(33.333% - 16px);
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
   }
 
   .bvgn-taxas.bvgn-cards-2 .bvgn-taxa {
@@ -199,3 +201,45 @@ label.bvgn-taxa::after {
 }
 
 /* fim do CSS isolado para taxas e proteção */
+
+/* ===================================
+   BVGN — Layout refinado para cards
+   =================================== */
+
+.bvgn-cards-3 .bvgn-taxa .lbl {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 6px;
+}
+
+.bvgn-cards-3 .bvgn-taxa .lbl .texto {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.bvgn-cards-3 .bvgn-taxa .lbl .preco {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2563eb;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.bvgn-cards-3 .bvgn-taxa.selected .lbl .preco {
+  transform: scale(1.05);
+}
+
+.bvgn-cards-3 .bvgn-totais-titulo {
+  font-weight: 700;
+  text-align: center;
+  margin: 0 auto 16px auto;
+  text-transform: uppercase;
+  font-size: 1rem;
+}
+
+.bvgn-cards-3 .bvgn-taxa:focus-within {
+  outline: 2px solid #2563eb;
+  outline-offset: 4px;
+}

@@ -11,10 +11,13 @@ $taxas = BVGN_IntegracoesPT::obter_taxas_para_produto($a['produto_id']);
       $icone = !empty($t['icone']) ? $t['icone'] : 'assets/svg/passos03.svg';
     ?>
     <label class="bvgn-taxa">
-      <input type="checkbox" data-preco="<?php echo esc_attr($t['preco']); ?>" data-rotulo="<?php echo esc_attr($t['rotulo']); ?>" />
+      <input type="checkbox"
+             data-preco="<?php echo esc_attr($t['preco']); ?>"
+             data-rotulo="<?php echo esc_attr($t['rotulo']); ?>" />
       <span class="lbl">
         <img class="bvgn-icon" src="<?php echo plugins_url($icone, __FILE__); ?>" alt="">
-        <?php echo esc_html($t['rotulo']); ?> — R$ <?php echo number_format($t['preco'], 2, ',', '.'); ?>
+        <span class="texto"><?php echo esc_html($t['rotulo']); ?></span>
+        <span class="preco">R$ <?php echo number_format($t['preco'], 2, ',', '.'); ?></span>
       </span>
     </label>
   <?php endforeach; ?>
