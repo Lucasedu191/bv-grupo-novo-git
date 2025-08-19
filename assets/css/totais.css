@@ -50,23 +50,26 @@
 
 .bvgn-totais-cotacao {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
 }
 
 .bvgn-totais-cotacao .bvgn-totais {
-  flex: 1 1 60%;
+  flex: 1 1 100%;
   margin: 0;
 }
 
 .bvgn-totais-cotacao .bvgn-cotacao {
-  flex: 1 1 36%;
+  flex: 1 1 100%;
   margin: 0;
   display: flex;
-  align-items: center;
   justify-content: center;
+}
+
+.bvgn-cotacao .bvgn-btn {
+  width: 100%;
+  max-width: 480px;
 }
 
 /* Mobile */

@@ -88,15 +88,27 @@ label.bvgn-taxa::after {
 .bvgn-taxas-duplas {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 20px;
   justify-content: space-between;
+  align-items: stretch;
 }
 
 .bvgn-taxas-duplas .bvgn-taxas {
   flex: 1 1 48%;
+  min-width: 320px;
   margin: 0;
-  max-width: 100%;
 }
+
+@media (max-width: 1220px) {
+  .bvgn-taxas-duplas {
+    flex-direction: column;
+  }
+
+  .bvgn-taxas-duplas .bvgn-taxas {
+    flex: 1 1 100%;
+  }
+}
+
 
 /* Mobile */
 @media (max-width: 640px) {

@@ -35,3 +35,97 @@ body.single-product .elementor .bvgn-container {
   margin-left: auto !important;
   margin-right: auto !important;
 }
+
+/* ===============================
+   XL — Desktop grande (≥1280px)
+   =============================== */
+@media (min-width: 1280px) {
+  .bvgn-taxas-duplas {
+    flex-direction: row;
+  }
+
+  .bvgn-taxas-duplas .bvgn-taxas {
+    flex: 1 1 48%;
+  }
+
+  .bvgn-totais-cotacao {
+    flex-direction: column;
+  }
+}
+
+
+/* ===============================
+   LG — Notebooks (1025px–1279px)
+   =============================== */
+@media (min-width: 1025px) and (max-width: 1279px) {
+  .bvgn-taxas-duplas {
+    flex-direction: column;
+  }
+
+  .bvgn-taxas-duplas .bvgn-taxas {
+    flex: 1 1 100%;
+  }
+
+  .bvgn-totais-cotacao {
+    flex-direction: column;
+  }
+}
+
+
+/* ===============================
+   MD — Tablets / notebooks pequenos (641px–1024px)
+   =============================== */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .bvgn-container .bvgn-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .bvgn-taxas-duplas {
+    flex-direction: column;
+  }
+
+  .bvgn-taxas-duplas .bvgn-taxas {
+    flex: 1 1 100%;
+  }
+
+  .bvgn-totais-cotacao {
+    flex-direction: column;
+  }
+}
+
+
+/* ===============================
+   SM — Mobile (até 640px)
+   =============================== */
+@media (max-width: 640px) {
+  .bvgn-container .bvgn-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .bvgn-taxas,
+  .bvgn-agendamento,
+  .bvgn-totais,
+  .bvgn-cotacao {
+    max-width: 100% !important;
+    padding: 16px;
+    margin: 12px 0;
+  }
+
+  .bvgn-taxas-duplas {
+    flex-direction: column;
+  }
+
+  .bvgn-taxas-duplas .bvgn-taxas {
+    flex: 1 1 100%;
+  }
+
+  .bvgn-totais-cotacao {
+    flex-direction: column;
+  }
+
+  .bvgn-cotacao .bvgn-btn {
+    width: 100%;
+  }
+}
