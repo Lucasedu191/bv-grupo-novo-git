@@ -43,25 +43,34 @@ $precoB = $protecao[$cor]['basica'];
 $precoP = $protecao[$cor]['premium'];
 ?>
 
-<div class="bvgn-taxas">
+<div class="bvgn-taxas bvgn-cards-3">
   <div class="bvgn-totais-titulo">Proteção</div>
 
   <label class="bvgn-taxa">
     <input type="radio" name="bvgn_protecao" value="sem"
            data-preco-dia="0" data-caucao="<?php echo esc_attr($caucao); ?>" checked>
-    <span class="lbl">Sem proteção — caução de <?php echo wc_price($caucao); ?></span>
+    <span class="lbl">
+      <img class="bvgn-icon" src="<?php echo plugins_url('assets/svg/passos01.svg', __FILE__); ?>" alt="">
+      Sem proteção — caução de <?php echo wc_price($caucao); ?>
+    </span>
   </label>
 
   <label class="bvgn-taxa">
     <input type="radio" name="bvgn_protecao" value="basica"
            data-preco-dia="<?php echo esc_attr($precoB); ?>" data-caucao="0">
-    <span class="lbl">Proteção Básica — <?php echo wc_price($precoB); ?>/dia (isenta caução)</span>
+    <span class="lbl">
+      <img class="bvgn-icon" src="<?php echo plugins_url('assets/svg/passos02.svg', __FILE__); ?>" alt="">
+      Proteção Básica — <?php echo wc_price($precoB); ?>/dia (isenta caução)
+    </span>
   </label>
 
   <label class="bvgn-taxa">
     <input type="radio" name="bvgn_protecao" value="premium"
            data-preco-dia="<?php echo esc_attr($precoP); ?>" data-caucao="0">
-    <span class="lbl">Proteção Premium — <?php echo wc_price($precoP); ?>/dia (isenta caução)</span>
+    <span class="lbl">
+      <img class="bvgn-icon" src="<?php echo plugins_url('assets/svg/passos03.svg', __FILE__); ?>" alt="">
+      Proteção Premium — <?php echo wc_price($precoP); ?>/dia (isenta caução)
+    </span>
   </label>
 </div>
 

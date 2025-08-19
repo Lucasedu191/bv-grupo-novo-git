@@ -264,6 +264,24 @@ function calcular($cx){
   function ligarEventos($cx){
   // qualquer mudança que afete o total
   $cx.on('change input', '.bvgn-variacao input, .bvgn-taxa input, .bvgn-data-inicio, .bvgn-data-fim', function(e){
+
+    // Destacar visualmente o item selecionado
+    if ($t.is('.bvgn-taxa input')) {
+      const isRadio = $t.attr('type') === 'radio';
+      const name = $t.attr('name');
+
+      if (isRadio) {
+        $cx.find(`input[name="${name}"]`).each(function () {
+          $(this).closest('.bvgn-taxa').removeClass('selected');
+        });
+      }
+
+      if ($t.is(':checked')) {
+        $t.closest('.bvgn-taxa').addClass('selected');
+      } else {
+        $t.closest('.bvgn-taxa').removeClass('selected');
+      }
+    }
     const $t = $(e.target);
 
     // se mudou variação → aplicar regras de dias
