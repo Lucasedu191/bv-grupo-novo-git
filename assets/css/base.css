@@ -2,21 +2,6 @@
    BVGN — Base (estrutura geral e layout)
    =============================== */
 
-
-/* Tokens */
-:root {
-  --bv-gap: 12px;
-  --bv-radius: 14px;
-  --bv-b: 2px;
-  --bv-text: #1f2937;
-  --bv-muted: #6b7280;
-  --bv-border: #e5e7eb;
-  --bv-primary: #0ea5e9;
-  --bv-primary-50: #e0f2fe;
-  --bv-shadow: 0 6px 18px rgba(0, 0, 0, .06);
-  --bv-shadowH: 0 10px 24px rgba(0, 0, 0, .10);
-}
-
 /* Container */
 .bvgn-container {
   max-width: 1240px;
@@ -231,16 +216,6 @@
     margin-left: auto !important;
     margin-right: auto !important;
     padding: 0 !important;
-    box-sizing: border-box !important;
-  }
-}
-
-@media (max-width: 640px) {
-  body.single-product .elementor-section.elementor-section-boxed > .elementor-container {
-    max-width: 100% !important;
-    width: 100% !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
     box-sizing: border-box !important;
   }
 }

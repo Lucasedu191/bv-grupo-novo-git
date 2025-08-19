@@ -75,14 +75,12 @@
 /* caixa “Taxas: R$ …” destacada mas discreta */
 .bvgn-totais .bvgn-taxas{
   order: 20; /* aparece antes do subtotal */
-  background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:12px 16px;
-  color:#374151; font-weight:600; margin:10px 0 8px;
 }
 
 /* lista detalhada de taxas logo depois */
-.bvgn-totais .bvgn-taxas-lista{ order: 21; margin: 0 0 10px; }
-.bvgn-totais .bvgn-subtotal{ order: 30; color:#374151; }
-.bvgn-totais .bvgn-total{ order: 40; margin-top:8px; }
+.bvgn-totais .bvgn-taxas-lista{ order: 21;}
+.bvgn-totais .bvgn-subtotal{ order: 30; }
+.bvgn-totais .bvgn-total{ order: 40;}
 
 
 

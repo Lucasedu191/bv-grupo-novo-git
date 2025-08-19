@@ -19,25 +19,24 @@
 }
 
 .bvgn-taxas .bvgn-taxa {
-  flex: 1 1 calc(50% - 12px);
+  flex: 1 1 100%;
   margin: 0;
 }
 
 /* Cada taxa como um card com checkbox estilizado */
 .bvgn-taxa {
-  position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  flex-direction: row;
   gap: 10px;
-  padding: 14px 18px; /* ajuste leve no padding */
+  padding: 14px 18px;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   background: #f9fafb;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   cursor: pointer;
   transition: all .2s ease;
-  min-height: 56px; /* garante altura mínima para clique confortável */
-  flex:1 1 calc(50% - 12px);
+  width: 100%;
 }
 .bvgn-taxa:hover {
   background: #f3f4f6;
@@ -53,11 +52,12 @@
 
 /* Checkbox visual com label */
 .bvgn-taxa .lbl {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
   font-size: 0.96rem;
   color: #111827;
   font-weight: 500;
-  display: inline-flex;
-  align-items: center;
   line-height: 1.4;
 }
 .bvgn-taxa .lbl::before {

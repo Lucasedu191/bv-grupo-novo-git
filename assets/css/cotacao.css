@@ -2,24 +2,31 @@
    BVGN — Cotação (bloco final)
    =============================== */
 
-/* Container do botão ou bloco final */
+.bvgn-totais-cotacao {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+}
+
 .bvgn-cotacao {
   grid-column: 1 / -1;
   max-width: 560px;
   width: 100%;
   margin: 32px auto 0;
+  padding: 0 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
 }
 
-/* Botão principal */
 .bvgn-cotacao .bvgn-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 100%;
+  max-width: 480px;
   padding: 14px 22px;
   font-size: 1rem;
   font-weight: 700;
@@ -38,32 +45,23 @@
   box-shadow: 0 12px 24px rgba(13,110,253,.24);
 }
 
-/* Subtexto abaixo do botão (opcional) */
 .bvgn-cotacao .bvgn-subtexto {
   font-size: 0.9rem;
   color: #6b7280;
   text-align: center;
 }
 
-/* Mobile */
 @media (max-width: 640px) {
   .bvgn-cotacao {
-    padding: 0 16px;
+    padding: 0 12px;
   }
 
   .bvgn-cotacao .bvgn-btn {
-    width: 100%;
-    font-size: 1rem;
+    font-size: 0.95rem;
+    max-width: 100%;
   }
 
   .bvgn-cotacao .bvgn-subtexto {
     font-size: 0.85rem;
   }
-}
-
-.bvgn-totais-cotacao{ display:flex; flex-direction:column; gap:16px; align-items:stretch; }
-.bvgn-cotacao{ width:100%; display:flex; justify-content:center; }
-.bvgn-cotacao .bvgn-btn{ width:100%; max-width:480px; }
-@media (max-width:640px){
-  .bvgn-cotacao .bvgn-btn{ width:100%; }
 }
