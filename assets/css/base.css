@@ -222,16 +222,15 @@
 
 
 @media (max-width: 640px) {
-  .content_wrap {
+  .page_content_wrap .content_wrap,
+  .page_content_wrap .content_wrap_fullscreen,
+  .content_wrap,
+  .content_container {
     width: 100% !important;
     max-width: 100% !important;
-    margin: 0 auto !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
     padding: 0 !important;
     box-sizing: border-box !important;
-  }
-
-  .content {
-    width: 100% !important;
-    padding: 0 !important;
   }
 }
