@@ -231,3 +231,178 @@
 }
 
 /* fim  ajuste do layout mobile para pegar 100% */
+
+
+/* === AJUSTE ESTILO VARIAÇÕES (PROTEÇÃO) === */
+.bvgn-variacoes {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.bvgn-variacao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 2px solid var(--bv-card-bd);
+  border-radius: var(--bv-card-radius);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.bvgn-variacao:hover {
+  border-color: #3b82f6;
+}
+.bvgn-variacao input[type="radio"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #cbd5e1;
+  border-radius: 50%;
+  background: #fff;
+  position: relative;
+  cursor: pointer;
+}
+.bvgn-variacao input[type="radio"]:checked {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+.bvgn-variacao input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+}
+
+/* Texto do rótulo */
+.bvgn-variacao .lbl {
+  font-weight: 500;
+  color: var(--bv-title);
+  font-size: 14px;
+}
+
+
+/* === AJUSTE ESTILO TAXAS OPCIONAIS === */
+.bvgn-taxas {
+  display: grid;
+  gap: 12px;
+}
+.bvgn-taxa {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 2px solid var(--bv-card-bd);
+  border-radius: var(--bv-card-radius);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.bvgn-taxa:hover {
+  border-color: #3b82f6;
+}
+.bvgn-taxa input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #cbd5e1;
+  border-radius: 4px;
+  background: #fff;
+  position: relative;
+  cursor: pointer;
+}
+.bvgn-taxa input[type="checkbox"]:checked {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+.bvgn-taxa input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.bvgn-taxa .lbl {
+  font-weight: 500;
+  color: var(--bv-title);
+  font-size: 14px;
+}
+
+
+/* ================================
+   BVGN — Mobile refinado (até 640px)
+   ================================ */
+
+@media (max-width: 640px) {
+  /* GRID se empilha */
+  .bvgn-grid.bvgn-grid--compact {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .bvgn-col-left,
+  .bvgn-col-right {
+    display: grid;
+    gap: 14px;
+  }
+
+  /* Imagem menor, centralizada */
+  .bvgn-col-right .bvgn-imagem {
+    max-width: 100%;
+    margin: 0 auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+
+  /* Título e descrição ajustados */
+  .bvgn-col-right .bvgn-titulo {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .bvgn-col-right .bvgn-descricao {
+    font-size: 14px;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* Cartões (proteção, taxas, datas...) com padding mais enxuto */
+  .bvgn-variacoes,
+  .bvgn-taxas,
+  .bvgn-agendamento,
+  .bvgn-totais,
+  .bvgn-informacoes {
+    padding: 12px !important;
+  }
+
+  .bvgn-variacao,
+  .bvgn-taxa {
+    padding: 12px !important;
+    gap: 10px;
+  }
+
+  /* Botão maior e ocupando largura total */
+  .bvgn-cotacao .bvgn-btn {
+    font-size: 15px;
+    padding: 14px;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  /* Observações */
+  .bvgn-informacoes textarea {
+    font-size: 14px;
+    padding: 12px;
+    min-height: 90px;
+  }
+}

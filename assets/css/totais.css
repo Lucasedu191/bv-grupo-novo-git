@@ -108,3 +108,47 @@
     justify-content: stretch;
   }
 }
+
+/* ===== Ajustes visuais finais nos totais e botão (estilo moderno laranja) ===== */
+
+/* Título RESUMO */
+.bvgn-totais-titulo {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1f2937;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+/* Linhas de resumo */
+.bvgn-totais .bvgn-linha {
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+/* Total em destaque */
+.bvgn-totais .bvgn-total {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #111827;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 10px;
+  margin-top: 6px;
+}
+
+/* Botão destacado (laranja), reaproveita a .bvgn-btn */
+.bvgn-cotacao .bvgn-btn {
+  background: #ec6707;
+  color: #fff;
+  font-weight: 700;
+  font-size: 16px;
+  border-radius: 12px;
+  padding: 14px 20px;
+  border: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.bvgn-cotacao .bvgn-btn:hover {
+  background: #d45804;
+  transform: translateY(-1px);
+}
