@@ -181,11 +181,41 @@
   }
 }
 
-/* Já mantido em base.css (não repetir) */
-/*
-@media (min-width: 1280px){
-  .bvgn-col-full > * {
-    max-width: 640px;
-  }
+/* === BVGN — Cards padrão e títulos === */
+:root{
+  --bv-card-bg:#fff;
+  --bv-card-bd:#e9edf3;
+  --bv-card-radius:14px;
+  --bv-card-shadow:0 6px 18px rgba(0,0,0,.06);
+  --bv-title: #1f2937;
+  --bv-muted: #6b7280;
 }
-*/
+
+/* cards principais */
+.bvgn-taxas,
+.bvgn-agendamento,
+.bvgn-totais{
+  background: var(--bv-card-bg);
+  border:1px solid var(--bv-card-bd);
+  border-radius: var(--bv-card-radius);
+  box-shadow: var(--bv-card-shadow);
+  padding:20px;
+}
+
+/* títulos dos blocos (ex: PROTEÇÃO / SERVIÇOS OPCIONAIS) */
+.bvgn-totais-titulo{
+  font: 800 0.95rem/1.2 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  letter-spacing:.3px;
+  color: var(--bv-title);
+  text-transform:uppercase;
+  margin:0 0 10px;
+}
+
+/* textos “metadados” (ex: Plano selecionado / Retirada / Período) */
+.bvgn-totais .bvgn-var,
+.bvgn-totais .bvgn-local,
+.bvgn-totais .bvgn-dias{
+  color: var(--bv-muted);
+  font-size:.95rem;
+  margin: 3px 0;
+}

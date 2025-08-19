@@ -128,4 +128,12 @@ body.single-product .elementor .bvgn-container {
   .bvgn-cotacao .bvgn-btn {
     width: 100%;
   }
+    /* remove paddings laterais do container da seção do Elementor somente no product */
+  body.single-product .elementor-section.elementor-section-boxed > .elementor-container{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* garante que nosso container ocupe tudo */
+  .bvgn-container{ padding-left: 12px; padding-right: 12px; }
 }

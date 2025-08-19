@@ -60,3 +60,10 @@
     font-size: 0.85rem;
   }
 }
+
+.bvgn-totais-cotacao{ display:flex; flex-direction:column; gap:16px; align-items:stretch; }
+.bvgn-cotacao{ width:100%; display:flex; justify-content:center; }
+.bvgn-cotacao .bvgn-btn{ width:100%; max-width:480px; }
+@media (max-width:640px){
+  .bvgn-cotacao .bvgn-btn{ width:100%; }
+}

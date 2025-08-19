@@ -73,6 +73,18 @@
           });
         });
 
+        // Proteção (radio) — incluir na lista de taxas selecionadas
+        var prot = cx.querySelector('input[name="bvgn_protecao"]:checked');
+        if (prot) {
+          var precoProt = prot.dataset.precoDia || '0';
+          var rotuloProt = (prot.closest('label')?.querySelector('.lbl')?.textContent || 'Proteção').trim();
+
+          taxasSel.push({
+            rotulo: rotuloProt,
+            preco: precoProt
+          });
+        }
+
         try { totais = jQuery(cx).data('bvgnTotais') || null; } catch(_){}
         var inf = cx.querySelector('.bvgn-informacoes');
         infoCliente = inf ? (inf.value || '') : '';

@@ -137,6 +137,21 @@ function calcular($cx){
     // soma taxas
     let taxas = 0;
 
+    // 1. Proteção (radio) — baseado no atributo data-preco-dia
+    const $prot = $cx.find('input[name="bvgn_protecao"]:checked');
+    if ($prot.length) {
+      const precoDia = numero($prot.data('preco-dia'));
+      const rotuloProt = String($prot.closest('label').find('.lbl').text() || 'Proteção').trim();
+      const valorProt = precoDia * qtd;
+
+      taxas += valorProt;
+
+      // adiciona na lista detalhada (caso esteja mostrando os itens)
+      if ($cx.find('#bvgn-taxas-itens').length) {
+        $cx.find('#bvgn-taxas-itens').append(`<li>${rotuloProt} — R$ ${valorProt.toFixed(2).replace('.', ',')}</li>`);
+      }
+    }
+
     // taxas selecionadas (checkbox)
     $cx.find('.bvgn-taxa input[type=checkbox]:checked').each(function(){
       const rotulo = String($(this).data('rotulo') || '').toLowerCase();
