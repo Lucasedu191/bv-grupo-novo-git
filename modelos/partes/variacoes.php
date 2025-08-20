@@ -20,11 +20,20 @@ if (!isset($p) || !$p instanceof WC_Product) {
 // Fallback simples caso sua função já exista noutro arquivo
 if (!function_exists('bvgn_min_max_by_label')){
   function bvgn_min_max_by_label($rotulo, $tipo){
-    if ($tipo === 'mensal') return [30,30];
-    if (preg_match('~(\d+)\s*dias?~i', $rotulo, $m)){
+    if ($tipo === 'mensal') return [30, 30];
+
+    // Extrai dois números, ex: "03–06 Dias", "07 a 14 Dias"
+    if (preg_match('~(\d{1,2})[^\d]+(\d{1,2})~', $rotulo, $m)) {
+      return [intval($m[1]), intval($m[2])];
+    }
+
+    // Um único número, ex: "1 Dia"
+    if (preg_match('~(\d{1,2})\s*dias?~i', $rotulo, $m)){
       $n = max(1, intval($m[1]));
       return [$n, $n];
     }
+
+    // Fallback
     return [1, 30];
   }
 }
