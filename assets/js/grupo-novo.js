@@ -96,28 +96,6 @@ function normalizeDatesToRule($cx){
 
   const daysNow = diferencaDiasSeguro($s.val(), $e.val());
 
-  // if(minDays === 1 && maxDays === 1){
-  //   $e.val($s.val());
-  //   setMsg($cx, 'Esta variação permite apenas 1 dia. Ajustamos a devolução.');
-  //   return true;
-  // }
-  // if(daysNow < minDays){
-  //   const base = parseISODateLocal($s.val());
-  //   const forced = new Date(base.getTime());
-  //   forced.setDate(base.getDate() + (minDays - 1));
-  //   $e.val(dateToISO(forced));
-  //   setMsg($cx, `Mínimo de ${minDays} dias. Ajustamos a devolução.`);
-  //   return true;
-  // }
-  // if(daysNow > maxDays){
-  //   const base = parseISODateLocal($s.val());
-  //   const forced = new Date(base.getTime());
-  //   forced.setDate(base.getDate() + (maxDays - 1));
-  //   $e.val(dateToISO(forced));
-  //   setMsg($cx, `Máximo de ${maxDays} dias. Ajustamos a devolução.`);
-  //   return true;
-  // }
-
   setMsg($cx, '');
   return false;
 }
@@ -358,6 +336,18 @@ function calcular($cx){
       $cx.find('.bvgn-variacao input[type=radio]').prop('checked', false);
 
       const dias = diferencaDiasSeguro(s, e);
+
+      console.log('[BVGN][DEBUG] Dias calculados:', dias);
+        $cx.find('.bvgn-variacao input[type=radio]').each(function() {
+          const min = parseInt($(this).data('min-days') || 1, 10);
+          const max = parseInt($(this).data('max-days') || min, 10);
+          console.log('[BVGN][DEBUG] Verificando variação:', {
+            id: $(this).val(),
+            min,
+            max,
+            rotulo: $(this).closest('label').find('.lbl').text().trim()
+          });
+        });
 
       // Tenta encontrar variação compatível com os dias
       const $inputs = $cx.find('.bvgn-variacao input[type=radio]');
