@@ -68,9 +68,8 @@ if ($p && $p->is_type('variable')){
       $min_max = [30, 30]; // mensal fixo (ajuste se necessário)
 
     } else {
-      // diário mantém sua heurística por rótulo
-      $slug = $attrs['attribute_pa_por-dia'] ?? '';
-      $rotulo = ucwords(str_replace('-', ' ', $slug));
+      // diário: monta rótulo com base nos atributos completos
+      $rotulo = wc_get_formatted_variation($attrs, true, false, false);
       if (stripos($rotulo, 'dia') === false) continue;
       $min_max = bvgn_min_max_by_label($rotulo, 'diario');
     }
