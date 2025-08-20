@@ -168,10 +168,6 @@ label.bvgn-taxa::after {
     flex-direction: row;
   }
 
-  .bvgn-icon {
-    margin-top: 2px;
-  }
-
   .bvgn-taxa.selected {
     background-color: #e0efff;
     border-color: #3b82f6;
@@ -183,6 +179,28 @@ label.bvgn-taxa::after {
 
   .bvgn-taxas-duplas .bvgn-taxas {
     flex: 1 1 100%;
+  }
+
+   .bvgn-cards-3 .bvgn-taxa .lbl {
+    font-size: 0.9rem;
+  }
+
+  .bvgn-cards-3 .bvgn-taxa .lbl .texto {
+    font-size: 0.85rem;
+  }
+
+  .bvgn-cards-3 .bvgn-taxa .lbl .preco {
+    font-size: 0.9rem;
+  }
+
+  .bvgn-cards-3 .bvgn-icon {
+     margin-top: 2px;
+    width: 26px;
+    height: 26px;
+  }
+  /* Força alinhamento melhor entre os cards para que não pule linha à toa */
+  .bvgn-cards-3 {
+    justify-content: space-between;
   }
 }
 
@@ -215,11 +233,11 @@ label.bvgn-taxa::after {
 }
 
 .bvgn-cards-3 .bvgn-taxa .lbl .texto {
-  font-size: 0.92rem;
-  font-weight: 500;
-  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
-
 .bvgn-cards-3 .bvgn-taxa .lbl .preco {
   font-size: 1rem;
   font-weight: 700;
@@ -231,15 +249,37 @@ label.bvgn-taxa::after {
   transform: scale(1.05);
 }
 
+/* Centralizar título de cada bloco */
 .bvgn-cards-3 .bvgn-totais-titulo {
-  font-weight: 700;
   text-align: center;
-  margin: 0 auto 16px auto;
-  text-transform: uppercase;
+  font-weight: 700;
+  margin: 0 auto 20px;
   font-size: 1rem;
+  text-transform: uppercase;
+  line-height: 1.2;
+  word-break: keep-all;
 }
 
 .bvgn-cards-3 .bvgn-taxa:focus-within {
   outline: 2px solid #2563eb;
   outline-offset: 4px;
+}
+
+/* ajuste checkbox para virar botão */
+.bvgn-cards-3 .lbl .botao-fake {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+  border-radius: 6px;
+  background: #fff;
+  transition: all 0.2s ease;
+}
+
+.bvgn-cards-3 .bvgn-taxa.selected .botao-fake {
+  background: #2563eb;
+  color: #fff;
 }

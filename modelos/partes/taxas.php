@@ -15,9 +15,10 @@ $taxas = BVGN_IntegracoesPT::obter_taxas_para_produto($a['produto_id']);
              data-preco="<?php echo esc_attr($t['preco']); ?>"
              data-rotulo="<?php echo esc_attr($t['rotulo']); ?>" />
       <span class="lbl">
-        <img class="bvgn-icon" src="<?php echo plugins_url($icone, __FILE__); ?>" alt="">
+        <img class="bvgn-icon" src="<?php echo BVGN_URL . $icone; ?>" alt="">
         <span class="texto"><?php echo esc_html($t['rotulo']); ?></span>
         <span class="preco">R$ <?php echo number_format($t['preco'], 2, ',', '.'); ?></span>
+        <span class="botao-fake">Selecionar</span>
       </span>
     </label>
   <?php endforeach; ?>

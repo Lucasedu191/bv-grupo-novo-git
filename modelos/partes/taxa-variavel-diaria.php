@@ -50,9 +50,10 @@ $precoP = $protecao[$cor]['premium'];
     <input type="radio" name="bvgn_protecao" value="sem"
            data-preco-dia="0" data-caucao="<?php echo esc_attr($caucao); ?>" checked>
     <span class="lbl">
-      <img class="bvgn-icon" src="<?php echo plugin_dir_url(__DIR__) . 'assets/svg/passos01.svg'; ?>" alt="">
+      <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos01.svg'; ?>" alt="">
       <span class="texto">Sem proteção — caução de</span>
       <span class="preco"><?php echo wc_price($caucao); ?></span>
+      <span class="botao-fake">Selecionar</span>
     </span>
   </label>
 
@@ -60,10 +61,10 @@ $precoP = $protecao[$cor]['premium'];
     <input type="radio" name="bvgn_protecao" value="basica"
            data-preco-dia="<?php echo esc_attr($precoB); ?>" data-caucao="0">
     <span class="lbl">
-      <img class="bvgn-icon" src="<?php echo plugin_dir_url(__DIR__) . 'assets/svg/passos02.svg'; ?>" alt="">
-
+      <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos02.svg'; ?>" alt="">
       <span class="texto">Proteção Básica</span>
       <span class="preco"><?php echo wc_price($precoB); ?>/dia<br><small>(isenta caução)</small></span>
+      <span class="botao-fake">Selecionar</span>
     </span>
   </label>
 
@@ -71,11 +72,13 @@ $precoP = $protecao[$cor]['premium'];
     <input type="radio" name="bvgn_protecao" value="premium"
            data-preco-dia="<?php echo esc_attr($precoP); ?>" data-caucao="0">
     <span class="lbl">
-      <img class="bvgn-icon" src="<?php echo plugin_dir_url(__DIR__) . 'assets/svg/passos03.svg'; ?>" alt="">
+      <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos03.svg'; ?>" alt="">
       <span class="texto">Proteção Premium</span>
       <span class="preco"><?php echo wc_price($precoP); ?>/dia<br><small>(isenta caução)</small></span>
+      <span class="botao-fake">Selecionar</span>
     </span>
   </label>
 </div>
+
 
 
