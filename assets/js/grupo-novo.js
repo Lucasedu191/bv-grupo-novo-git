@@ -404,8 +404,11 @@ function calcular($cx){
         const isoInicio = toISO(dados.inicio);
         const isoFim = toISO(dados.fim);
 
-        $('.bvgn-data-inicio').val(isoInicio);
-        $('.bvgn-data-fim').val(isoFim);
+        
+        
+
+        $('.bvgn-data-inicio').val(isoInicio).trigger('change');
+        $('.bvgn-data-fim').val(isoFim).trigger('change');
 
         setTimeout(function(){
           $('.bvgn-data-fim').trigger('change');
