@@ -62,7 +62,8 @@ function dateToISO(d){
   function setMsg($cx, txt){
     const $m = $cx.find('#bv-date-msg');
     if(!$m.length) return;
-    if(txt){ $m.text(txt).addClass('on'); }
+    if(txt){ $m.html(txt).addClass('on'); }
+    
     else { $m.text('').removeClass('on'); }
   }
 
@@ -349,12 +350,13 @@ function calcular($cx){
       });
 
       if (!selecionado) {
-      // Verifica se o período ultrapassa os 30 dias
       if (dias > 30) {
-        alert('O período máximo para agendamentos diários é de 30 dias. Para prazos maiores, acesse a página de grupos mensais.');
+        setMsg($cx, 'O período máximo para agendamentos diários é de 30 dias. Para prazos maiores, <a href="/grupos-mensais">acesse os grupos mensais</a>.');
       } else {
-        alert('Nenhuma opção de carro está disponível para esse período.');
+        setMsg($cx, `Nenhum plano cobre ${dias} dias. Tente ajustar o período ou acesse os grupos mensais.`);
       }
+    } else {
+      setMsg($cx, `Plano selecionado automaticamente para ${dias} dias.`);
     }
 
     });
@@ -395,8 +397,6 @@ function calcular($cx){
         }, 150); // dá um pequeno tempo para DOM renderizar
 
         console.log('[BVGN] Datas preenchidas a partir do localStorage:', { isoInicio, isoFim });
-
-        $('.bvgn-data-fim').trigger('change');
       }
     } catch (e) {
       console.warn('[BVGN] Erro ao carregar dados do agendamento:', e);

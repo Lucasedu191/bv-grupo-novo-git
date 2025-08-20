@@ -13,6 +13,7 @@ $tipo = $a['type'] ?? 'diario';
     </label>
     <div id="bv-date-msg" class="bv-date-msg" aria-live="polite"></div>
   </div>
+  <div id="bv-date-msg" class="bvgn-msg"></div>
 <?php else: ?>
   <div class="bvgn-agendamento bvgn-agendamento--mensal" data-bvgn-tipo="mensal">
     <em>Plano Mensal: Não é necessário selecionar datas.</em>

@@ -101,3 +101,24 @@
     padding: 12px 20px;
   }
 }
+
+/* ajuste da mensagem de alerta nas datas incorretas */
+
+#bv-date-msg.bvgn-msg {
+  display: none;
+  margin-top: 12px;
+  font-size: 14px;
+  color: #b22;
+}
+
+#bv-date-msg.bvgn-msg.on {
+  display: block;
+}
+
+#bv-date-msg.bvgn-msg a {
+  color: #0073aa;
+  text-decoration: underline;
+}
+
+
+/* fim ajuste da mensagem de alerta nas datas incorretas */
