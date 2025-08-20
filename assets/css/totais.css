@@ -108,3 +108,79 @@
     justify-content: stretch;
   }
 }
+
+/* ===== Bloco de resumo de cotação (organizado e responsivo) ===== */
+.bvgn-resumo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.bvgn-resumo .resumo-linha {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px dashed #e5e7eb;
+  padding: 6px 0;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.bvgn-resumo .resumo-label {
+  font-weight: 500;
+  color: #6b7280;
+  flex: 1 1 50%;
+}
+
+.bvgn-resumo .resumo-valor {
+  font-weight: 600;
+  text-align: right;
+  flex: 1 1 50%;
+  min-width: 120px;
+}
+
+.bvgn-resumo .total .resumo-label,
+.bvgn-resumo .total .resumo-valor {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.bvgn-resumo .resumo-valor.destaque {
+  color: #0073aa;
+}
+
+/* Responsivo para telas pequenas */
+@media (max-width: 480px) {
+  .bvgn-resumo {
+    font-size: 0.92rem;
+    gap: 8px;
+  }
+
+  .bvgn-resumo .resumo-linha {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 8px 0;
+  }
+
+  .bvgn-resumo .resumo-label,
+  .bvgn-resumo .resumo-valor {
+    flex: unset;
+    width: 100%;
+    text-align: left;
+  }
+
+  .bvgn-resumo .resumo-valor {
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .bvgn-resumo .total .resumo-label,
+  .bvgn-resumo .total .resumo-valor {
+    font-size: 1rem;
+  }
+}
+

@@ -222,6 +222,31 @@ function calcular($cx){
       $cx.find('#bvgn-var-view').text(`${rotulo} — R$ ${preco.toFixed(2).replace('.', ',')}`);
     }
 
+    // Preencher proteção no resumo (bloco lateral)
+    if ($prot.length) {
+      const rotuloProt = String($prot.closest('label').find('.lbl').text() || '').trim();
+      $cx.find('.bvgn-protecao').show();
+      $cx.find('#bvgn-protecao-view').text(rotuloProt);
+    } else {
+      $cx.find('.bvgn-protecao').hide();
+      $cx.find('#bvgn-protecao-view').text('');
+    }
+
+    // Preencher serviços opcionais no resumo (bloco lateral)
+    const opcionais = [];
+    $cx.find('.bvgn-taxa input[type=checkbox]:checked').each(function(){
+      const rotulo = String($(this).data('rotulo') || '').trim();
+      if (rotulo) opcionais.push(rotulo);
+    });
+
+    if (opcionais.length > 0) {
+      $cx.find('.bvgn-opcionais').show();
+      $cx.find('#bvgn-opcionais-view').html(opcionais.join('<br/>'));
+    } else {
+      $cx.find('.bvgn-opcionais').hide();
+      $cx.find('#bvgn-opcionais-view').text('');
+    }
+
     $cx.data('bvgnTotais', { base, taxas, qtd, subtotal, total, tipo });
 }
 

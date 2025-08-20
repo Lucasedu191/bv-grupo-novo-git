@@ -69,7 +69,8 @@ if ($p && $p->is_type('variable')){
 
     } else {
       // diário mantém sua heurística por rótulo
-      $rotulo = wc_get_formatted_variation($attrs, true, false, false);
+      $slug = $attrs['attribute_pa_por-dia'] ?? '';
+      $rotulo = ucwords(str_replace('-', ' ', $slug));
       if (stripos($rotulo, 'dia') === false) continue;
       $min_max = bvgn_min_max_by_label($rotulo, 'diario');
     }
