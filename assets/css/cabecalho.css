@@ -170,6 +170,12 @@
   line-height: 1.2;
 }
 
+/* Garante que o input de ano não tampe o mês */
+.flatpickr-current-month input.cur-year {
+  position: relative;
+  z-index: 1;
+
+
 /* Mês por extenso (modo 'static') */
 /* Garante que o mês seja visível no cabeçalho */
 .flatpickr-current-month .cur-month {
@@ -180,6 +186,7 @@
   font-weight: 600;
   color: #000;
   margin-right: 6px;
+  z-index: 2;
 }
 
 /* Ano (input) menor e com largura adequada */
