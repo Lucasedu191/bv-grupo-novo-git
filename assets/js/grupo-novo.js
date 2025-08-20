@@ -349,8 +349,13 @@ function calcular($cx){
       });
 
       if (!selecionado) {
+      // Verifica se o período ultrapassa os 30 dias
+      if (dias > 30) {
         alert('O período máximo para agendamentos diários é de 30 dias. Para prazos maiores, acesse a página de grupos mensais.');
+      } else {
+        alert('Nenhuma opção de carro está disponível para esse período.');
       }
+    }
 
     });
   }
@@ -384,6 +389,10 @@ function calcular($cx){
 
         $('.bvgn-data-inicio').val(isoInicio);
         $('.bvgn-data-fim').val(isoFim);
+
+        setTimeout(function(){
+          $('.bvgn-data-fim').trigger('change');
+        }, 150); // dá um pequeno tempo para DOM renderizar
 
         console.log('[BVGN] Datas preenchidas a partir do localStorage:', { isoInicio, isoFim });
 
