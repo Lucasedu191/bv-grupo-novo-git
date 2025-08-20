@@ -18,7 +18,7 @@ function diferencaDiasSeguro(inicioStr, fimStr){
   const e = parseISODateLocal(fimStr);
   if(!s || !e) return 0;
   const ms = e.setHours(0,0,0,0) - s.setHours(0,0,0,0);
-  return Math.max(Math.floor(ms / 86400000) + 1, 1);
+  return Math.max(Math.floor(ms / 86400000), 1);
 }
 
 // helper ISO
@@ -441,7 +441,7 @@ function calcular($cx){
       });
 
       if (!varSelecionada) {
-        setMsg($cx, `Nenhum plano cobre ${dias} dias. Ajuste as datas ou <a href="/grupos-mensais">acesse os grupos mensais</a>.`);
+        setMsg($cx, `Nenhum plano cobre ${dias} dias. Ajuste as datas ou <a href="/planos-mensais">acesse os grupos mensais</a>.`);
         return;
       }
     }
