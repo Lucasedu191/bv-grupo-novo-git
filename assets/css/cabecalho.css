@@ -171,11 +171,15 @@
 }
 
 /* Mês por extenso (modo 'static') */
+/* Garante que o mês seja visível no cabeçalho */
 .flatpickr-current-month .cur-month {
-  display: inline-block;
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: static !important;
   font-weight: 600;
-  margin-right: 4px;
-  visibility: visible;    /* garante visibilidade se algum CSS do tema esconder */
+  color: #000;
+  margin-right: 6px;
 }
 
 /* Ano (input) menor e com largura adequada */
