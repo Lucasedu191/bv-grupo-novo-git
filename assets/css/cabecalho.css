@@ -175,7 +175,7 @@
   position: relative;
   z-index: 1;
 
-
+}
 /* Mês por extenso (modo 'static') */
 /* Garante que o mês seja visível no cabeçalho */
 .flatpickr-current-month .cur-month {
@@ -184,7 +184,7 @@
   opacity: 1 !important;
   position: static !important;
   font-weight: 600;
-  color: #000;
+  color: #fff;
   margin-right: 6px;
   z-index: 2;
 }
