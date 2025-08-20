@@ -24,7 +24,9 @@ document.addEventListener('DOMContentLoaded', function () {
           dateFormat: 'Y-m-d',
           minDate: hoje,
           maxDate: maxGlobal,
-          defaultDate: new Date(hoje.getTime() + 86400000)
+          // defaultDate: new Date(hoje.getTime() + 86400000)
+          placeholder: 'Data...',
+          monthSelectorType: 'static'
         });
         console.log('[BVGN] Flatpickr fim inicializado');
 
@@ -34,7 +36,9 @@ document.addEventListener('DOMContentLoaded', function () {
           dateFormat: 'Y-m-d',
           minDate: hoje,
           maxDate: maxGlobal,
-          defaultDate: hoje,
+          // defaultDate: hoje,
+          placeholder: 'Data...',
+          monthSelectorType: 'static',
           onChange: function (selectedDates) {
             if (selectedDates.length) {
               fimPicker.set('minDate', selectedDates[0]);

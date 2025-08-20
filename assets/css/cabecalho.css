@@ -159,3 +159,47 @@
   color: #6ce9fb;
   fill: #6ce9fb;
 }
+
+/* Cabeçalho do Flatpickr: mês + ano lado a lado */
+.flatpickr-calendar .flatpickr-current-month {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;        /* base do cabeçalho */
+  line-height: 1.2;
+}
+
+/* Mês por extenso (modo 'static') */
+.flatpickr-current-month .cur-month {
+  display: inline-block;
+  font-weight: 600;
+  margin-right: 4px;
+  visibility: visible;    /* garante visibilidade se algum CSS do tema esconder */
+}
+
+/* Ano (input) menor e com largura adequada */
+.flatpickr-current-month .numInputWrapper,
+.flatpickr-current-month .numInputWrapper input.cur-year {
+  font-size: 12px;
+  height: 28px;
+  width: 4.5ch;           /* evita ocupar o cabeçalho todo */
+}
+
+/* Se usar dropdown de mês, garanta que apareça corretamente */
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+  display: inline-block;
+  width: auto;
+  min-width: 100px;
+  border: 0;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0 6px;
+  appearance: none;
+}
+
+/* Evita que estilos do tema "estourem" o cabeçalho */
+.flatpickr-calendar .flatpickr-months .flatpickr-month {
+  height: auto;
+}
