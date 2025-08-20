@@ -338,3 +338,30 @@ label.bvgn-taxa::after {
 .bvgn-taxa input[type="radio"] {
   display: none;
 }
+
+/* Esconde visual de checkbox padrão (círculo azul que aparece no topo) */
+.bvgn-taxa .lbl::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* Força o layout dos cards em telas pequenas a manter os 3 em linha */
+@media (max-width: 640px) {
+  .bvgn-cards-3 {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .bvgn-cards-3 .bvgn-taxa {
+    flex: 1 1 calc(50% - 12px);
+    max-width: calc(50% - 12px);
+  }
+}
+
+/* Ajuste adicional para dispositivos ainda menores */
+@media (max-width: 480px) {
+  .bvgn-cards-3 .bvgn-taxa {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
