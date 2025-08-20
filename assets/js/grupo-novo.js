@@ -264,7 +264,7 @@ function calcular($cx){
   function ligarEventos($cx){
   // qualquer mudança que afete o total
   $cx.on('change input', '.bvgn-variacao input, .bvgn-taxa input, .bvgn-data-inicio, .bvgn-data-fim', function(e){
-
+    const $t = $(e.target);
     // Destacar visualmente o item selecionado
     if ($t.is('.bvgn-taxa input')) {
       const isRadio = $t.attr('type') === 'radio';
@@ -296,7 +296,7 @@ function calcular($cx){
       calcular($cx);
       return;
     }
-    const $t = $(e.target);
+    
 
     // se mudou variação → aplicar regras de dias
     if($t.is('.bvgn-variacao input')){
