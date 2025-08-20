@@ -114,6 +114,7 @@ if ($p && $p->is_type('variable')){
             data-min-days="<?php echo esc_attr($v['min_days']); ?>"
             data-max-days="<?php echo esc_attr($v['max_days']); ?>"
             data-desc="<?php echo esc_attr($v['desc']); ?>"
+            data-rotulo="<?php echo esc_attr($v['rotulo']); ?>"
             <?php checked($i === 0); ?>
           />
           <span class="lbl"><?php echo esc_html($v['rotulo']); ?></span>
