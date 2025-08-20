@@ -78,6 +78,14 @@
   box-shadow: inset 0 0 0 3px #fff;
 }
 
+/* Organiza os cards para manter em linha (desktop) */
+.bvgn-taxas.bvgn-cards-3 {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+}
+
 .bvgn-taxas.bvgn-cards-3 .bvgn-taxa {
     flex: 1 1 calc(33.333% - 16px);
     max-width: calc(33.333% - 16px);
@@ -97,13 +105,11 @@
   }
 
   .bvgn-icon {
-    width: 32px;
-    height: 32px;
+    width: 50px;
+    height: 50px;
     object-fit: contain;
-    border-radius: 6px;
-    background: #f3f4f6;
-    border: 1px solid #e5e7eb;
-    padding: 4px;
+    margin: 0 auto 6px auto;
+    display: block;
   }
 
 /* Remove estilos herdados de temas */
@@ -193,14 +199,22 @@ label.bvgn-taxa::after {
     font-size: 0.9rem;
   }
 
-  .bvgn-cards-3 .bvgn-icon {
-     margin-top: 2px;
-    width: 26px;
-    height: 26px;
+  .bvgn-icon {
+    width: 40px !important;
+    height: 40px !important;
   }
   /* Força alinhamento melhor entre os cards para que não pule linha à toa */
   .bvgn-cards-3 {
     justify-content: space-between;
+  }
+
+   .bvgn-taxas.bvgn-cards-3 .bvgn-taxa {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+  
+  .bvgn-taxa .texto {
+    white-space: normal;
   }
 }
 
@@ -266,20 +280,61 @@ label.bvgn-taxa::after {
 }
 
 /* ajuste checkbox para virar botão */
-.bvgn-cards-3 .lbl .botao-fake {
+.bvgn-taxa .botao-fake {
   display: inline-block;
   margin-top: 8px;
-  padding: 6px 12px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #2563eb;
+  padding: 4px 12px;
   border: 1px solid #2563eb;
   border-radius: 6px;
+  color: #2563eb;
   background: #fff;
-  transition: all 0.2s ease;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  transition: 0.2s;
+}
+/* Quando marcado (checkbox ou radio) */
+.bvgn-taxa input:checked + .lbl .botao-fake {
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  border-color: #2563eb;
 }
 
 .bvgn-cards-3 .bvgn-taxa.selected .botao-fake {
   background: #2563eb;
   color: #fff;
+}
+
+/* Centraliza o título */
+.bvgn-taxas .bvgn-totais-titulo {
+  width: 100%;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+/* Evita quebra de linha no texto */
+.bvgn-taxa .texto {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Estiliza o preço */
+.bvgn-taxa .preco {
+  display: block;
+  text-align: center;
+  margin-top: 4px;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+/* Oculta o input nativo corretamente */
+.bvgn-taxa input[type="checkbox"],
+.bvgn-taxa input[type="radio"] {
+  display: none;
 }
