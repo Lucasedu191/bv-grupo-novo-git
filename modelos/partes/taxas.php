@@ -1,7 +1,7 @@
 <?php
 $taxas = BVGN_IntegracoesPT::obter_taxas_para_produto($a['produto_id']);
 ?>
-<div class="bvgn-taxas bvgn-cards-3">
+<div class="bvgn-taxas bvgn-cards-3 bvgn-servicos-opcionais">
   <div class="bvgn-totais-titulo">Serviços Opcionais</div>
 
   <?php include __DIR__ . '/taxa-fixa-mensal.php'; ?>
@@ -11,10 +11,12 @@ $taxas = BVGN_IntegracoesPT::obter_taxas_para_produto($a['produto_id']);
       $icone = !empty($t['icone']) ? $t['icone'] : 'assets/svg/passos03.svg';
       $rotulo = $t['rotulo'];
 
-      // quebra "(diaria)" para uma nova linha, se existir
-      if (str_contains($rotulo, '(diaria)')) {
-        $rotulo = str_replace('(diaria)', '<br><small>(diaria)</small>', $rotulo);
-      }
+      // substitui "(diaria)" e "(obrigatória)" para quebrar a linha
+      $rotulo = str_replace(
+        ['(diaria)', '(obrigatória)'],
+        ['<br><small>(diaria)</small>', '<br><small>(obrigatória)</small>'],
+        $rotulo
+      );
     ?>
     <label class="bvgn-taxa">
       <input type="checkbox"

@@ -216,6 +216,24 @@ label.bvgn-taxa::after {
   .bvgn-taxa .texto {
     white-space: normal;
   }
+
+  .bvgn-servicos-opcionais .bvgn-taxa {
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .bvgn-servicos-opcionais .bvgn-taxa .lbl {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .bvgn-servicos-opcionais .bvgn-taxa .texto,
+  .bvgn-servicos-opcionais .bvgn-taxa .preco,
+  .bvgn-servicos-opcionais .bvgn-taxa .botao-fake {
+    text-align: center;
+  }
 }
 
 

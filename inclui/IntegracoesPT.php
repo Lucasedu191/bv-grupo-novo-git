@@ -24,7 +24,7 @@ class BVGN_IntegracoesPT {
     ];
 
     $taxas[] = [
-      'rotulo' => 'Taxa de limpeza',
+      'rotulo' => 'Taxa de limpeza (obrigatória)',
       'preco'  => 45.00,
       'icone'  => 'assets/svg/passos03.svg' 
     ];
