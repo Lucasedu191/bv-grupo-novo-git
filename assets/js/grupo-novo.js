@@ -416,12 +416,36 @@ function calcular($cx){
     const tipo = getTipo($cx);
     console.log('[BVGN] Tipo selecionado:', tipo);
 
-    const $var = $cx.find('.bvgn-variacao input:checked');
-    if (!$var.length) {
-      alert('Selecione uma variação.');
-      console.warn('[BVGN] Nenhuma variação selecionada.');
-      return;
+    
+    if (tipo === 'diario') {
+      const inicio = $cx.find('.bvgn-data-inicio').val();
+      const fim    = $cx.find('.bvgn-data-fim').val();
+
+      if (!inicio || !fim) {
+        setMsg($cx, 'Selecione as datas de início e fim.');
+        return;
+      }
+
+      const dias = diferencaDiasSeguro(inicio, fim);
+      const $inputs = $cx.find('.bvgn-variacao input[type=radio]');
+      let varSelecionada = null;
+
+      $inputs.each(function(){
+        const min = parseInt($(this).data('min-days') || 1, 10);
+        const max = parseInt($(this).data('max-days') || min, 10);
+        if (dias >= min && dias <= max) {
+          varSelecionada = $(this);
+          $(this).prop('checked', true); // força marcação
+          return false;
+        }
+      });
+
+      if (!varSelecionada) {
+        setMsg($cx, `Nenhum plano cobre ${dias} dias. Ajuste as datas ou <a href="/grupos-mensais">acesse os grupos mensais</a>.`);
+        return;
+      }
     }
+
 
     if (tipo === 'diario') {
     const inicio = $cx.find('.bvgn-data-inicio').val();
