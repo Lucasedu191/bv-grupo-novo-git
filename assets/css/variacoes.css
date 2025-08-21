@@ -217,4 +217,25 @@
   .bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacao .preco{  font-size: 17px; }
 }
 
+/* Card de descrição abaixo dos cards — só MENSAL */
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-desc-card{
+  display:block;
+  margin-top:14px;
+  padding:14px 16px;
+  border:1px solid #e6e6e6;
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 6px 18px rgba(0,0,0,.05);
+  font-size:15px;
+  color:#0f172a;
+  line-height:1.35;
+}
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-desc-card strong{ font-weight:700; }
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-desc-card .badge{
+  display:inline-block; margin-left:8px; padding:4px 8px;
+  border-radius:999px; border:1px solid #dbeafe; background:#eff6ff;
+  font-size:13px; color:#1d4ed8; vertical-align:middle;
+}
+
+
 /* === fim  GRID – apenas para o plano mensal === */
