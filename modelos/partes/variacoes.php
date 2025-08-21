@@ -30,6 +30,11 @@ if (!function_exists('bvgn_min_max_by_label')){
     // Um único número, ex: "1 Dia"
     if (preg_match('~(\d{1,2})\s*dias?~i', $rotulo, $m)){
       $n = max(1, intval($m[1]));
+
+      if ($n === 1) {
+        return [1, 2];
+      }
+      
       return [$n, $n];
     }
 
