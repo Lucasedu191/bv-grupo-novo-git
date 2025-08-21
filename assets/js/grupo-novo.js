@@ -174,6 +174,9 @@ function calcular($cx){
     $cx.find('#bvgn-subtotal-raw').val(subtotal);
     $cx.find('#bvgn-total-raw').val(total);
 
+    $cx.find('#bvgn-subtotal-view').text(subtotal.toFixed(2).replace('.', ','));
+    $cx.find('#bvgn-total-view').text(total.toFixed(2).replace('.', ','));
+
     // Listar taxas detalhadas (opcional)
     const taxasDetalhadas = [];
     $cx.find('.bvgn-taxa input[type=checkbox]:checked').each(function(){

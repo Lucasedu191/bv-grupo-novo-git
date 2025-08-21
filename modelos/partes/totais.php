@@ -37,12 +37,12 @@ $tipo = $a['type'] ?? 'diario';
 
     <div class="resumo-linha">
       <span class="resumo-label"><?php esc_html_e('Subtotal:', 'bvgn'); ?></span>
-      <span class="resumo-valor">R$ <span class="valor" id="bvgn-subtotal">0,00</span></span>
+      <span class="resumo-valor">R$ <span class="valor" id="bvgn-subtotal-view">0,00</span></span>
     </div>
 
     <div class="resumo-linha total">
       <span class="resumo-label"><?php esc_html_e('Total:', 'bvgn'); ?></span>
-      <span class="resumo-valor destaque">R$ <span class="valor" id="bvgn-total">0,00</span></span>
+      <span class="resumo-valor destaque">R$ <span class="valor" id="bvgn-total-view">0,00</span></span>
     </div>
   </div>
 
