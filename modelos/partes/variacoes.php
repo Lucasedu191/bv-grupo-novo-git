@@ -70,7 +70,8 @@ if ($p && $p->is_type('variable')){
     } else {
       // diário: monta rótulo com base nos atributos completos
       $rotulo = wc_get_formatted_variation($attrs, true, false, false);
-      if (stripos($rotulo, 'dia') === false) continue;
+
+      // não precisa mais verificar se contém "dia"
       $min_max = bvgn_min_max_by_label($rotulo, 'diario');
     }
 
