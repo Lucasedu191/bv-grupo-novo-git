@@ -119,16 +119,26 @@ function calcular($cx){
     // 1. Proteção (radio) — baseado no atributo data-preco-dia
     const $prot = $cx.find('input[name="bvgn_protecao"]:checked');
     if ($prot.length) {
+      const tipo = $prot.val();
       const precoDia = numero($prot.data('preco-dia'));
-      const rotuloProt = String($prot.closest('label').find('.texto').text() || 'Proteção').trim();
-      const valorProt = precoDia;
+      const caucao = numero($prot.data('caucao'));
+      const nomeProt = String($prot.closest('label').find('.texto').clone().children().remove().end().text()).trim();
+      
+      const valorProt = 0;
+      if (tipo === 'sem') {
+        valorProt = caucao;
+      } else {
+        valorProt = precoDia;
+      }
 
       taxas += valorProt;
 
-      // adiciona na lista detalhada (caso esteja mostrando os itens)
-      if ($cx.find('#bvgn-taxas-itens').length) {
-        $cx.find('#bvgn-taxas-itens').append(`<li>${rotuloProt} — R$ ${valorProt.toFixed(2).replace('.', ',')}</li>`);
-      }
+      const rotuloProt = `${nomeProt} — R$ ${valorProt.toFixed(2).replace('.', ',')}`;
+
+       // adiciona na lista detalhada (caso esteja mostrando os itens)
+        if ($cx.find('#bvgn-taxas-itens').length) {
+          $cx.find('#bvgn-taxas-itens').append(`<li>${rotuloProt}</li>`);
+        }
     }
 
     // taxas selecionadas (checkbox)

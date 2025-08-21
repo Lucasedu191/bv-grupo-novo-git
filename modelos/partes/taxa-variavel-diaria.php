@@ -51,7 +51,7 @@ $precoP = $protecao[$cor]['premium'];
            data-preco-dia="0" data-caucao="<?php echo esc_attr($caucao); ?>" checked>
     <span class="lbl">
       <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos01.svg'; ?>" alt="">
-      <span class="texto">Sem proteção </br> caução de</span>
+      <span class="texto">Sem proteção, </br> caução de</span>
       <span class="preco"><?php echo wc_price($caucao); ?></span>
       <span class="botao-fake">Selecionar</span>
     </span>
