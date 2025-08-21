@@ -140,7 +140,7 @@
 
       $.post(BVGN.ajaxUrl, carga, function(r){
 
-        var texto = ['Olá vim do site e gostaria de fazer uma cotação'];
+        var texto = 'Olá vim do site e gostaria de fazer uma cotação';
 
         var pdfUrl = (r && r.success && r.data && r.data.url) ? r.data.url : '';
         
