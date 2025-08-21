@@ -220,7 +220,10 @@ function calcular($cx){
 
     // Preencher proteção no resumo (bloco lateral)
     if ($prot.length) {
-      const rotuloProt = String($prot.closest('label').find('.lbl').text() || '').trim();
+      const nomeProt = String($prot.closest('label').find('.texto').clone().children().remove().end().text()).trim();
+      const precoProt = numero($prot.data('preco-dia'));
+      const rotuloProt = `${nomeProt} — R$ ${precoProt.toFixed(2).replace('.', ',')}`;
+
       $cx.find('.bvgn-protecao').show();
       $cx.find('#bvgn-protecao-view').text(rotuloProt);
     } else {
