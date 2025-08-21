@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
       btn.addEventListener('click', () => {
         const inicio = new Date(inicioEl.value);
         const fim = new Date(fimEl.value);
-        const local = document.getElementById('bvgn-cabecalho-local').textContent || 'Sede';
+        const local = document.getElementById('bvgn-cabecalho-local').textContent || 'BV Locadora, Rua Coronel Mota, 629';
 
         if (!inicioEl.value || !fimEl.value) {
           alert('Preencha as duas datas.');

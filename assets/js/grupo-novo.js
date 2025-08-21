@@ -103,7 +103,11 @@ function normalizeDatesToRule($cx){
   // ====== cálculo (seu original, inalterado) ======
 function calcular($cx){
     const tipo = getTipo($cx);
-    const base = numero($cx.find('.bvgn-variacao input[type=radio]:checked').data('preco'));
+    let base = 0;
+    const $var = $cx.find('.bvgn-variacao input[type=radio]:checked');
+    if ($var.length) {
+      base = numero($var.data('preco'));
+    }
 
     // quantidade de dias (apenas para diário)
     let qtd = 1;
@@ -158,7 +162,7 @@ function calcular($cx){
 
     // Exibir o local de retirada
     $cx.find('.bvgn-local').show();
-    $cx.find('#bvgn-local-view').text('Sede');
+    $cx.find('#bvgn-local-view').text('BV Locadora, Rua Coronel Mota, 629');
 
     // Exibir o período de dias
     $cx.find('.bvgn-dias').show();
@@ -266,6 +270,29 @@ function calcular($cx){
 
   // ====== eventos ======
   function ligarEventos($cx){
+
+  // Corrige o clique no botão fake: alterna o input e dispara o change
+  $cx.on('click', '.bvgn-taxa .botao-fake', function(e){
+    e.preventDefault();
+
+    const $label = $(this).closest('label.bvgn-taxa');
+    const $inp = $label.find('input').first();
+
+    if (!$inp.length) return;
+
+    if ($inp.attr('type') === 'radio') {
+      const name = $inp.attr('name');
+      $cx.find(`input[name="${name}"]`).each(function () {
+        $(this).prop('checked', false).closest('.bvgn-taxa').removeClass('selected');
+      });
+      $inp.prop('checked', true).closest('.bvgn-taxa').addClass('selected');
+    } else {
+      $inp.prop('checked', !$inp.prop('checked'));
+      $label.toggleClass('selected', $inp.prop('checked'));
+    }
+
+    $inp.trigger('change');
+  });  
   // qualquer mudança que afete o total
   $cx.on('change input', '.bvgn-variacao input, .bvgn-taxa input, .bvgn-data-inicio, .bvgn-data-fim', function(e){
     const $t = $(e.target);
@@ -301,13 +328,6 @@ function calcular($cx){
       return;
     }
     
-
-    // se mudou variação → aplicar regras de dias
-    if($t.is('.bvgn-variacao input')){
-      aplicarRegrasECalcular($cx);
-      updateVarDesc($cx); 
-      return;
-    }
 
     // se mudou data → normaliza e recalcula
     if($t.is('.bvgn-data-inicio, .bvgn-data-fim')){
