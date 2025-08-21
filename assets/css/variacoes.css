@@ -109,3 +109,112 @@
     scroll-snap-align: start;
   }
 }
+
+/* === CARDS – apenas para o plano Mensal === */
+.bvgn-variacoes[data-bvgn-tipo="mensal"]{
+  grid-template-columns: 1fr !important; /* só a lista */
+}
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacao-desc{
+  display: none !important; /* some o painel lateral */
+}
+
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacoes-opcoes{
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)); /* 3 colunas */
+  gap: 12px;
+  align-items: stretch;
+}
+
+@media (max-width: 1024px){
+  .bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacoes-opcoes{
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 colunas */
+  }
+}
+@media (max-width: 560px){
+  .bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacoes-opcoes{
+    grid-template-columns: 1fr; /* 1 coluna */
+  }
+}
+
+/* reset para não herdar flex/float antigos */
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacao{
+  display: block !important;
+  flex: initial !important;
+  width: auto !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  float: none !important;
+  position: relative !important;
+  box-sizing: border-box;
+  
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  background: #fff;
+  padding: 12px 14px;               /* padding menor p/ caber 3 colunas */
+  box-shadow: 0 6px 18px rgba(0,0,0,.05);
+  transition: border-color .2s, box-shadow .2s, transform .06s;
+  cursor: pointer;
+}
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacao:hover{
+  border-color: #d4d4d8;
+  box-shadow: 0 10px 24px rgba(0,0,0,.06);
+  transform: translateY(-1px);
+}
+
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacao > input{
+  position:absolute; opacity:0; pointer-events:none;
+}
+
+/* conteúdo do card */
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacao .lbl{
+  display:flex; flex-direction:column; gap:8px; align-items:flex-start; font-size: 17px;
+}
+
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacao .titulo{
+  font-weight: 600; font-size: 14px; line-height: 1.2;
+}
+
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacao .preco{
+  font-weight: 700; font-size: 16px;
+}
+
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacao .per-dia{
+  margin-top: 2px;
+  font-size: 13px;                  /* menor para caber nas 3 colunas */
+  color: #475569;
+  background: #f8fafc;
+  border: 1px dashed #e2e8f0;
+  border-radius: 8px;
+  padding: 6px 8px;
+  width: 100%;
+}
+
+/* botão fake compacto */
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacao .botao-fake{
+  margin-top: 6px;
+  width: 100%;
+  text-align: center;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
+/* estado selecionado */
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacao:has(> input:checked){
+  border-color: #3b82f6;
+  background: #f1f6ff;
+  box-shadow: 0 10px 24px rgba(59,130,246,.15);
+}
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacao:has(> input:checked) .botao-fake{
+  border-color: #3b82f6;
+  background: rgba(59,130,246,.08);
+}
+
+/* mobile: um pouco mais de legibilidade */
+@media (max-width: 560px){
+  .bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacao .titulo{ font-size: 15px; }
+  .bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-variacao .preco{  font-size: 17px; }
+}
+
+/* === fim  GRID – apenas para o plano mensal === */
