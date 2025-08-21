@@ -158,7 +158,7 @@ function calcular($cx){
 
     // Exibir o local de retirada
     $cx.find('.bvgn-local').show();
-    $cx.find('#bvgn-local-view').text('Sede');
+    $cx.find('#bvgn-local-view').text('BV Locadora, Rua Coronel Mota, 629');
 
     // Exibir o período de dias
     $cx.find('.bvgn-dias').show();
