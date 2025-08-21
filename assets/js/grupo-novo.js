@@ -175,6 +175,10 @@ function calcular($cx){
     $cx.find('#bvgn-local-view').text('BV Locadora, Rua Coronel Mota, 629');
 
     // Exibir o período de dias
+    const isMensal = $('.bvgn-variacoes[data-bvgn-tipo="mensal"]').length > 0;
+    if (isMensal) qtd = 30;
+    
+    // Exibir o período de dias
     $cx.find('.bvgn-dias').show();
     $cx.find('#bvgn-days-view').text(`${qtd} dia${qtd > 1 ? 's' : ''}`);
     $cx.find('#bvgn-days-raw').val(qtd);
