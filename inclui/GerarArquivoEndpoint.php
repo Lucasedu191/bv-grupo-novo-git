@@ -66,24 +66,39 @@ class BVGN_GerarArquivoEndpoint {
     <?php
     $html = ob_get_clean();
 
-    $hash = wp_generate_password(12,false,false).'-'.time();
-    $arquivo = BVGN_DIR_ARQUIVOS . "/cotacao-{$hash}.html";
-    if (!file_exists(BVGN_DIR_ARQUIVOS)) { wp_mkdir_p(BVGN_DIR_ARQUIVOS); }
-    file_put_contents($arquivo, $html);
-    $url  = BVGN_URL_ARQUIVOS . "/cotacao-{$hash}.html";
-
-    if ($dados['formato']==='pdf' && file_exists(BVGN_CAMINHO.'vendor/autoload.php')){
-      require_once BVGN_CAMINHO.'vendor/autoload.php';
-      if (class_exists('\Dompdf\Dompdf')){
-        $dompdf = new Dompdf\Dompdf();
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4','portrait');
-        $dompdf->render();
-        $pdf  = BVGN_DIR_ARQUIVOS . "/cotacao-{$hash}.pdf";
-        file_put_contents($pdf, $dompdf->output());
-        $url = BVGN_URL_ARQUIVOS . "/cotacao-{$hash}.pdf";
-      }
+    
+    if ($produto) {
+      $nomeProd = $produto->get_name();
+      // Pega só até o primeiro traço (– ou -)
+      $primeiraParte = preg_split('/[\-–]/', $nomeProd)[0] ?? $nomeProd;
+      $slugProd = sanitize_title($primeiraParte); // exemplo: 'Grupo A' → 'grupo-a'
+    } else {
+      $slugProd = 'produto';
     }
+    $dataHora = date('d-m-Y_Hi');
+    $nome = "cotacao-{$slugProd}-{$dataHora}";
+
+    if ($dados['formato'] === 'pdf' && file_exists(BVGN_CAMINHO . 'vendor/autoload.php')) {
+      require_once BVGN_CAMINHO . 'vendor/autoload.php';
+      if (class_exists('\Dompdf\Dompdf')) {
+        $dompdf = new \Dompdf\Dompdf();
+        $dompdf->loadHtml('<meta charset="utf-8">' . $html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        $pdf = BVGN_DIR_ARQUIVOS . "/{$nome}.pdf";
+        file_put_contents($pdf, $dompdf->output());
+        $url = BVGN_URL_ARQUIVOS . "/{$nome}.pdf";
+      } else {
+        wp_send_json_error(['msg' => 'Dompdf não encontrado']);
+      }
+    } else {
+      // formato html, se for o caso
+      $arquivo = BVGN_DIR_ARQUIVOS . "/{$nome}.html";
+      file_put_contents($arquivo, $html);
+      $url = BVGN_URL_ARQUIVOS . "/{$nome}.html";
+    }
+
 
     wp_send_json_success(['url'=>$url]);
   }
