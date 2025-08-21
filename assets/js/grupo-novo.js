@@ -302,13 +302,6 @@ function calcular($cx){
     }
     
 
-    // se mudou variação → aplicar regras de dias
-    if($t.is('.bvgn-variacao input')){
-      aplicarRegrasECalcular($cx);
-      updateVarDesc($cx); 
-      return;
-    }
-
     // se mudou data → normaliza e recalcula
     if($t.is('.bvgn-data-inicio, .bvgn-data-fim')){
       normalizeDatesToRule($cx);
