@@ -120,8 +120,8 @@ function calcular($cx){
     const $prot = $cx.find('input[name="bvgn_protecao"]:checked');
     if ($prot.length) {
       const precoDia = numero($prot.data('preco-dia'));
-      const rotuloProt = String($prot.closest('label').find('.lbl').text() || 'Proteção').trim();
-      const valorProt = precoDia * qtd;
+      const rotuloProt = String($prot.closest('label').find('.texto').text() || 'Proteção').trim();
+      const valorProt = precoDia;
 
       taxas += valorProt;
 

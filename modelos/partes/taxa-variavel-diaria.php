@@ -63,7 +63,8 @@ $precoP = $protecao[$cor]['premium'];
     <span class="lbl">
       <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos02.svg'; ?>" alt="">
       <span class="texto">Proteção Básica</span>
-      <span class="preco"><?php echo wc_price($precoB); ?>/dia<br><small>(isenta caução)</small></span>
+      <span class="preco"><?php echo wc_price($precoB); ?><br><small>(isenta caução)</small></span>
+
       <span class="botao-fake">Selecionar</span>
     </span>
   </label>
@@ -74,7 +75,8 @@ $precoP = $protecao[$cor]['premium'];
     <span class="lbl">
       <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos03.svg'; ?>" alt="">
       <span class="texto">Proteção Premium</span>
-      <span class="preco"><?php echo wc_price($precoP); ?>/dia<br><small>(isenta caução)</small></span>
+      <span class="preco"><?php echo wc_price($precoP); ?><br><small>(isenta caução)</small></span>
+
       <span class="botao-fake">Selecionar</span>
     </span>
   </label>
