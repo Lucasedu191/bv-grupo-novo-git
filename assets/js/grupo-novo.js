@@ -122,6 +122,9 @@ function calcular($cx){
       const preco = numero($prot.data('preco-dia'));
       const caucao = numero($prot.data('caucao'));
       const nomeProt = String($prot.closest('label').find('.texto').clone().children().remove().end().text()).trim();
+      const precoProt = numero($prot.data('preco-dia'));
+      
+      
 
       const valorProt = preco; // apenas 1x
       taxas += valorProt;
@@ -131,8 +134,8 @@ function calcular($cx){
         taxas += caucao;
       }
 
-      const rotuloProt = `${nomeProt} — R$ ${(valorProt + caucao).toFixed(2).replace('.', ',')}`;
-
+      // const rotuloProt = `${nomeProt} — R$ ${(valorProt + caucao).toFixed(2).replace('.', ',')}`;
+      const rotuloProt = `${nomeProt} — R$ ${precoProt.toFixed(2).replace('.', ',')}`;
       // adiciona na lista detalhada (caso esteja mostrando os itens)
       if ($cx.find('#bvgn-taxas-itens').length) {
         $cx.find('#bvgn-taxas-itens').append(`<li>${rotuloProt}</li>`);
@@ -229,7 +232,10 @@ function calcular($cx){
     const opcionais = [];
     $cx.find('.bvgn-taxa input[type=checkbox]:checked').each(function(){
       const rotulo = String($(this).data('rotulo') || '').trim();
-      if (rotulo) opcionais.push(rotulo);
+      const preco = numero($(this).data('preco'));
+      if (rotulo) {
+        opcionais.push(`${rotulo} — R$ ${preco.toFixed(2).replace('.', ',')}`);
+      }
     });
 
     if (opcionais.length > 0) {

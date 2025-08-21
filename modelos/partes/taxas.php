@@ -21,16 +21,16 @@ $taxas = BVGN_IntegracoesPT::obter_taxas_para_produto($a['produto_id']);
       $rotulo
     );
   ?>
-  <label class="bvgn-taxa">
+  <label class="bvgn-taxa<?php echo $is_obrigatoria ? ' selecionado obrigatorio' : ''; ?>">
     <input type="checkbox"
-           data-preco="<?php echo esc_attr($t['preco']); ?>"
-           data-rotulo="<?php echo esc_attr($t['rotulo']); ?>"
-           <?php echo $is_obrigatoria ? 'checked' : ''; ?> />
+          data-preco="<?php echo esc_attr($t['preco']); ?>"
+          data-rotulo="<?php echo esc_attr($t['rotulo']); ?>"
+          <?php echo $is_obrigatoria ? 'checked disabled' : ''; ?> />
     <span class="lbl">
       <img class="bvgn-icon" src="<?php echo BVGN_URL . esc_attr($icone); ?>" alt="">
       <span class="texto"><?php echo $rotulo; ?></span>
       <span class="preco">R$ <?php echo number_format($t['preco'], 2, ',', '.'); ?></span>
-      <span class="botao-fake">Selecionar</span>
+      <span class="botao-fake"><?php echo $is_obrigatoria ? 'Selecionado' : 'Selecionar'; ?></span>
     </span>
   </label>
 <?php endforeach; ?>
