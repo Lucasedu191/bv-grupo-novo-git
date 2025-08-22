@@ -228,6 +228,7 @@ function calcular($cx){
       $cx.find('#bvgn-protecao-view').text('Proteção básica — incluída');
     } else if ($prot.length) {
       const nomeProt = String($prot.closest('label').find('.texto').clone().children().remove().end().text()).trim();
+      const precoProt = numero($prot.data('preco-dia'));
       const caucao = numero($prot.data('caucao'));
       const valorExibir = precoProt + caucao;
 
@@ -289,6 +290,14 @@ function calcular($cx){
     }
 
     calcular($cx);
+
+    // Ajustar título de blocos no plano mensal
+    const $tituloServicos = $cx.find('.bvgn-servicos-opcionais .bvgn-totais-titulo');
+    if (tipo === 'mensal') {
+      $tituloServicos.text('Taxas e serviços opcionais');
+    } else {
+      $tituloServicos.text('Serviços Opcionais');
+    }
   }
 
   function updateVarDesc($cx){
