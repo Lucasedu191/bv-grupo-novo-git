@@ -1,5 +1,5 @@
 <?php
-$css = @file_get_contents(BVGN_CAMINHO . 'assets/css/cotacao.css');
+$css = @file_get_contents(BVGN_DIR . 'assets/css/cotacao.css');
 $data = date('d/m/Y');
 $codigo = strtoupper(substr(wp_hash(microtime()), 0, 5));
 ?>
