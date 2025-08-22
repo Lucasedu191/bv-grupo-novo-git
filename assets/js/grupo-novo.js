@@ -298,6 +298,7 @@ function calcular($cx){
     } else {
       $tituloServicos.text('Serviços Opcionais');
     }
+    console.log('[BVGN] Título ajustado:', tipo);
   }
 
   function updateVarDesc($cx){
