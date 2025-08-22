@@ -241,7 +241,7 @@ function calcular($cx){
     }
 
 
-    // Preencher serviços opcionais no resumo (bloco lateral)
+    // Preencher serviços opcionais (detalhamento das taxas)
     const opcionais = [];
 
     // (1) checkbox normais
@@ -262,17 +262,35 @@ function calcular($cx){
       }
     });
 
-    if (opcionais.length > 0) {
-      $cx.find('.bvgn-opcionais').show();
-      $cx.find('#bvgn-opcionais-view').html(opcionais.join('<br/>'));
-    } else {
+    if (tipo === 'mensal') {
+      // No plano mensal → exibir no bloco de "Taxas"
+      const $listaTaxas = $cx.find('#bvgn-taxas-itens');
+      $listaTaxas.empty();
+      opcionais.forEach(t => {
+        $listaTaxas.append(`<li>${t}</li>`);
+      });
+      if (opcionais.length) {
+        $cx.find('.bvgn-taxas-lista').show();
+      }
+
+      // Oculta o bloco de "Serviços Opcionais"
       $cx.find('.bvgn-opcionais').hide();
       $cx.find('#bvgn-opcionais-view').text('');
+    } else {
+      // No plano diário → exibe no bloco de "Serviços Opcionais"
+      if (opcionais.length > 0) {
+        $cx.find('.bvgn-opcionais').show();
+        $cx.find('#bvgn-opcionais-view').html(opcionais.join('<br/>'));
+      } else {
+        $cx.find('.bvgn-opcionais').hide();
+        $cx.find('#bvgn-opcionais-view').text('');
+      }
     }
 
+    // Atualiza os dados do cálculo
     $cx.data('bvgnTotais', { base, taxas, qtd, subtotal, total, tipo });
 
-     // Ajustar título de blocos no plano mensal
+    // Ajusta o título do bloco de serviços opcionais
     const $tituloServicos = $cx.find('.bvgn-servicos-opcionais .bvgn-totais-titulo');
     if (tipo === 'mensal') {
       $tituloServicos.text('Taxas e serviços opcionais');
@@ -280,6 +298,7 @@ function calcular($cx){
       $tituloServicos.text('Serviços Opcionais');
     }
     console.log('[BVGN] Título ajustado:', tipo);
+
 }
 
 
