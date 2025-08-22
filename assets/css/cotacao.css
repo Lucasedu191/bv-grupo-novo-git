@@ -68,6 +68,7 @@
 
 /* classes para o template do pdf */
 
+/* GERAL */
 body {
   font-family: Arial, sans-serif;
   font-size: 12px;
@@ -76,92 +77,126 @@ body {
   padding: 0;
 }
 
+/* CABEÇALHO */
 .cotacao-cabecalho {
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  padding: 24px 32px;
   border-bottom: 2px solid #163c67;
-  padding: 10px 20px;
-  margin-bottom: 20px;
 }
 
-.logo-cabecalho {
-  width: 60px;
-  height: auto;
-  margin-right: 20px;
-}
-
-.titulo-cabecalho {
+.cabecalho-col-esq .marca {
   font-size: 24px;
-  text-transform: uppercase;
+  font-weight: bold;
   color: #163c67;
   margin: 0;
+  letter-spacing: 1px;
 }
 
+.cabecalho-col-dir .titulo-topo {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: right;
+  color: #000;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.cabecalho-col-dir .titulo-topo span {
+  font-size: 14px;
+  font-weight: normal;
+  display: block;
+}
+
+/* CONTAINER PRINCIPAL */
 .cotacao-container {
-  padding: 0 20px;
+  padding: 32px;
+  page-break-inside: avoid;
 }
 
+/* DADOS */
 .cotacao-dados {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 30px;
+  gap: 32px;
+  margin-bottom: 32px;
 }
 
-.cotacao-dados .bloco-esquerda,
-.cotacao-dados .bloco-direita {
-  width: 48%;
+.cotacao-dados h2 {
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #163c67;
 }
 
 .cotacao-dados p {
   margin: 4px 0;
 }
 
-.cotacao-tabela table {
+/* VALORES */
+.cotacao-valores {
+  margin-top: 24px;
+}
+
+.cotacao-valores h2 {
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: #163c67;
+}
+
+.cotacao-valores table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 20px;
 }
 
-.cotacao-tabela th,
-.cotacao-tabela td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  font-size: 12px;
-}
-
-.cotacao-tabela th {
-  background-color: #f4f4f4;
+.cotacao-valores th {
+  background: #f4f4f4;
   text-align: left;
+  padding: 10px;
+  font-weight: bold;
+  border: 1px solid #ccc;
 }
 
-.cotacao-tabela .total td {
+.cotacao-valores td {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.cotacao-valores tr.total td {
   background-color: #163c67;
   color: #fff;
   font-weight: bold;
   font-size: 13px;
 }
 
+/* RODAPÉ */
 .cotacao-rodape {
   background-color: #163c67;
   color: #fff;
-  padding: 20px;
+  padding: 20px 32px;
   margin-top: 40px;
 }
 
 .rodape-conteudo {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
 }
 
-.logo-rodape {
+.rodape-logo img {
   width: 60px;
   height: auto;
 }
 
 .info-empresa p {
-  margin: 3px 0;
+  margin: 4px 0;
   font-size: 11px;
+}
+
+.validez {
+  margin-top: 8px;
+  font-style: italic;
 }
 
 
