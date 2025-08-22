@@ -57,9 +57,6 @@ class BVGN_GerarArquivoEndpoint {
       $urlBase = BVGN_URL_ARQUIVOS;
       if (!file_exists($base)) wp_mkdir_p($base);
 
-      $arquivo_html = "$base/{$nome}.html";
-      file_put_contents($arquivo_html, $html);
-
       // === GERAR PDF COM DOMPDF ===
       $arquivo_pdf = '';
       if ($dados['formato'] === 'pdf' && file_exists(BVGN_CAMINHO . 'vendor/autoload.php')) {
