@@ -241,10 +241,8 @@ function calcular($cx){
     }
 
 
-    // Preencher serviços opcionais (detalhamento das taxas)
+    // === Serviços Opcionais: SEMPRE exibe os checkbox marcados ===
     const opcionais = [];
-
-    // (1) checkbox normais
     $cx.find('.bvgn-taxa input[type=checkbox]:checked').each(function(){
       const rotulo = String($(this).data('rotulo') || '').trim();
       const preco = numero($(this).data('preco'));
@@ -253,44 +251,39 @@ function calcular($cx){
       }
     });
 
-    // (2) taxas fixas mensais (obrigatórias)
-    $cx.find('.bvgn-taxa-fixa-input').each(function(){
-      const rotulo = String($(this).data('rotulo') || '').trim();
-      const preco = numero($(this).data('preco'));
-      if (rotulo) {
-        opcionais.push(`${rotulo} — R$ ${preco.toFixed(2).replace('.', ',')}`);
-      }
-    });
-
-    if (tipo === 'mensal') {
-      // No plano mensal → exibir no bloco de "Taxas"
-      const $listaTaxas = $cx.find('#bvgn-taxas-itens');
-      $listaTaxas.empty();
-      opcionais.forEach(t => {
-        $listaTaxas.append(`<li>${t}</li>`);
-      });
-      if (opcionais.length) {
-        $cx.find('.bvgn-taxas-lista').show();
-      }
-
-      // Oculta o bloco de "Serviços Opcionais"
+    if (opcionais.length > 0) {
+      $cx.find('.bvgn-opcionais').show();
+      $cx.find('#bvgn-opcionais-view').html(opcionais.join('<br/>'));
+    } else {
       $cx.find('.bvgn-opcionais').hide();
       $cx.find('#bvgn-opcionais-view').text('');
-    } else {
-      // No plano diário → exibe no bloco de "Serviços Opcionais"
-      if (opcionais.length > 0) {
-        $cx.find('.bvgn-opcionais').show();
-        $cx.find('#bvgn-opcionais-view').html(opcionais.join('<br/>'));
-      } else {
-        $cx.find('.bvgn-opcionais').hide();
-        $cx.find('#bvgn-opcionais-view').text('');
-      }
     }
 
-    // Atualiza os dados do cálculo
+    // === Taxas detalhadas: APENAS no plano mensal ===
+    const $listaTaxas = $cx.find('#bvgn-taxas-itens');
+    $listaTaxas.empty();
+
+    if (tipo === 'mensal') {
+      $cx.find('.bvgn-taxa-fixa-input').each(function(){
+        const rotulo = String($(this).data('rotulo') || '').trim();
+        const preco  = numero($(this).data('preco'));
+        if (rotulo) {
+          $listaTaxas.append(`<li>${rotulo} — R$ ${preco.toFixed(2).replace('.', ',')}</li>`);
+        }
+      });
+
+      if ($listaTaxas.children().length > 0) {
+        $cx.find('.bvgn-taxas-lista').show();
+      }
+    } else {
+      // no diário, garantir que a lista fique oculta
+      $cx.find('.bvgn-taxas-lista').hide();
+    }
+
+    // === Gravar totais calculados
     $cx.data('bvgnTotais', { base, taxas, qtd, subtotal, total, tipo });
 
-    // Ajusta o título do bloco de serviços opcionais
+    // === Ajustar título do bloco de serviços opcionais
     const $tituloServicos = $cx.find('.bvgn-servicos-opcionais .bvgn-totais-titulo');
     if (tipo === 'mensal') {
       $tituloServicos.text('Taxas e serviços opcionais');
