@@ -32,11 +32,8 @@ $tipo = $a['type'] ?? 'diario';
 
     <div class="resumo-linha">
       <span class="resumo-label"><?php esc_html_e('Taxas:', 'bvgn'); ?></span>
+      <div class="bvgn-taxas-detalhes" id="bvgn-taxas-itens" style="display:none; flex-direction: column; gap: 4px;"></div>
       <span class="resumo-valor">R$ <span class="valor" id="bvgn-taxas">0,00</span></span>
-    </div>
-
-    <div class="bvgn-taxas-lista" style="display:none;">
-      <ul id="bvgn-taxas-itens" style="margin: 8px 0 0; padding-left: 18px; font-size: 14px;"></ul>
     </div>
 
     <div class="resumo-linha">
