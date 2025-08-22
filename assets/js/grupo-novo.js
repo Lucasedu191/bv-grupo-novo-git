@@ -271,6 +271,15 @@ function calcular($cx){
     }
 
     $cx.data('bvgnTotais', { base, taxas, qtd, subtotal, total, tipo });
+
+     // Ajustar título de blocos no plano mensal
+    const $tituloServicos = $cx.find('.bvgn-servicos-opcionais .bvgn-totais-titulo');
+    if (tipo === 'mensal') {
+      $tituloServicos.text('Taxas e serviços opcionais');
+    } else {
+      $tituloServicos.text('Serviços Opcionais');
+    }
+    console.log('[BVGN] Título ajustado:', tipo);
 }
 
 
@@ -291,14 +300,7 @@ function calcular($cx){
 
     calcular($cx);
 
-    // Ajustar título de blocos no plano mensal
-    const $tituloServicos = $cx.find('.bvgn-servicos-opcionais .bvgn-totais-titulo');
-    if (tipo === 'mensal') {
-      $tituloServicos.text('Taxas e serviços opcionais');
-    } else {
-      $tituloServicos.text('Serviços Opcionais');
-    }
-    console.log('[BVGN] Título ajustado:', tipo);
+   
   }
 
   function updateVarDesc($cx){
