@@ -35,6 +35,10 @@ $tipo = $a['type'] ?? 'diario';
       <span class="resumo-valor">R$ <span class="valor" id="bvgn-taxas">0,00</span></span>
     </div>
 
+    <div class="bvgn-taxas-lista" style="display:none;">
+      <ul id="bvgn-taxas-itens" style="margin: 8px 0 0; padding-left: 18px; font-size: 14px;"></ul>
+    </div>
+
     <div class="resumo-linha">
       <span class="resumo-label"><?php esc_html_e('Subtotal:', 'bvgn'); ?></span>
       <span class="resumo-valor">R$ <span class="valor" id="bvgn-subtotal-view">0,00</span></span>
