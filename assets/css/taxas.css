@@ -383,3 +383,20 @@ label.bvgn-taxa::after {
     max-width: 100%;
   }
 }
+
+/* Mensal: destaque e bloqueio visual */
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-taxa.bvgn-obrigatoria {
+  border: 2px solid #22c55e;
+  background: #f6fff9;
+  position: relative;
+}
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-taxa.bvgn-obrigatoria .botao-fake {
+  opacity: .8;
+  cursor: default;
+}
+.bvgn-variacoes[data-bvgn-tipo="mensal"] .bvgn-taxa.locked::after{
+  content: "Obrigatória";
+  position: absolute; top: 10px; right: 10px;
+  font-size: 11px; padding: 2px 6px; border-radius: 999px;
+  background: #22c55e; color: #fff; letter-spacing:.02em;
+}

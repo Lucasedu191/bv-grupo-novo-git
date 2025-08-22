@@ -222,14 +222,16 @@ function calcular($cx){
     }
 
     // Preencher proteção no resumo (bloco lateral)
-    if ($prot.length) {
+    if (tipo === 'mensal') {
+      // Para plano mensal, exibe fixo
+      $cx.find('.bvgn-protecao').show();
+      $cx.find('#bvgn-protecao-view').text('Proteção básica — incluída');
+    } else if ($prot.length) {
       const nomeProt = String($prot.closest('label').find('.texto').clone().children().remove().end().text()).trim();
-      const precoProt = numero($prot.data('preco-dia'));
       const caucao = numero($prot.data('caucao'));
       const valorExibir = precoProt + caucao;
 
       const rotuloProt = `${nomeProt} — R$ ${valorExibir.toFixed(2).replace('.', ',')}`;
-
       $cx.find('.bvgn-protecao').show();
       $cx.find('#bvgn-protecao-view').text(rotuloProt);
     } else {
@@ -237,9 +239,21 @@ function calcular($cx){
       $cx.find('#bvgn-protecao-view').text('');
     }
 
+
     // Preencher serviços opcionais no resumo (bloco lateral)
     const opcionais = [];
+
+    // (1) checkbox normais
     $cx.find('.bvgn-taxa input[type=checkbox]:checked').each(function(){
+      const rotulo = String($(this).data('rotulo') || '').trim();
+      const preco = numero($(this).data('preco'));
+      if (rotulo) {
+        opcionais.push(`${rotulo} — R$ ${preco.toFixed(2).replace('.', ',')}`);
+      }
+    });
+
+    // (2) taxas fixas mensais (obrigatórias)
+    $cx.find('.bvgn-taxa-fixa-input').each(function(){
       const rotulo = String($(this).data('rotulo') || '').trim();
       const preco = numero($(this).data('preco'));
       if (rotulo) {
