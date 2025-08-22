@@ -63,8 +63,9 @@ $codigo = strtoupper(substr(wp_hash(microtime()), 0, 5));
   </section>
 </main>
 
-<!-- Rodapé fixado -->
+<!-- Rodapé fixado lindo -->
 <footer class="cotacao-rodape">
+  <div class="rodape-barra-branca"></div>
   <div class="rodape-conteudo">
     <div class="rodape-logo">
       <img src="https://bvlocadora.com.br/wp-content/uploads/2019/04/logo-boton-bv-locadora.png" alt="Logo BV">
