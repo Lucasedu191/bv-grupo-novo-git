@@ -1,4 +1,6 @@
 <?php
+
+if (!defined('ABSPATH')) exit;
 use Dompdf\Dompdf;
 
 class BVGN_GerarArquivoEndpoint {
@@ -98,3 +100,4 @@ class BVGN_GerarArquivoEndpoint {
     wp_send_json_error(['msg' => 'Erro ao gerar PDF']);
   }
 }
+BVGN_GerarArquivoEndpoint::init();

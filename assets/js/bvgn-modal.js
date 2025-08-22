@@ -131,8 +131,8 @@
         totais:       totais,
         formato:      'pdf',
         telefone:     numero,   // opcional: servidor pode registrar destino
-        nome: payload.nome,
-        whats: numero,
+        bvgn_nome: payload.nome,
+        bvgn_whats: numero,
       };
 
       // ===== Chama backend, pega URL do PDF e abre o WhatsApp com o link =====
