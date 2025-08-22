@@ -130,7 +130,9 @@
         taxas:        taxasSel,
         totais:       totais,
         formato:      'pdf',
-        telefone:     numero   // opcional: servidor pode registrar destino
+        telefone:     numero,   // opcional: servidor pode registrar destino
+        nome: payload.nome,
+        whats: numero,
       };
 
       // ===== Chama backend, pega URL do PDF e abre o WhatsApp com o link =====
