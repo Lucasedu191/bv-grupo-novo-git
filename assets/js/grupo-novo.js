@@ -268,7 +268,12 @@ function calcular($cx){
         const rotulo = String($(this).data('rotulo') || '').trim();
         const preco  = numero($(this).data('preco'));
         if (rotulo) {
-          $listaTaxas.append(`<li>${rotulo} — R$ ${preco.toFixed(2).replace('.', ',')}</li>`);
+          $listaTaxas.append(`
+            <div class="resumo-linha-inner">
+              <span class="resumo-label">${rotulo}</span>
+              <span class="resumo-valor">R$ ${preco.toFixed(2).replace('.', ',')}</span>
+            </div>
+          `)
         }
       });
 
