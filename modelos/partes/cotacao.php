@@ -4,8 +4,8 @@ $css = file_exists($cssPath) ? file_get_contents($cssPath) : '';
 $data = date('d/m/Y');
 $codigo = strtoupper(substr(wp_hash(microtime()), 0, 5));
 
-$logoUrl      = BVGN_URL . 'assets/img/logo-bvlocadora.png'; // topo
-$wmUrl   = $logoUrl; // usa a mesma imagem como marca d'água
+$logoUrl = 'https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png'; // topo
+$wmUrl   = $logoUrl; // marca d’água central
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -17,7 +17,7 @@ $wmUrl   = $logoUrl; // usa a mesma imagem como marca d'água
 
 <!-- Marca d’água full-page centralizada -->
 <div class="marca-dagua">
-  <img src="<?= esc_url($wmUrl) ?>" alt="" />
+  <img src="<?= esc_url($wmUrl) ?>" alt="Marca d’água BV Locadora" />
 </div>
 
 <!-- Cabeçalho moderno / timbrado -->
