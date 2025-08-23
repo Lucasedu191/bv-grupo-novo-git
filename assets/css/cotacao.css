@@ -88,12 +88,16 @@ body {
 .marca-dagua{
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 85%;     /* ajuste o tamanho global aqui */
-  opacity: .10;             /* deixe maior para testar a visibilidade */
-  z-index: 1;               /* fica atrás do conteúdo que terá z-index maior */
+  z-index: 0;
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.marca-dagua img{
+  max-width: 85%;
+  max-height: 85%;
+  opacity: 0.08;   /* transparência, ajuste se quiser mais forte */
 }
 
 /* Garante que conteúdo fique acima da marca d’água */
