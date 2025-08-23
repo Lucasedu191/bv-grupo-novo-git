@@ -39,7 +39,17 @@
       // Pré-abre aba/janela dentro do clique do usuário (escapa de bloqueios)
       var waWin = null;
       try {
-        waWin = window.open('about:blank','_blank','noopener,noreferrer');
+        waWin = window.open('','_blank','noopener,noreferrer');
+         if (waWin && !waWin.closed) {
+          waWin.document.write(
+            '<!doctype html><meta charset="utf-8"><title>Redirecionando…</title>' +
+            '<style>body{margin:0;display:grid;place-items:center;height:100vh;font:16px system-ui}'
+            +'.spin{width:40px;height:40px;border-radius:50%;border:4px solid #ddd;border-top-color:#25d366;animation:spin 1s linear infinite}'
+            +'@keyframes spin{to{transform:rotate(360deg)}}</style>' +
+            '<div><div class="spin"></div><p>Redirecionando para o WhatsApp…</p></div>'
+          );
+          waWin.document.close();
+        }
       } catch(e) {
         waWin = null; // se bloqueou
       }
@@ -53,6 +63,14 @@
         mensagem:         (data.get('mensagem')||'').trim(),
         nonce:            data.get('nonce') || ''
       };
+
+      function abrirWhats(waUrl){
+      if (waWin && !waWin.closed) {
+        try { waWin.location.replace(waUrl); return; } catch(e){}
+      }
+      // Se a aba foi bloqueada, tenta abrir agora em nova aba (degrada com dignidade)
+      window.open(waUrl, '_blank', 'noopener');
+    }
 
       // Normalização (somente dígitos)
       var numeroCliente = (payload.whatsapp || '').replace(/\D/g,'');
@@ -70,17 +88,17 @@
       // Validações
       if(!payload.nome){
         alert('Informe seu nome.');
-        if (waWin && !waWin.closed) waWin.close();
+        
         return;
       }
       if (!numeroCliente) {
         alert('Informe um número de WhatsApp válido.');
-        if (waWin && !waWin.closed) waWin.close();
+        
         return;
       }
       if (!numeroDestino) {
         alert('Número de destino do WhatsApp não configurado.');
-        if (waWin && !waWin.closed) waWin.close();
+        
         return;
       }
 
@@ -163,12 +181,7 @@
       var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(textoFallback);
 
       // redireciona usando a aba pré‑aberta (anti-popup)
-      if (waWin && !waWin.closed) {
-        try { waWin.location.href = waUrl; }
-        catch(e){ window.location.href = waUrl; }
-      } else {
-        window.location.href = waUrl;
-      }
+      abrirWhats(waUrl);
 
       closeModal('bvgn-cotacao-modal');
       return;
@@ -217,13 +230,7 @@
       var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
 
  
-      if (waWin && !waWin.closed) {
-        try { waWin.location.href = waUrl; }
-        catch(e){ window.location.href = waUrl; }
-      } else {
-        window.location.href = waUrl;
-      }
-
+      abrirWhats(waUrl);
     })
     .fail(function(){
       alert('Não foi possível gerar o PDF agora. Vou abrir o WhatsApp sem o link do arquivo.');
@@ -250,12 +257,7 @@
       var texto = linhas.join('\n');
       var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
 
-      if (waWin && !waWin.closed) {
-        try { waWin.location.href = waUrl; }
-        catch(e){ window.location.href = waUrl; }
-      } else {
-        window.location.href = waUrl;
-      }
+      abrirWhats(waUrl);
     })
     .always(function(){
       if (btnSubmit) { btnSubmit.disabled = false; btnSubmit.textContent = 'Enviar'; }
