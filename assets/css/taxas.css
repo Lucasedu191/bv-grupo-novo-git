@@ -401,7 +401,7 @@ label.bvgn-taxa::after {
   background: #22c55e; color: #fff; letter-spacing:.02em;
 }
 
-.bvgn-taxa-caucao .lbl {
+.bvgn-taxa.bvgn-taxa-caucao .lbl {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -414,23 +414,23 @@ label.bvgn-taxa::after {
   background: #fff;
 }
 
-.bvgn-taxa-caucao .bvgn-icon {
+.bvgn-taxa.bvgn-taxa-caucao .bvgn-icon {
   max-width: 40px;
   height: auto;
   margin-bottom: 8px;
 }
 
-.bvgn-taxa-caucao .texto {
+.bvgn-taxa.bvgn-taxa-caucao .texto {
   font-size: 14px;
   line-height: 1.3;
 }
 
-.bvgn-taxa-caucao .preco {
+.bvgn-taxa.bvgn-taxa-caucao .preco {
   font-weight: bold;
   font-size: 16px;
 }
 
-.bvgn-taxa-caucao .botao-fake {
+.bvgn-taxa.bvgn-taxa-caucao .botao-fake {
   background-color: #2563eb;
   color: #fff;
   font-weight: 500;

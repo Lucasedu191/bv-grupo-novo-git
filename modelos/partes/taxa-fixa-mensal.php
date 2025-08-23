@@ -79,7 +79,7 @@ if ($is_mensal && $grupo && $caucao !== null && $km !== null):
   />
 
   <!-- visual no mesmo formato das outras taxas -->
-  <label class="bvgn-taxa selecionado obrigatorio">
+  <label class="bvgn-taxa selecionado obrigatorio bvgn-taxa-caucao">
   <input type="checkbox" checked disabled />
   <span class="lbl">
     <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos01.svg'; ?>" alt="">
