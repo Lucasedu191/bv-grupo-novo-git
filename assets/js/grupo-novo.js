@@ -522,6 +522,17 @@ function calcular($cx){
       }
     }
 
+    if (tipo === 'diario') {
+    const inicio = $cx.find('.bvgn-data-inicio').val();
+    const fim = $cx.find('.bvgn-data-fim').val();
+    console.log('[BVGN] Datas selecionadas:', { inicio, fim });
+
+    if (!inicio || !fim) {
+      alert('Selecione as datas de início e fim.');
+      console.warn('[BVGN] Datas incompletas.');
+      return;
+    }
+
     const dias = diferencaDiasSeguro(inicio, fim);
     const $inputs = $cx.find('.bvgn-variacao input[type=radio]');
     let varSelecionada = null;
