@@ -67,199 +67,169 @@
 }
 
 /* classes para o template do pdf */
-
-/* GERAL */
+/* ======= Base ======= */
 body {
   font-family: Arial, sans-serif;
   font-size: 12px;
   color: #333;
   margin: 0;
   padding: 0;
+  background: #fff;
 }
 
-/* CABEÇALHO */
+/* Reserva espaço para o rodapé fixo */
+.cotacao-container {
+  padding: 32px;
+  padding-bottom: 120px;
+  page-break-inside: avoid;
+}
+
+/* ======= Marca d’água (usa div .marca-dagua no HTML) ======= */
+.marca-dagua {
+  position: fixed;
+  inset: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 70%;
+  opacity: .05;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Garante que conteúdo fique acima da marca d’água */
+.cotacao-cabecalho,
+.cotacao-container,
+.cotacao-rodape { position: relative; z-index: 1; }
+
+/* ======= Cabeçalho ======= */
 .cotacao-cabecalho {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 32px;
-  border-bottom: 2px solid #163c67;
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 16px;
+  padding: 18px 32px 14px;
+  border-bottom: 2px solid #0b0b0b;
+  margin-bottom: 18px;
 }
 
 .cabecalho-col-esq .marca {
   font-size: 24px;
-  font-weight: bold;
-  color: #163c67;
+  font-weight: 700;
+  color: #0b0b0b;
   margin: 0;
   letter-spacing: 1px;
 }
 
 .cabecalho-col-dir .titulo-topo {
-  font-size: 18px;
-  font-weight: bold;
   text-align: right;
-  color: #000;
-  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: .02em;
   text-transform: uppercase;
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.1;
 }
+.cabecalho-col-dir .titulo-topo span { font-weight: 900; display: block; }
 
-.cabecalho-col-dir .titulo-topo span {
-  font-size: 14px;
-  font-weight: normal;
-  display: block;
-}
-
-/* CONTAINER PRINCIPAL */
-.cotacao-container {
-  padding: 32px;
-  page-break-inside: avoid;
-}
-
-/* DADOS */
+/* ======= Seção “Dados” ======= */
 .cotacao-dados {
   display: flex;
   justify-content: space-between;
   gap: 32px;
   margin-bottom: 32px;
 }
-
 .cotacao-dados h2 {
   font-size: 14px;
-  margin-bottom: 8px;
-  color: #163c67;
+  margin: 0 0 8px 0;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: #0b0b0b;
 }
+.cotacao-dados p { margin: 4px 0; }
 
-.cotacao-dados p {
-  margin: 4px 0;
-}
-
-/* VALORES */
-.cotacao-valores {
-  margin-top: 24px;
-}
-
+/* ======= Seção “Valores” ======= */
+.cotacao-valores { margin-top: 24px; }
 .cotacao-valores h2 {
   font-size: 14px;
-  margin-bottom: 12px;
-  color: #163c67;
+  margin: 0 0 12px 0;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: #0b0b0b;
 }
-
 .cotacao-valores table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 12.5px;
 }
-
-.cotacao-valores th {
-  background: #f4f4f4;
+.cotacao-valores thead th {
+  background: #f2f3f5;
+  border: 1px solid #dcdfe3;
+  padding: 8px 10px;
   text-align: left;
-  padding: 10px;
-  font-weight: bold;
-  border: 1px solid #ccc;
+}
+.cotacao-valores tbody td {
+  border: 1px solid #e6e9ee;
+  padding: 8px 10px;
+}
+.cotacao-valores tbody tr.total td {
+  font-weight: 800;
+  border-top: 2px solid #0b0b0b;
+  font-size: 13.5px;
 }
 
-.cotacao-valores td {
-  padding: 10px;
-  border: 1px solid #ccc;
-}
-
-.cotacao-valores tr.total td {
-  background-color: #163c67;
-  color: #fff;
-  font-weight: bold;
-  font-size: 13px;
-}
-
-/* RODAPÉ */
-.cotacao-rodape {
-  background-color: #163c67;
-  color: #fff;
-  padding: 20px 32px;
-  margin-top: 40px;
-}
-
-.rodape-conteudo {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 20px;
-}
-
-.rodape-logo img {
-  width: 60px;
-  height: auto;
-}
-
-.info-empresa p {
-  margin: 4px 0;
-  font-size: 11px;
-}
-
-.validez {
-  margin-top: 8px;
-  font-style: italic;
-}
-/* RODAPÉ PERFEITO */
+/* ======= Rodapé fixo (full-bleed + barra branca) ======= */
 .cotacao-rodape {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #1b2554;
+  left: 0; right: 0; bottom: 0;
+  background: #0b0b0b;
   color: #fff;
-  font-size: 11px;
   padding: 0;
-  margin: 0;
+  z-index: 2;
   height: 100px;
   box-sizing: border-box;
 }
 
 .rodape-barra-branca {
-  height: 3px;
-  background-color: #fff;
+  height: 6px;
+  background: #fff;
   width: 100%;
 }
 
 .rodape-conteudo {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 40px;
-  height: calc(100% - 3px); /* ajusta para sobrar espaço abaixo da barra branca */
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 18px 12px;
+  height: calc(100% - 6px);
   box-sizing: border-box;
 }
 
 .rodape-logo img {
-  height: 60px;
+  height: 28px;
   width: auto;
+  filter: brightness(0) invert(1); /* logo branca */
   display: block;
 }
 
-.rodape-logo {
-  display: flex;
-  align-items: center;
-}
-
-.rodape-divider {
-  width: 1px;
-  height: 60px;
-  background-color: #fff;
-  margin: 0 20px;
-}
-
 .info-empresa {
-  text-align: left;
-  line-height: 1.4;
+  text-align: right;
+  line-height: 1.35;
+  font-size: 11.5px;
+  color: #f6f7f9;
 }
-
-.info-empresa p {
-  margin: 0;
-  font-size: 11px;
-}
-
-.validez {
+.info-empresa .validez {
   margin-top: 4px;
   font-style: italic;
-  font-size: 10px;
+  opacity: .9;
+}
+
+/* ======= Responsivo simples (visualização web) ======= */
+@media (max-width: 700px) {
+  .cotacao-cabecalho { grid-template-columns: 1fr; padding-left: 20px; padding-right: 20px; }
+  .cabecalho-col-dir .titulo-topo { text-align: left; }
+  .cotacao-container { padding-left: 20px; padding-right: 20px; }
+  .rodape-conteudo { flex-direction: column; align-items: flex-start; }
+  .info-empresa { text-align: left; }
 }
 
 

@@ -3,6 +3,9 @@ $cssPath = BVGN_DIR . 'assets/css/cotacao.css';
 $css = file_exists($cssPath) ? file_get_contents($cssPath) : '';
 $data = date('d/m/Y');
 $codigo = strtoupper(substr(wp_hash(microtime()), 0, 5));
+
+$logoUrl      = BVGN_URL . 'assets/img/logo-bvlocadora.png'; // topo
+$logoMarcaDagua = $logoUrl; // usa a mesma imagem como marca d'água
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -10,15 +13,28 @@ $codigo = strtoupper(substr(wp_hash(microtime()), 0, 5));
   <meta charset="utf-8">
   <style><?= $css ?></style>
 </head>
-<body>
+<body class="pdf-cotacao">
 
-<!-- Cabeçalho moderno -->
+<!-- Marca d'água de fundo -->
+<div class="marca-dagua" aria-hidden="true" style="background-image:url('<?= esc_url($logoUrl ?? "https://bvlocadora.com.br/wp-content/uploads/2019/04/logo-boton-bv-locadora.png") ?>')"></div>
+
+
+<!-- Cabeçalho moderno / timbrado -->
 <header class="cotacao-cabecalho">
   <div class="cabecalho-col-esq">
-    <h1 class="marca">BVLOCADORA</h1>
+    <img class="logo-topo" src="<?= esc_url($logoUrl) ?>" alt="BV Locadora" />
+    <div class="empresa-info">
+      <strong>BV Locadora</strong><br>
+      CNPJ: 31.315.055/0001-14<br>
+      Rua Coronel Mota, 629 — Centro — Boa Vista/RR — CEP: 69301-120<br>
+      Tel: (95) 98102-2395 — E-mail: bvlocadora@outlook.com — www.bvlocadora.com.br
+    </div>
   </div>
   <div class="cabecalho-col-dir">
     <p class="titulo-topo">COTAÇÃO<br><span>DE SERVIÇO</span></p>
+    <div class="caixa-meta">
+      <div><strong>Data:</strong> <?= $data ?></div>
+    </div>
   </div>
 </header>
 
@@ -62,22 +78,6 @@ $codigo = strtoupper(substr(wp_hash(microtime()), 0, 5));
     </table>
   </section>
 </main>
-
-<!-- Rodapé fixado lindo -->
-<footer class="cotacao-rodape">
-  <div class="rodape-barra-branca"></div>
-  <div class="rodape-conteudo">
-    <div class="rodape-logo">
-      <img src="https://bvlocadora.com.br/wp-content/uploads/2019/04/logo-boton-bv-locadora.png" alt="Logo BV">
-    </div>
-    <div class="info-empresa">
-      <p>Rua Coronel Mota, 629, Centro - Boa Vista, Roraima, CEP: 69301-120</p>
-      <p>(95) 98102-2395 &nbsp;|&nbsp; bvlocadora@outlook.com</p>
-      <p>www.bvlocadora.com.br</p>
-      <p class="validez">A cotação possui validade de 5 dias.</p>
-    </div>
-  </div>
-</footer>
 
 </body>
 </html>
