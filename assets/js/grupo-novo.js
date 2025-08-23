@@ -476,6 +476,19 @@ function calcular($cx){
       console.warn('[BVGN] Erro ao carregar dados do agendamento:', e);
     }
   }
+  // Depois do bloco que trata agendamentoRaw ...
+  setTimeout(function(){
+    const inicioVal = $('.bvgn-data-inicio').val();
+    const fimVal    = $('.bvgn-data-fim').val();
+    console.log('[BVGN][CHECK-INICIAL]', { inicio: inicioVal, fim: fimVal });
+
+    if (!inicioVal || !fimVal) {
+      console.warn('[BVGN] Usuário acessou direto, datas ainda não preenchidas.');
+      $('.bvgn-container').each(function(){
+        setMsg($(this), 'Selecione as datas de início e fim antes de gerar a cotação.');
+      });
+    }
+  }, 160);
   
   $('.bvgn-container').each(function(){
      const $cx = $(this);
@@ -497,8 +510,6 @@ function calcular($cx){
 
       if (!inicio || !fim) {
         setMsg($cx, 'Selecione as datas de início e fim.');
-        alert('Selecione as datas de início e fim.');
-        $cx.find(!inicio ? '.bvgn-data-inicio' : '.bvgn-data-fim').focus();
         return;
       }
 
@@ -530,9 +541,6 @@ function calcular($cx){
     if (!inicio || !fim) {
       alert('Selecione as datas de início e fim.');
       console.warn('[BVGN] Datas incompletas.');
-
-      setMsg($cx, 'Selecione as datas de início e fim.');
-      $cx.find(!inicio ? '.bvgn-data-inicio' : '.bvgn-data-fim').focus();
       return;
     }
 
