@@ -36,6 +36,14 @@
     form.addEventListener('submit', function(e){
       e.preventDefault();
 
+      // Pré-abre aba/janela dentro do clique do usuário (escapa de bloqueios)
+      var waWin = null;
+      try {
+        waWin = window.open('about:blank','_blank','noopener,noreferrer');
+      } catch(e) {
+        waWin = null; // se bloqueou
+      }
+
       var data = new FormData(form);
       var payload = {
         produto_id:       data.get('produto_id') || null,
@@ -62,14 +70,17 @@
       // Validações
       if(!payload.nome){
         alert('Informe seu nome.');
+        if (waWin && !waWin.closed) waWin.close();
         return;
       }
       if (!numeroCliente) {
         alert('Informe um número de WhatsApp válido.');
+        if (waWin && !waWin.closed) waWin.close();
         return;
       }
       if (!numeroDestino) {
         alert('Número de destino do WhatsApp não configurado.');
+        if (waWin && !waWin.closed) waWin.close();
         return;
       }
 
@@ -125,34 +136,43 @@
 
       // ===== Se não houver BVGN.ajaxUrl, faz fallback direto para o WhatsApp (sem PDF) =====
       if (!window.BVGN || !BVGN.ajaxUrl) {
-        var linhasFallback = [];
-        linhasFallback.push('Olá! Quero uma cotação.');
-        if (payload.nome) linhasFallback.push('Nome: ' + payload.nome);
-        linhasFallback.push('Whats do cliente: +' + numeroClienteIntl);
-        // Nome do produto (em vez do ID)
-        var produtoNome = '';
-        var cx = document.querySelector('.bvgn-container');
-        if (cx) {
-          var t = cx.querySelector('h1.product_title, .product_title, .entry-title, h1') ||
-                  document.querySelector('h1.product_title, .product_title, .entry-title, h1');
-          if (t && t.textContent) produtoNome = t.textContent.trim();
-          if (!produtoNome) {
-            var dataNome = cx.getAttribute('data-produto-nome');
-            if (dataNome) produtoNome = String(dataNome).trim();
-          }
+      var linhasFallback = [];
+      linhasFallback.push('Olá! Quero uma cotação.');
+      if (payload.nome) linhasFallback.push('Nome: ' + payload.nome);
+      linhasFallback.push('Whats do cliente: +' + numeroClienteIntl);
+      // Nome do produto (em vez do ID)
+      var produtoNome = '';
+      // var cx = document.querySelector('.bvgn-container');
+      if (cx) {
+        var t = cx.querySelector('h1.product_title, .product_title, .entry-title, h1') ||
+                document.querySelector('h1.product_title, .product_title, .entry-title, h1');
+        if (t && t.textContent) produtoNome = t.textContent.trim();
+        if (!produtoNome) {
+          var dataNome = cx.getAttribute('data-produto-nome');
+          if (dataNome) produtoNome = String(dataNome).trim();
         }
-        if (produtoNome) linhasFallback.push('Produto: ' + produtoNome);
-
-        if (variacaoRotulo) linhasFallback.push('Variação: ' + variacaoRotulo);
-        if (datas.inicio || datas.fim) linhasFallback.push('Período: ' + (datas.inicio || '—') + ' até ' + (datas.fim || '—'));
-        if (infoCliente) linhasFallback.push('Observações: ' + infoCliente);
-        if (payload.mensagem) linhasFallback.push('Mensagem: ' + payload.mensagem);
-
-        var textoFallback = linhasFallback.join('\n');
-        window.location.href = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(textoFallback);
-        closeModal('bvgn-cotacao-modal');
-        return;
       }
+      if (produtoNome) linhasFallback.push('Produto: ' + produtoNome);
+
+      if (variacaoRotulo) linhasFallback.push('Variação: ' + variacaoRotulo);
+      if (datas.inicio || datas.fim) linhasFallback.push('Período: ' + (datas.inicio || '—') + ' até ' + (datas.fim || '—'));
+      if (infoCliente) linhasFallback.push('Observações: ' + infoCliente);
+      if (payload.mensagem) linhasFallback.push('Mensagem: ' + payload.mensagem);
+
+      var textoFallback = linhasFallback.join('\n');
+      var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(textoFallback);
+
+      // redireciona usando a aba pré‑aberta (anti-popup)
+      if (waWin && !waWin.closed) {
+        try { waWin.location.href = waUrl; }
+        catch(e){ window.location.href = waUrl; }
+      } else {
+        window.location.href = waUrl;
+      }
+
+      closeModal('bvgn-cotacao-modal');
+      return;
+    }
 
       // ===== Monta carga p/ gerar PDF (mesmo formato do botão antigo) =====
       var carga = {
@@ -193,8 +213,17 @@
       if (pdfUrl) linhas.push('PDF da cotação: ' + pdfUrl);
 
       var texto = linhas.join('\n');
-      var waLink = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(texto);
-      window.open(waLink, '_blank');
+      // var waLink = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(texto);
+      var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
+
+ 
+      if (waWin && !waWin.closed) {
+        try { waWin.location.href = waUrl; }
+        catch(e){ window.location.href = waUrl; }
+      } else {
+        window.location.href = waUrl;
+      }
+
     })
     .fail(function(){
       alert('Não foi possível gerar o PDF agora. Vou abrir o WhatsApp sem o link do arquivo.');
@@ -202,12 +231,12 @@
       linhas.push('Olá! Quero uma cotação.');
       if (payload.nome) linhas.push('Nome: ' + payload.nome);
       linhas.push('Whats do cliente: +' + numeroClienteIntl);
-      
+
       var produtoNome = '';
       if (cx) {
-        var t =
-          cx.querySelector('h1.product_title, .product_title, .entry-title, h1') ||
-          document.querySelector('h1.product_title, .product_title, .entry-title, h1');
+        var t = 
+        cx.querySelector('h1.product_title, .product_title, .entry-title, h1') ||
+                document.querySelector('h1.product_title, .product_title, .entry-title, h1');
         if (t && t.textContent) {
           produtoNome = t.textContent.trim();
         }
@@ -219,7 +248,14 @@
       if (datas.inicio || datas.fim) linhas.push('Período: ' + (datas.inicio || '—') + ' até ' + (datas.fim || '—'));
 
       var texto = linhas.join('\n');
-      window.location.href = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(texto);
+      var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
+
+      if (waWin && !waWin.closed) {
+        try { waWin.location.href = waUrl; }
+        catch(e){ window.location.href = waUrl; }
+      } else {
+        window.location.href = waUrl;
+      }
     })
     .always(function(){
       if (btnSubmit) { btnSubmit.disabled = false; btnSubmit.textContent = 'Enviar'; }
