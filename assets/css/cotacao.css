@@ -67,83 +67,78 @@
 }
 
 /* classes para o template do pdf */
-/* ======= Base ======= */
+/* ===== Página / Base ===== */
+@page {                     /* A4 com margens reais */
+  margin: 18mm 16mm 20mm 16mm;  /* top | right | bottom | left */
+}
 
-html, body { background:#fff !important; margin:0; padding:0; }
+html, body {
+  background: #fff !important;
+  margin: 0; padding: 0;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  color: #333;
+}
 
-/* conteúdo acima da marca d’água */
+/* Camadas: conteúdo acima da marca d’água */
 .cotacao-cabecalho,
 .cotacao-container,
 .cotacao-rodape { position: relative; z-index: 2; background: transparent; }
 
-/* marca d’água fixa centralizada (uma única) */
-.marca-dagua{
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.marca-dagua img{
-  max-width: 80%;
-  max-height: 80%;
-  opacity: 0.08;     /* ajuste: 0.05 ~ 0.10 */
-  filter: none;      /* nada de grayscale/mix-blend */
-}
-
-/* Garante que conteúdo fique acima da marca d’água */
+/* Largura de leitura e centrado */
 .cotacao-cabecalho,
-.cotacao-container,
-.cotacao-rodape { position: relative; z-index: 2; }
-
-/* ======= Cabeçalho ======= */
-.cotacao-cabecalho,
-.cotacao-container{
-  background: transparent;
+.cotacao-container {
+  max-width: 170mm;                /* ~646px */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
-.cabecalho-col-esq .marca {
-  font-size: 24px;
-  font-weight: 700;
-  color: #0b0b0b;
-  margin: 0;
-  letter-spacing: 1px;
+/* ===== Cabeçalho ===== */
+.cotacao-cabecalho {
+  display: grid;
+  grid-template-columns: 140px 1fr;  /* logo | texto (e título à direita) */
+  gap: 12px;
+  padding: 10mm 0 6mm;               /* respira com a @page */
+  border-bottom: 2px solid #0b0b0b;
+  align-items: start;
 }
+.logo-topo { height: 46px; width: auto; display: block; margin-top: 2mm; }
+.empresa-info { font-size: 10.5px; line-height: 1.28; color: #222; }
 
-.cabecalho-col-dir .titulo-topo {
+.titulo-topo {
   text-align: right;
-  font-weight: 800;
-  letter-spacing: .02em;
-  text-transform: uppercase;
   margin: 0;
   font-size: 20px;
   line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: .02em;
+  text-transform: uppercase;
 }
-.cabecalho-col-dir .titulo-topo span { font-weight: 900; display: block; }
+.titulo-topo span { font-weight: 900; }
 
-/* ======= Seção “Dados” ======= */
+/* ===== Seção “Dados” ===== */
 .cotacao-dados {
   display: flex;
   justify-content: space-between;
   gap: 32px;
-  margin-bottom: 32px;
+  margin: 8mm 0 10mm;
 }
 .cotacao-dados h2 {
-  font-size: 14px;
-  margin: 0 0 8px 0;
+  font-size: 13.5px;
+  margin: 0 0 6mm 0;
   letter-spacing: .02em;
   text-transform: uppercase;
   color: #0b0b0b;
 }
-.cotacao-dados p { margin: 4px 0; }
+.cotacao-dados p { margin: 2mm 0; }
 
-/* ======= Seção “Valores” ======= */
-.cotacao-valores { margin-top: 24px; }
+/* ===== Seção “Valores” ===== */
+.cotacao-valores { margin-top: 6mm; }
 .cotacao-valores h2 {
-  font-size: 14px;
-  margin: 0 0 12px 0;
+  font-size: 13.5px;
+  margin: 0 0 6mm 0;
   letter-spacing: .02em;
   text-transform: uppercase;
   color: #0b0b0b;
@@ -154,14 +149,14 @@ html, body { background:#fff !important; margin:0; padding:0; }
   font-size: 12.5px;
 }
 .cotacao-valores thead th {
-  background: #f2f3f5;
-  border: 1px solid #dcdfe3;
-  padding: 8px 10px;
+  background: #f3f5f8;
+  border: 1px solid #e2e6ec;
+  padding: 6px 10px;
   text-align: left;
 }
 .cotacao-valores tbody td {
-  border: 1px solid #e6e9ee;
-  padding: 8px 10px;
+  border: 1px solid #eef1f5;
+  padding: 6px 10px;
 }
 .cotacao-valores tbody tr.total td {
   font-weight: 800;
@@ -169,7 +164,25 @@ html, body { background:#fff !important; margin:0; padding:0; }
   font-size: 13.5px;
 }
 
-/* ======= Rodapé fixo (full-bleed + barra branca) ======= */
+/* ===== Marca-d’água (única, central e mais baixa) ===== */
+.marca-dagua {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.marca-dagua img{
+  position: absolute;
+  left: 50%;
+  top: 62%;                      /* desce para ~metade da página */
+  transform: translate(-50%, -50%);
+  width: 58%;                    /* menor */
+  height: auto;
+  opacity: .12;                  /* um pouco mais forte; ajuste .10 ~ .14 */
+  filter: none;                  /* mantém as cores */
+}
+
+/* ===== Rodapé fixo (full-bleed + barra branca) ===== */
 .cotacao-rodape {
   position: fixed;
   left: 0; right: 0; bottom: 0;
@@ -180,14 +193,10 @@ html, body { background:#fff !important; margin:0; padding:0; }
   height: 100px;
   box-sizing: border-box;
 }
-
-.rodape-barra-branca {
-  height: 6px;
-  background: #fff;
-  width: 100%;
-}
-
+.rodape-barra-branca { height: 6px; background: #fff; width: 100%; }
 .rodape-conteudo {
+  max-width: 170mm;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -196,53 +205,30 @@ html, body { background:#fff !important; margin:0; padding:0; }
   height: calc(100% - 6px);
   box-sizing: border-box;
 }
-
 .rodape-logo img {
   height: 28px;
   width: auto;
-  filter: brightness(0) invert(1); /* logo branca */
+  filter: brightness(0) invert(1); /* deixa branca sobre o fundo escuro */
   display: block;
 }
-
 .info-empresa {
   text-align: right;
   line-height: 1.35;
   font-size: 11.5px;
   color: #f6f7f9;
 }
-.info-empresa .validez {
-  margin-top: 4px;
-  font-style: italic;
-  opacity: .9;
-}
+.info-empresa .validez { margin-top: 4px; font-style: italic; opacity: .9; }
 
-/* ======= Responsivo simples (visualização web) ======= */
+/* ===== Visualização web (responsivo simples) ===== */
 @media (max-width: 700px) {
-  .cotacao-cabecalho { grid-template-columns: 1fr; padding-left: 20px; padding-right: 20px; }
-  .cabecalho-col-dir .titulo-topo { text-align: left; }
-  .cotacao-container { padding-left: 20px; padding-right: 20px; }
+  .cotacao-cabecalho { grid-template-columns: 1fr; padding-left: 0; padding-right: 0; }
+  .titulo-topo { text-align: left; }
+  .cotacao-container { padding-left: 0; padding-right: 0; }
   .rodape-conteudo { flex-direction: column; align-items: flex-start; }
   .info-empresa { text-align: left; }
 }
-/* Garante que conteúdo fique acima da marca d’água */
-.cotacao-cabecalho,
-.cotacao-container,
-.cotacao-rodape { position: relative; z-index: 1; }
 
-/* === Logo pequena no topo (lado esquerdo) === */
-.logo-topo{
-  height: 56px;           /* ajuste fino do tamanho */
-  width: auto;
-  display: block;
-  margin: 0 0 8px 0;
-}
-
-/* (opcional) melhora consistência na impressão em PDF */
-.pdf-cotacao{
-  -webkit-print-color-adjust: exact;
-  print-color-adjust: exact;
-}
-
-
+/* melhora cores no PDF */
+.pdf-cotacao{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
 /*FIM  classes para o template do pdf */

@@ -23,18 +23,20 @@ $wmUrl   = $logoUrl; // marca d’água central
 <!-- Cabeçalho moderno / timbrado -->
 <header class="cotacao-cabecalho">
   <div class="cabecalho-col-esq">
-    <img class="logo-topo" src="<?= esc_url($logoUrl) ?>" alt="BV Locadora" />
-    <div class="empresa-info">
-      <strong>BV Locadora</strong><br>
+    <img class="logo-topo" src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png" alt="BV Locadora" />
+  </div>
+
+  <div class="cabecalho-col-mid">
+    <div class="empresa-info-top">
+      <strong>A. F. COMERCIO E SERVICOS LTDA</strong><br>
       CNPJ: 31.315.055/0001-14<br>
-      Rua Coronel Mota, 629 — Centro — Boa Vista/RR — CEP: 69301-120<br>
-      Tel: (95) 98102-2395 — E-mail: bvlocadora@outlook.com — www.bvlocadora.com.br
+      R. Cel. Mota, Centro, 629 — Boa Vista/RR — CEP: 69301-120<br>
+      TEL: (95) 98102-2395 — E-mail: bvlocadora@outlook.com
     </div>
   </div>
 
   <div class="cabecalho-col-dir">
     <p class="titulo-topo">COTAÇÃO<br><span>DE SERVIÇO</span></p>
-    <!-- se você já tem a caixa de Data/Nº, mantenha aqui -->
   </div>
 </header>
 
