@@ -80,16 +80,16 @@ if ($is_mensal && $grupo && $caucao !== null && $km !== null):
 
   <!-- visual no mesmo formato das outras taxas -->
   <label class="bvgn-taxa selecionado obrigatorio">
-    <input type="checkbox" checked disabled />
-    <span class="lbl">
-      <img class="bvgn-icon" src="<?php echo esc_attr($icone); ?>" alt="" />
-      <span class="texto">
-        <?php echo esc_html($rotulo_fixo); ?>
-        <br><small>Quilometragem excedente: R$ <?php echo $km_formatado; ?>/km adicional</small>
-      </span>
-      <span class="preco">R$ <?php echo $preco_formatado; ?></span>
-      <span class="botao-fake">Selecionado</span>
+  <input type="checkbox" checked disabled />
+  <span class="lbl">
+    <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos01.svg'; ?>" alt="">
+    <span class="texto">
+      <?php echo esc_html($rotulo_fixo); ?>
+      <br><small>Quilometragem excedente: R$ <?php echo number_format((float)$km, 2, ',', '.'); ?>/km adicional</small>
     </span>
-  </label>
+    <span class="preco">R$ <?php echo number_format((float)$caucao, 2, ',', '.'); ?></span>
+    <span class="botao-fake">Selecionado</span>
+  </span>
+</label>
 
 <?php endif; ?>
