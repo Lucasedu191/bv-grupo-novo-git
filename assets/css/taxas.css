@@ -444,3 +444,34 @@ label.bvgn-taxa::after {
   padding: 4px 10px;
   border-radius: 6px;
 }
+
+/* Força a caução a ocupar 100% da linha, acima dos outros */
+.bvgn-taxas.bvgn-cards-3 .bvgn-taxa.bvgn-taxa-caucao {
+  flex: 1 1 100%;
+  max-width: 100%;
+}
+
+/* Permitir que o texto quebre linha corretamente */
+.bvgn-taxa.bvgn-taxa-caucao .texto {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: center;
+  color: #0f172a;
+}
+
+/* Reduzir padding e gap para liberar espaço vertical */
+.bvgn-taxa.bvgn-taxa-caucao .lbl {
+  padding: 12px;
+  gap: 6px;
+}
+
+/* Também aplicável para mobile, se necessário */
+@media (max-width: 640px) {
+  .bvgn-taxas.bvgn-cards-3 .bvgn-taxa.bvgn-taxa-caucao {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
