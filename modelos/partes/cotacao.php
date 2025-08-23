@@ -21,25 +21,34 @@ $wmUrl   = $logoUrl; // marca d’água central
 </div>
 
 <!-- Cabeçalho timbrado: logo + infos (lado a lado) | título à direita -->
+<!-- Cabeçalho timbrado: [logo | infos] + [título] -->
 <header class="cotacao-cabecalho">
-  <!-- Bloco esquerdo COMPACTO: logo + texto ao lado -->
-  <div class="cabecalho-bloco-esq">
-    <div class="brandline">
-      <img class="logo-topo" src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png" alt="BV Locadora" />
-      <div class="empresa-info">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+    <tr valign="middle">
+      <!-- COL 1: LOGO -->
+      <td width="78" style="padding:0 8px 0 0;">
+        <img src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png"
+             alt="BV Locadora" style="display:block;height:56px;width:auto;">
+      </td>
+
+      <!-- COL 2: INFOS (à ESQUERDA, na MESMA LINHA da logo) -->
+      <td style="padding:0; font-size:10.5px; line-height:1.28; color:#222; text-align:left;">
         <strong>A. F. COMERCIO E SERVICOS LTDA</strong><br>
         CNPJ: 31.315.055/0001-14<br>
         R. Cel. Mota, Centro, 629 — Boa Vista/RR — CEP: 69301-120<br>
         TEL: (95) 98102-2395 — E-mail: bvlocadora@outlook.com
-      </div>
-    </div>
-  </div>
+      </td>
 
-  <!-- Bloco direito: título -->
-  <div class="cabecalho-col-dir">
-    <p class="titulo-topo">COTAÇÃO<br><span>DE SERVIÇO</span></p>
-  </div>
+      <!-- COL 3: TÍTULO (à DIREITA) -->
+      <td width="220" align="right" style="padding:0 0 0 12px;">
+        <p style="margin:0; font: 800 20px/1.1 Arial, sans-serif; letter-spacing:.02em; text-transform:uppercase; text-align:right;">
+          COTAÇÃO<br><span style="font-weight:900;">DE SERVIÇO</span>
+        </p>
+      </td>
+    </tr>
+  </table>
 </header>
+
 
 <!-- Conteúdo -->
 <main class="cotacao-container">
