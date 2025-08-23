@@ -96,33 +96,25 @@ html, body {
 }
 
 /* ===== Cabeçalho ===== */
-.cotacao-cabecalho {
-  grid-template-columns: 160px 1fr 240px; /* garante 3 colunas */
-  align-items: center !important;      /* tudo na mesma linha/altura da logo */
+/* Header em 2 colunas: esquerda (logo+texto) | direita (título) */
+.cotacao-cabecalho{
+  display:grid !important;
+  grid-template-columns: 1fr 240px !important;
   gap: 14px !important;
-  padding-top: 8mm !important;
-  padding-bottom: 5mm !important;
-}
-.cabecalho-col-mid{
-  display: flex !important;
   align-items: center !important;
-  justify-content: flex-start !important;
-  padding-left: 6px;   
 }
-.logo-topo { height: 46px; width: auto; display: block; margin-top: 2mm; }
+
+/* Linha da marca (logo + infos lado a lado) */
+.brandline{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .empresa-info{
-  text-align:center;                  /* texto centralizado */
-  font-size:10.5px;
-  line-height:1.28;
-  color:#222;
-  margin:0;                           /* zera margens extras */
-}
-.cabecalho-col-mid .empresa-info{
-  text-align: left !important;
+  text-align: left;
   line-height: 1.28;
-  font-size: 10.5px;
-  margin: 0 !important;
-  max-width: none !important;  
+  font-size: 10.5px;                          /* zera margens extras */
 }
 .titulo-topo {
   text-align: right;
@@ -135,12 +127,11 @@ html, body {
 }
 
 .logo-topo{
-  height: 56px !important;
-  width: auto !important;
-  margin: 0 !important;
+   height: 56px;      /* ajuste fino aqui (ex.: 52–60px) */
+  width: auto;
   display: block;
+  margin: 0;
 }
-.titulo-topo span { font-weight: 900; }
 
 /* ===== Seção “Dados” ===== */
 .cotacao-dados {

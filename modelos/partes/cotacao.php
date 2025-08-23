@@ -20,22 +20,22 @@ $wmUrl   = $logoUrl; // marca d’água central
   <img src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png" alt="">
 </div>
 
-<!-- Cabeçalho moderno / timbrado -->
+<!-- Cabeçalho timbrado: logo + infos (lado a lado) | título à direita -->
 <header class="cotacao-cabecalho">
-  <div class="cabecalho-col-esq">
-    <img class="logo-topo" src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png" alt="BV Locadora" />
-  </div>
-
-  <!-- COLUNA CENTRAL (texto da empresa) -->
-  <div class="cabecalho-col-mid">
-    <div class="empresa-info">
-      <strong>A. F. COMERCIO E SERVICOS LTDA</strong><br>
-      CNPJ: 31.315.055/0001-14<br>
-      R. Cel. Mota, Centro, 629 — Boa Vista/RR — CEP: 69301-120<br>
-      TEL: (95) 98102-2395 — E-mail: bvlocadora@outlook.com
+  <!-- Bloco esquerdo COMPACTO: logo + texto ao lado -->
+  <div class="cabecalho-bloco-esq">
+    <div class="brandline">
+      <img class="logo-topo" src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png" alt="BV Locadora" />
+      <div class="empresa-info">
+        <strong>A. F. COMERCIO E SERVICOS LTDA</strong><br>
+        CNPJ: 31.315.055/0001-14<br>
+        R. Cel. Mota, Centro, 629 — Boa Vista/RR — CEP: 69301-120<br>
+        TEL: (95) 98102-2395 — E-mail: bvlocadora@outlook.com
+      </div>
     </div>
   </div>
 
+  <!-- Bloco direito: título -->
   <div class="cabecalho-col-dir">
     <p class="titulo-topo">COTAÇÃO<br><span>DE SERVIÇO</span></p>
   </div>
