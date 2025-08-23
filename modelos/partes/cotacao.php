@@ -20,35 +20,34 @@ $wmUrl   = $logoUrl; // marca d’água central
   <img src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png" alt="">
 </div>
 
-<!-- Cabeçalho timbrado: logo + infos (lado a lado) | título à direita -->
-<!-- Cabeçalho timbrado: [logo | infos] + [título] -->
-<header class="cotacao-cabecalho">
+
+<!-- Cabeçalho timbrado sem título (título vai abaixo) -->
+<header class="cotacao-cabecalho" style="margin-top:6mm;">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
     <tr valign="middle">
-      <!-- COL 1: LOGO -->
-      <td width="78" style="padding:0 8px 0 0;">
+      <!-- LOGO -->
+      <td width="88" style="padding:0 8px 0 0;">
         <img src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png"
-             alt="BV Locadora" style="display:block;height:56px;width:auto;">
+             alt="BV Locadora" style="display:block;height:58px;width:auto;">
       </td>
 
-      <!-- COL 2: INFOS (à ESQUERDA, na MESMA LINHA da logo) -->
+      <!-- ESPAÇADOR: empurra o texto para a direita (ajuste aqui se quiser mais) -->
+      <td width="28" style="padding:0;"></td>
+
+      <!-- INFOS (alinhadas à ESQUERDA) -->
       <td style="padding:0; font-size:10.5px; line-height:1.28; color:#222; text-align:left;">
         <strong>A. F. COMERCIO E SERVICOS LTDA</strong><br>
         CNPJ: 31.315.055/0001-14<br>
         R. Cel. Mota, Centro, 629 — Boa Vista/RR — CEP: 69301-120<br>
         TEL: (95) 98102-2395 — E-mail: bvlocadora@outlook.com
       </td>
-
-      <!-- COL 3: TÍTULO (à DIREITA) -->
-      <td width="220" align="right" style="padding:0 0 0 12px;">
-        <p style="margin:0; font: 800 20px/1.1 Arial, sans-serif; letter-spacing:.02em; text-transform:uppercase; text-align:right;">
-          COTAÇÃO<br><span style="font-weight:900;">DE SERVIÇO</span>
-        </p>
-      </td>
     </tr>
   </table>
 </header>
 
+<h1 class="titulo-cotacao">
+  COTAÇÃO <span>DE SERVIÇO</span>
+</h1>
 
 <!-- Conteúdo -->
 <main class="cotacao-container">

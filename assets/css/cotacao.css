@@ -116,18 +116,20 @@ html, body {
   line-height: 1.28;
   font-size: 10.5px;                          /* zera margens extras */
 }
-.titulo-topo {
-  text-align: right;
-  margin: 0;
-  font-size: 20px;
-  line-height: 1.1;
-  font-weight: 800;
+.titulo-cotacao{
+  max-width: 170mm;               /* mesma largura do conteúdo */
+  margin: 8mm auto 6mm;           /* respiro acima/abaixo */
+  font: 800 20px/1.1 Arial, sans-serif;
   letter-spacing: .02em;
   text-transform: uppercase;
+  text-align: right;
+  border-bottom: 2px solid #0b0b0b;
+  padding-bottom: 4mm;
 }
+.titulo-cotacao span{ font-weight: 900; }
 
 .logo-topo{
-   height: 56px;      /* ajuste fino aqui (ex.: 52–60px) */
+  height: 65px;      /* ajuste fino aqui (ex.: 52–60px) */
   width: auto;
   display: block;
   margin: 0;
