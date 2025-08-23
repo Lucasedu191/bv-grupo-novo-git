@@ -97,16 +97,16 @@ html, body {
 
 /* ===== Cabeçalho ===== */
 .cotacao-cabecalho {
-  display: grid;
-  grid-template-columns: 140px 1fr 220px;  /* logo | texto (e título à direita) */
-  gap: 12px;
-  padding: 10mm 0 6mm;               /* respira com a @page */
-  align-items: center;
+  grid-template-columns: 140px 1fr 220px; /* garante 3 colunas */
+  align-items: start;                      /* cola os conteúdos no topo */
+  padding-top: 8mm !important;             /* sobe o cabeçalho */
+  padding-bottom: 5mm !important;
 }
 .cabecalho-col-mid{
-  display:flex;
-  align-items:center;                 /* centro vertical */
-  justify-content:center;             /* centro horizontal */
+  display: flex;
+  justify-content: flex-end;               /* empurra o bloco para a direita */
+  align-items: flex-start;                 /* topo */
+  margin-top: -2mm;  
 }
 .logo-topo { height: 46px; width: auto; display: block; margin-top: 2mm; }
 .empresa-info{
@@ -116,7 +116,12 @@ html, body {
   color:#222;
   margin:0;                           /* zera margens extras */
 }
-.cabecalho-col-mid .empresa-info{ max-width: 95%; }
+.cabecalho-col-mid .empresa-info{
+  text-align: right;
+  line-height: 1.25;
+  font-size: 10.5px;
+  max-width: 360px;  
+}
 .titulo-topo {
   text-align: right;
   margin: 0;
@@ -125,6 +130,11 @@ html, body {
   font-weight: 800;
   letter-spacing: .02em;
   text-transform: uppercase;
+}
+
+.logo-topo{
+  height: 44px !important;
+  margin-top: 1mm !important;
 }
 .titulo-topo span { font-weight: 900; }
 
