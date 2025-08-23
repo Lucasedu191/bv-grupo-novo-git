@@ -273,13 +273,13 @@ function calcular($cx){
     $cx.data('bvgnTotais', { base, taxas, qtd, subtotal, total, tipo });
 
     // Ajustar nome do rótulo lateral de "Serviços opcionais" no resumo
-    const $rotuloServicos = $cx.find('.bvgn-opcionais .resumo-label');
-    if ($rotuloServicos.length) {
-      if (tipo === 'mensal') {
-        $rotuloServicos.text('Taxas / Serviços opcionais:');
-      } else {
-        $rotuloServicos.text('Serviços opcionais:');
-      }
+    // Ajustar títulos conforme o tipo de plano
+    if (tipo === 'mensal') {
+      $cx.find('.bvgn-opcionais .resumo-label').text('Taxas / Serviços opcionais:');
+      $cx.find('.bvgn-servicos-opcionais .bvgn-totais-titulo').text('Taxas e serviços opcionais');
+    } else {
+      $cx.find('.bvgn-opcionais .resumo-label').text('Serviços opcionais:');
+      $cx.find('.bvgn-servicos-opcionais .bvgn-totais-titulo').text('Serviços Opcionais');
     }
 }
 
