@@ -530,6 +530,9 @@ function calcular($cx){
     if (!inicio || !fim) {
       alert('Selecione as datas de início e fim.');
       console.warn('[BVGN] Datas incompletas.');
+
+      setMsg($cx, 'Selecione as datas de início e fim.');
+      $cx.find(!inicio ? '.bvgn-data-inicio' : '.bvgn-data-fim').focus();
       return;
     }
 
