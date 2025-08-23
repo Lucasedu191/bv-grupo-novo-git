@@ -68,37 +68,30 @@
 
 /* classes para o template do pdf */
 /* ======= Base ======= */
-html, body {
-  margin: 0;
-  padding: 0;
-  background: #fff;
-}
 
-/* Reserva espaço para o rodapé fixo */
+html, body { background:#fff !important; margin:0; padding:0; }
+
 /* conteúdo acima da marca d’água */
 .cotacao-cabecalho,
 .cotacao-container,
 .cotacao-rodape { position: relative; z-index: 2; background: transparent; }
 
-/* marca d’água fixa, 1 única, centralizada */
+/* marca d’água fixa centralizada (uma única) */
 .marca-dagua{
   position: fixed;
-  inset: 0;                /* top/right/bottom/left: 0 */
-  z-index: 1;              /* atrás do conteúdo (que é z-index:2) */
+  inset: 0;
+  z-index: 1;
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
-/* usa IMG para permitir transparência sem “apagar” o fundo */
 .marca-dagua img{
-  position: absolute;
-  left: 50%;
-  top: 52%;                /* levemente abaixo do centro para não colidir com o cabeçalho */
-  transform: translate(-50%, -50%) scale(0.90); /* ajuste fino do tamanho/posicionamento */
-  height: 70vh;            /* escala pelo tamanho da página */
-  width: auto;
-  opacity: 0.08;           /* visível mas suave; ajuste entre .05 ~ .10 */
-  filter: none;            /* NÃO usar grayscale/mix-blend */
-}}
+  max-width: 80%;
+  max-height: 80%;
+  opacity: 0.08;     /* ajuste: 0.05 ~ 0.10 */
+  filter: none;      /* nada de grayscale/mix-blend */
+}
 
 /* Garante que conteúdo fique acima da marca d’água */
 .cotacao-cabecalho,
@@ -109,7 +102,7 @@ html, body {
 .cotacao-cabecalho,
 .cotacao-container{
   background: transparent;
-}}
+}
 
 .cabecalho-col-esq .marca {
   font-size: 24px;
