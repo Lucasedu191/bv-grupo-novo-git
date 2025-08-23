@@ -26,8 +26,9 @@ $wmUrl   = $logoUrl; // marca d’água central
     <img class="logo-topo" src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png" alt="BV Locadora" />
   </div>
 
+  <!-- COLUNA CENTRAL (texto da empresa) -->
   <div class="cabecalho-col-mid">
-    <div class="empresa-info-top">
+    <div class="empresa-info">
       <strong>A. F. COMERCIO E SERVICOS LTDA</strong><br>
       CNPJ: 31.315.055/0001-14<br>
       R. Cel. Mota, Centro, 629 — Boa Vista/RR — CEP: 69301-120<br>

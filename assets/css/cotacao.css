@@ -174,7 +174,7 @@ html, body {
 .marca-dagua img{
   position: absolute;
   left: 50%;
-  top: 62%;                      /* desce para ~metade da página */
+  top: 35%;                      /* desce para ~metade da página */
   transform: translate(-50%, -50%);
   width: 58%;                    /* menor */
   height: auto;
