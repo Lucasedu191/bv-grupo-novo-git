@@ -5,7 +5,7 @@ $data = date('d/m/Y');
 $codigo = strtoupper(substr(wp_hash(microtime()), 0, 5));
 
 $logoUrl      = BVGN_URL . 'assets/img/logo-bvlocadora.png'; // topo
-$logoMarcaDagua = $logoUrl; // usa a mesma imagem como marca d'água
+$wmUrl   = $logoUrl; // usa a mesma imagem como marca d'água
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -15,9 +15,10 @@ $logoMarcaDagua = $logoUrl; // usa a mesma imagem como marca d'água
 </head>
 <body class="pdf-cotacao">
 
-<!-- Marca d'água de fundo -->
-<div class="marca-dagua" aria-hidden="true" style="background-image:url('<?= esc_url($logoUrl ?? "https://bvlocadora.com.br/wp-content/uploads/2019/04/logo-boton-bv-locadora.png") ?>')"></div>
-
+<!-- Marca d’água full-page centralizada -->
+<div class="marca-dagua">
+  <img src="<?= esc_url($wmUrl) ?>" alt="" />
+</div>
 
 <!-- Cabeçalho moderno / timbrado -->
 <header class="cotacao-cabecalho">
@@ -30,11 +31,10 @@ $logoMarcaDagua = $logoUrl; // usa a mesma imagem como marca d'água
       Tel: (95) 98102-2395 — E-mail: bvlocadora@outlook.com — www.bvlocadora.com.br
     </div>
   </div>
+
   <div class="cabecalho-col-dir">
     <p class="titulo-topo">COTAÇÃO<br><span>DE SERVIÇO</span></p>
-    <div class="caixa-meta">
-      <div><strong>Data:</strong> <?= $data ?></div>
-    </div>
+    <!-- se você já tem a caixa de Data/Nº, mantenha aqui -->
   </div>
 </header>
 

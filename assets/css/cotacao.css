@@ -231,6 +231,39 @@ body {
   .rodape-conteudo { flex-direction: column; align-items: flex-start; }
   .info-empresa { text-align: left; }
 }
+/* Garante que conteúdo fique acima da marca d’água */
+.cotacao-cabecalho,
+.cotacao-container,
+.cotacao-rodape { position: relative; z-index: 1; }
+
+/* === Logo pequena no topo (lado esquerdo) === */
+.logo-topo{
+  height: 56px;           /* ajuste fino do tamanho */
+  width: auto;
+  display: block;
+  margin: 0 0 8px 0;
+}
+
+/* === Marca d’água full page, centralizada === */
+.marca-dagua{
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.marca-dagua img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;     /* cobre a página sem cortar */
+  opacity: .06;            /* bem clarinha */
+  filter: grayscale(1);    /* neutra */
+}
+
+/* (opcional) melhora consistência na impressão em PDF */
+.pdf-cotacao{
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
 
 
 
