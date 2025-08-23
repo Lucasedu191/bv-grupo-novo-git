@@ -16,8 +16,8 @@ $wmUrl   = $logoUrl; // marca d’água central
 <body class="pdf-cotacao">
 
 <!-- Marca d’água full-page centralizada -->
-<div class="marca-dagua">
-  <img src="<?= esc_url($wmUrl) ?>" alt="Marca d’água BV Locadora" />
+<div class="marca-dagua"
+     style="background-image:url('https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png')">
 </div>
 
 <!-- Cabeçalho moderno / timbrado -->
