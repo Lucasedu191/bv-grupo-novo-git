@@ -401,6 +401,12 @@ label.bvgn-taxa::after {
   background: #22c55e; color: #fff; letter-spacing:.02em;
 }
 
+/* Card de Caução com layout igual aos demais */
+.bvgn-taxa.bvgn-taxa-caucao {
+  flex: 1 1 100%;
+  max-width: 100%;
+}
+
 .bvgn-taxa.bvgn-taxa-caucao .lbl {
   display: flex;
   flex-direction: column;
@@ -409,9 +415,7 @@ label.bvgn-taxa::after {
   height: 100%;
   padding: 16px;
   text-align: center;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  background: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
 }
 
 .bvgn-taxa.bvgn-taxa-caucao .bvgn-icon {
@@ -422,12 +426,14 @@ label.bvgn-taxa::after {
 
 .bvgn-taxa.bvgn-taxa-caucao .texto {
   font-size: 14px;
-  line-height: 1.3;
+  line-height: 1.4;
+  color: #0f172a;
 }
 
 .bvgn-taxa.bvgn-taxa-caucao .preco {
   font-weight: bold;
   font-size: 16px;
+  color: #1d4ed8;
 }
 
 .bvgn-taxa.bvgn-taxa-caucao .botao-fake {
