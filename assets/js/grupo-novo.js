@@ -241,9 +241,20 @@ function calcular($cx){
     }
 
 
-    // === Serviços Opcionais: SEMPRE exibe os checkbox marcados ===
+    // Preencher serviços opcionais no resumo (bloco lateral)
     const opcionais = [];
+
+    // (1) checkbox normais
     $cx.find('.bvgn-taxa input[type=checkbox]:checked').each(function(){
+      const rotulo = String($(this).data('rotulo') || '').trim();
+      const preco = numero($(this).data('preco'));
+      if (rotulo) {
+        opcionais.push(`${rotulo} — R$ ${preco.toFixed(2).replace('.', ',')}`);
+      }
+    });
+
+    // (2) taxas fixas mensais (obrigatórias)
+    $cx.find('.bvgn-taxa-fixa-input').each(function(){
       const rotulo = String($(this).data('rotulo') || '').trim();
       const preco = numero($(this).data('preco'));
       if (rotulo) {
@@ -259,44 +270,7 @@ function calcular($cx){
       $cx.find('#bvgn-opcionais-view').text('');
     }
 
-    // === Taxas detalhadas: APENAS no plano mensal ===
-    const $listaTaxas = $cx.find('#bvgn-taxas-itens');
-    $listaTaxas.empty();
-
-    if (tipo === 'mensal') {
-      $cx.find('.bvgn-taxa-fixa-input').each(function(){
-        const rotulo = String($(this).data('rotulo') || '').trim();
-        const preco  = numero($(this).data('preco'));
-        if (rotulo) {
-          $listaTaxas.append(`
-            <div class="resumo-linha-inner">
-              <span class="resumo-label">${rotulo}</span>
-              <span class="resumo-valor">R$ ${preco.toFixed(2).replace('.', ',')}</span>
-            </div>
-          `)
-        }
-      });
-
-      if ($listaTaxas.children().length > 0) {
-        $cx.find('.bvgn-taxas-lista').show();
-      }
-    } else {
-      // no diário, garantir que a lista fique oculta
-      $cx.find('.bvgn-taxas-lista').hide();
-    }
-
-    // === Gravar totais calculados
     $cx.data('bvgnTotais', { base, taxas, qtd, subtotal, total, tipo });
-
-    // === Ajustar título do bloco de serviços opcionais
-    const $tituloServicos = $cx.find('.bvgn-servicos-opcionais .bvgn-totais-titulo');
-    if (tipo === 'mensal') {
-      $tituloServicos.text('Taxas e serviços opcionais');
-    } else {
-      $tituloServicos.text('Serviços Opcionais');
-    }
-    console.log('[BVGN] Título ajustado:', tipo);
-
 }
 
 
