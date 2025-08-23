@@ -39,7 +39,7 @@
       // Pré-abre aba/janela dentro do clique do usuário (escapa de bloqueios)
       var waWin = null;
       try {
-        waWin = window.open('','_blank','noopener,noreferrer');
+        waWin = window.open('about:blank', 'bvgn_whats');
          if (waWin && !waWin.closed) {
           waWin.document.write(
             '<!doctype html><meta charset="utf-8"><title>Redirecionando…</title>' +
@@ -66,7 +66,9 @@
 
       function abrirWhats(waUrl){
       if (waWin && !waWin.closed) {
-        try { waWin.location.replace(waUrl); return; } catch(e){}
+        // navega a MESMA aba aberta no clique
+        waWin.location.href = waUrl;   // (pode usar .replace também)
+        return;
       }
       // Se a aba foi bloqueada, tenta abrir agora em nova aba (degrada com dignidade)
       window.open(waUrl, '_blank', 'noopener');
