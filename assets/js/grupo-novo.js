@@ -545,7 +545,37 @@ function calcular($cx){
       return;
     }
   }
+    // ====== Função utilitária ======
+    function definirDestinoFixo(botao) {
+      // pega do atributo data-telefone do botão
+      let numeroDestino = (botao.getAttribute('data-telefone') || '').replace(/\D/g, '');
 
+      // fallback global (se definido via wp_localize_script)
+      if (!numeroDestino && window.BVGN && BVGN.whatsDestino) {
+        numeroDestino = String(BVGN.whatsDestino).replace(/\D/g, '');
+      }
+
+      // escreve no hidden
+      const $hidById   = $('#bvgn_whats_destino');
+      const $hidByName = $('input[name="whatsapp_destino"]');
+
+      if ($hidById.length) {
+        $hidById.val(numeroDestino);
+      } else if ($hidByName.length) {
+        $hidByName.val(numeroDestino);
+      } else {
+        console.warn('[BVGN] Hidden whatsapp_destino não encontrado no DOM.');
+      }
+
+      if (!numeroDestino) {
+        console.warn('[BVGN] Número de destino não configurado.');
+      } else {
+        console.log('[BVGN] Destino fixo definido para:', numeroDestino);
+      }
+    }
+    definirDestinoFixo(this);
+
+     // Abre o modal
     console.log('[BVGN] Abrindo modal...');
     const modalEl = document.getElementById('bvgn-cotacao-modal');
 

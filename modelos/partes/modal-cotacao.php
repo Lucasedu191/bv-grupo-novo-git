@@ -25,6 +25,7 @@ $nonce          = isset($modal_data['nonce']) ? $modal_data['nonce'] : '';
       <form class="bvgn-form" id="bvgn-form-cotacao" novalidate>
         <input type="hidden" name="produto_id" value="<?php echo esc_attr($produto_id); ?>">
         <input type="hidden" name="nonce" value="<?php echo esc_attr($nonce); ?>">
+        <input type="hidden" name="whatsapp_destino" id="bvgn_whats_destino" value="">
 
         <div class="bvgn-form__group">
           <label for="bvgn_nome">Nome</label>

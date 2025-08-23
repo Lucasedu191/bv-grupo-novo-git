@@ -2,13 +2,18 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 9.1.6
+ * Version: 9.1.7
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
 
 if (!defined('ABSPATH')) exit;
 
+// Número fixo da BV para receber cotações (fallback global)
+if (!defined('BVGN_WHATS_DESTINO')) {
+  // só dígitos (DDI+DDD+número)
+  define('BVGN_WHATS_DESTINO', '5541999362867');
+}
 // --- Constantes seguras (fallback) ---
 // Caminhos/URLs do plugin (não dependem de nada externo)
 if (!defined('BVGN_DIR')) define('BVGN_DIR', trailingslashit(plugin_dir_path(__FILE__)));
@@ -229,8 +234,9 @@ add_action('wp_enqueue_scripts', function () {
 
     // Variáveis para o JS
     wp_localize_script('bvgn-js', 'BVGN', [
-      'ajaxUrl' => admin_url('admin-ajax.php'),
-      'nonce'   => wp_create_nonce('bvgn_nonce'),
+      'ajaxUrl'      => admin_url('admin-ajax.php'),
+      'nonce'        => wp_create_nonce('bvgn_nonce'),
+      'whatsDestino' => BVGN_WHATS_DESTINO, // <- fallback global lido no JS
     ]);
 
    
