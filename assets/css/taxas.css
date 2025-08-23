@@ -265,9 +265,9 @@ label.bvgn-taxa::after {
 }
 
 .bvgn-cards-3 .bvgn-taxa .lbl .texto {
-  white-space: nowrap;
+  white-space: normal;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: visible;
   max-width: 100%;
 }
 .bvgn-cards-3 .bvgn-taxa .lbl .preco {
