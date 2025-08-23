@@ -98,15 +98,25 @@ html, body {
 /* ===== Cabeçalho ===== */
 .cotacao-cabecalho {
   display: grid;
-  grid-template-columns: 140px 1fr;  /* logo | texto (e título à direita) */
+  grid-template-columns: 140px 1fr 220px;  /* logo | texto (e título à direita) */
   gap: 12px;
   padding: 10mm 0 6mm;               /* respira com a @page */
-  border-bottom: 2px solid #0b0b0b;
-  align-items: start;
+  align-items: center;
+}
+.cabecalho-col-mid{
+  display:flex;
+  align-items:center;                 /* centro vertical */
+  justify-content:center;             /* centro horizontal */
 }
 .logo-topo { height: 46px; width: auto; display: block; margin-top: 2mm; }
-.empresa-info { font-size: 10.5px; line-height: 1.28; color: #222; }
-
+.empresa-info{
+  text-align:center;                  /* texto centralizado */
+  font-size:10.5px;
+  line-height:1.28;
+  color:#222;
+  margin:0;                           /* zera margens extras */
+}
+.cabecalho-col-mid .empresa-info{ max-width: 95%; }
 .titulo-topo {
   text-align: right;
   margin: 0;
