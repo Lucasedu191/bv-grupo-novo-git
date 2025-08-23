@@ -42,11 +42,23 @@
         waWin = window.open('about:blank', 'bvgn_whats');
          if (waWin && !waWin.closed) {
           waWin.document.write(
-            '<!doctype html><meta charset="utf-8"><title>Redirecionando…</title>' +
-            '<style>body{margin:0;display:grid;place-items:center;height:100vh;font:16px system-ui}'
-            +'.spin{width:40px;height:40px;border-radius:50%;border:4px solid #ddd;border-top-color:#25d366;animation:spin 1s linear infinite}'
-            +'@keyframes spin{to{transform:rotate(360deg)}}</style>' +
-            '<div><div class="spin"></div><p>Redirecionando para o WhatsApp…</p></div>'
+            '<!doctype html><html lang="pt-br"><head><meta charset="utf-8">' +
+            '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+            '<title>Redirecionando…</title>' +
+            '<style>' +
+              'html,body{height:100%;margin:0}' +
+              'body{display:grid;place-items:center;font:16px system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif;color:#0f172a;background:#fff}' +
+              '.wrap{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}' +
+              '.logo{height:56px;width:auto;display:block}' +
+              '.spin{width:42px;height:42px;border-radius:50%;border:4px solid #ddd;border-top-color:#25d366;animation:spin 1s linear infinite}' +
+              '@keyframes spin{to{transform:rotate(360deg)}}' +
+            '</style></head><body>' +
+              '<div class="wrap">' +
+                '<img class="logo" src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png" alt="BV Locadora">' +
+                '<div class="spin"></div>' +
+                '<p>Redirecionando para o WhatsApp…</p>' +
+              '</div>' +
+            '</body></html>'
           );
           waWin.document.close();
         }
