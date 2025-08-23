@@ -497,6 +497,8 @@ function calcular($cx){
 
       if (!inicio || !fim) {
         setMsg($cx, 'Selecione as datas de início e fim.');
+        alert('Selecione as datas de início e fim.');
+        $cx.find(!inicio ? '.bvgn-data-inicio' : '.bvgn-data-fim').focus();
         return;
       }
 
@@ -518,18 +520,6 @@ function calcular($cx){
         setMsg($cx, `Nenhum plano cobre ${dias} dias. Ajuste as datas ou <a href="/planos-mensais">acesse os grupos mensais</a>.`);
         return;
       }
-    }
-
-
-    if (tipo === 'diario') {
-    const inicio = $cx.find('.bvgn-data-inicio').val();
-    const fim = $cx.find('.bvgn-data-fim').val();
-    console.log('[BVGN] Datas selecionadas:', { inicio, fim });
-
-    if (!inicio || !fim) {
-      alert('Selecione as datas de início e fim.');
-      console.warn('[BVGN] Datas incompletas.');
-      return;
     }
 
     const dias = diferencaDiasSeguro(inicio, fim);
