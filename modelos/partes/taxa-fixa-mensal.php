@@ -9,7 +9,7 @@ if (isset($a['produto_id'])) {
   $produto_id = intval(get_the_ID());
 }
 
-// 2) Descobrir se é "mensal" (slug ou nome contendo 'mensal')
+// 2) Descobrir se é "mensal"
 $is_mensal = false;
 if ($produto_id && function_exists('wp_get_post_terms')) {
   $cats = wp_get_post_terms($produto_id, 'product_cat', ['fields'=>'all']);
@@ -24,14 +24,14 @@ if ($produto_id && function_exists('wp_get_post_terms')) {
   }
 }
 
-// 3) Grupo pelo título ("Grupo X – ..."). Aceita quaisquer traços.
+// 3) Grupo
 $titulo = $produto_id ? get_the_title($produto_id) : '';
 $grupo = null;
 if ($titulo && preg_match('/Grupo\s+([A-Z])/i', $titulo, $m)) {
-  $grupo = strtoupper($m[1]); // A/B/C/D/E/J/H
+  $grupo = strtoupper($m[1]);
 }
 
-// 4) Tenta usar a classe se existir; senão cai no mapa local
+// 4) Dados
 $caucao = null; $km = null;
 if (class_exists('BVGN_IntegracoesPT') && is_callable(['BVGN_IntegracoesPT','obter_mensal_por_grupo'])) {
   $mensal = BVGN_IntegracoesPT::obter_mensal_por_grupo($produto_id);
@@ -41,7 +41,6 @@ if (class_exists('BVGN_IntegracoesPT') && is_callable(['BVGN_IntegracoesPT','obt
   if (isset($mensal['km_preco']))   $km        = (float)$mensal['km_preco'];
 }
 
-// Fallback do mapa se ainda não definiu
 if ($caucao === null || $km === null) {
   $map = [
     'A' => ['caucao'=>1000.00, 'km'=>0.60],
@@ -58,13 +57,17 @@ if ($caucao === null || $km === null) {
   }
 }
 
-// 5) Só imprime se for mensal + grupo válido + valores definidos
+// 5) Renderizar se tudo OK
 if ($is_mensal && $grupo && $caucao !== null && $km !== null):
   $rotulo_fixo = sprintf(
     'Caução (aplicado na retirada, reembolsável em caso de devolução sem danos) — Grupo %s',
     $grupo
   );
-  ?>
+  $preco_formatado = number_format((float)$caucao, 2, ',', '.');
+  $km_formatado    = number_format((float)$km, 2, ',', '.');
+  $icone = BVGN_URL . 'assets/svg/passos01.svg'; // ícone igual aos outros
+?>
+
   <!-- entra no cálculo -->
   <input
     type="hidden"
@@ -74,14 +77,19 @@ if ($is_mensal && $grupo && $caucao !== null && $km !== null):
     data-km-preco="<?php echo esc_attr(number_format((float)$km, 2, '.', '')); ?>"
     data-grupo="<?php echo esc_attr($grupo); ?>"
   />
+
   <!-- visual no mesmo formato das outras taxas -->
-  <label class="bvgn-taxa">
+  <label class="bvgn-taxa selecionado obrigatorio">
     <input type="checkbox" checked disabled />
     <span class="lbl">
-      <?php echo esc_html($rotulo_fixo); ?> — R$ <?php echo number_format((float)$caucao, 2, ',', '.'); ?>
-      <small style="opacity:.8;display:block;margin-top:2px;">
-        Quilometragem excedente: R$ <?php echo number_format((float)$km, 2, ',', '.'); ?>/km adicional
-      </small>
+      <img class="bvgn-icon" src="<?php echo esc_attr($icone); ?>" alt="" />
+      <span class="texto">
+        <?php echo esc_html($rotulo_fixo); ?>
+        <br><small>Quilometragem excedente: R$ <?php echo $km_formatado; ?>/km adicional</small>
+      </span>
+      <span class="preco">R$ <?php echo $preco_formatado; ?></span>
+      <span class="botao-fake">Selecionado</span>
     </span>
   </label>
+
 <?php endif; ?>
