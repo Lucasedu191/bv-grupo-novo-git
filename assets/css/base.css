@@ -237,6 +237,10 @@
     margin-right: auto !important;
     box-sizing: border-box !important;
   }
+  .elementor-element-403b1ae{
+    overflow-x: hidden !important; /* corta qualquer vazamento */
+    display:none;
+}
 }
 
 /* fim  ajuste do layout mobile para pegar 100% */

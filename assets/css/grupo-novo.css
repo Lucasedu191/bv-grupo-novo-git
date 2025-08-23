@@ -66,6 +66,9 @@
    SM — Mobile (até 640px)
    =============================== */
 @media (max-width: 640px) {
+  .bvgn-grid {
+    display: block !important;
+  }
   .bvgn-container .bvgn-grid {
     grid-template-columns: 1fr;
     gap: 16px;

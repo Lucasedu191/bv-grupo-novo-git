@@ -60,7 +60,7 @@ if ($caucao === null || $km === null) {
 // 5) Renderizar se tudo OK
 if ($is_mensal && $grupo && $caucao !== null && $km !== null):
   $rotulo_fixo = sprintf(
-    'Caução (aplicado na retirada, reembolsável<br> em caso de devolução sem danos) — Grupo %s',
+    'Caução (aplicado na retirada, reembolsável em caso de devolução sem danos) — Grupo %s',
     $grupo
   );
   $preco_formatado = number_format((float)$caucao, 2, ',', '.');
