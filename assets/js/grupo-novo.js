@@ -151,8 +151,14 @@ function calcular($cx){
       const preco  = numero($(this).data('preco'));
 
       // Se for taxa diária e tipo diário → multiplicar pelos dias
-      if (rotulo.includes('(diaria)') && tipo === 'diario'){
-        taxas += preco * qtd;
+      if (rotulo.includes('(diaria)')) {
+        if (tipo === 'diario') {
+          taxas += preco * qtd;
+        } else if (tipo === 'mensal') {
+          taxas += preco * 30;
+        } else {
+          taxas += preco;
+        }
       } else {
         taxas += preco;
       }
