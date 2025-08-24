@@ -11,15 +11,31 @@ $fmt = function($str){
   return $ts ? date('d/m/Y', $ts) : $str;
 };
 
+
+
+// Limpa o texto do rótulo para exibição
 $limpaRotulo = function($txt){
   $txt = (string)$txt;
-  // remove qualquer parêntese e seu conteúdo: (obrigatória), (isenta caução), etc.
-  $txt = preg_replace('/\s*\([^)]*\)/u', '', $txt);
-  // remove a palavra "Selecionado"
-  $txt = preg_replace('/\bSelecionado\b/iu', '', $txt);
-  // normaliza espaços múltiplos
-  $txt = preg_replace('/\s{2,}/', ' ', $txt);
-  return trim($txt);
+  $txt = preg_replace('/\s*\([^)]*\)/u', '', $txt);           // remove "(...)"
+  $txt = preg_replace('/\bSelecionad[oa]r?\b/iu', '', $txt);   // "Selecionado/Selecionar"
+  $txt = preg_replace('/,\s*cauç[aã]o[^—]*/iu', '', $txt);     // ", caução de ..."
+  $txt = preg_replace('/\s{2,}/', ' ', trim($txt));            // espaços
+  return $txt;
+};
+
+// Calcula o preço exibido (multiplica quando for diária)
+$precoExibicao = function($t, $dados){
+  $p    = floatval($t['preco'] ?? 0);
+  $rot  = (string)($t['rotulo'] ?? '');
+  $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
+  $qtd  = max(1, intval($dados['totais']['qtd'] ?? 1));
+
+  // Se for item "diária" e plano diário → multiplica pelos dias
+  if (preg_match('/di[áa]ria/i', $rot)) {
+    if ($tipo === 'diario')      $p *= $qtd;
+    elseif ($tipo === 'mensal')  $p *= 30;
+  }
+  return $p;
 };
 
 $retirada  = $fmt($dados['datas']['inicio'] ?? '');
@@ -97,7 +113,7 @@ $wmUrl   = $logoUrl; // marca d’água central
             <div><dt>Nome</dt><dd><?= esc_html($dados['nome'] ?? '—') ?></dd></div>
             <div><dt>WhatsApp</dt><dd><?= esc_html($dados['whats'] ?? '—') ?></dd></div>
             <?php if ($mensagem !== ''): ?>
-              <p><strong>Mensagem:</strong> <?= nl2br(esc_html($mensagem)); ?></p>
+              <div><dt>Mensagem</dt><dd><?= nl2br(esc_html($mensagem)); ?></dd></div>
             <?php endif; ?>
           </dl>
         </div>
@@ -135,9 +151,20 @@ $wmUrl   = $logoUrl; // marca d’água central
               <!-- Coluna 1: Plano -->
               <td>
                 <dl class="kv kv--stack">
-                  <div><dt>Plano</dt><dd><?= esc_html($dados['variacaoRotulo'] ?? '—') ?></dd></div>
+                  <?php
+                    $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
+                    $qtd  = max(1, intval($dados['totais']['qtd'] ?? 1));
+
+                    if ($tipo === 'mensal') {
+                      $labelPlano = 'Mensal (30 dias)';
+                    } else {
+                      $labelPlano = $qtd > 1 ? "Diárias ($qtd dias)" : "Diária";
+                    }
+                  ?>
+                  <div><dt>Plano</dt><dd><?= esc_html($labelPlano) ?></dd></div>
                 </dl>
               </td>
+
 
               <!-- Coluna 2: Local de retirada -->
               <td>
@@ -163,34 +190,93 @@ $wmUrl   = $logoUrl; // marca d’água central
       </td>
     </tr>
 
-    <!-- Linha 2: SERVIÇOS OPCIONAIS | TAXAS -->
+        <!-- Linha 2: SERVIÇOS OPCIONAIS | TAXAS -->
+        <?php
+      // detectar tipo e preparar info da proteção
+      $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
+
+      // localizar item de proteção nas taxas enviadas (se vier do front)
+      $protItem = null;
+      foreach (($taxasAll ?? []) as $t) {
+        if (preg_match('/prote[cç][aã]o/i', $t['rotulo'] ?? '')) {
+          $protItem = $t;
+          break;
+        }
+      }
+
+      // rótulo e valor para exibir na “Proteção”
+      if ($tipo === 'mensal') {
+        $protLabel = 'Proteção básica';
+        $protValor = null; // incluída
+      } else {
+        if ($protItem) {
+          $protLabel = $limpaRotulo($protItem['rotulo'] ?? 'Proteção');
+          $protValor = $precoExibicao($protItem, $dados);
+        } else {
+          // se não veio item específico, ainda assim mostra “Proteção” sem valor
+          $protLabel = 'Proteção';
+          $protValor = null;
+        }
+      }
+        ?>
     <tr>
+      <!-- Coluna 1: Serviços opcionais + Proteção -->
       <td class="col" style="width:50%; padding-right:3mm; vertical-align:top;">
         <div class="card card--ghost">
-          <h3>Serviços opcionais</h3>
+          <h3><?= $tipo === 'mensal' ? 'Taxas e serviços opcionais' : 'Serviços opcionais' ?></h3>
+
+          <!-- Proteção -->
+          <div class="kv" style="margin-bottom: 2mm;">
+            <div>
+              <dt>Proteção</dt>
+              <dd>
+                <?= esc_html($protLabel) ?>
+                <?php if ($protValor !== null): ?>
+                  — R$ <?= number_format($protValor, 2, ',', '.') ?>
+                <?php else: ?>
+                  — incluída
+                <?php endif; ?>
+              </dd>
+            </div>
+          </div>
+
+          <!-- Lista de opcionais (já limpa e com preço calculado) -->
           <?php if (!empty($opcionais)): ?>
             <ul class="lista">
               <?php foreach ($opcionais as $t): ?>
-                <li><?= esc_html($limpaRotulo($t['rotulo'] ?? '')) ?> — R$ <?= number_format($t['preco'] ?? 0, 2, ',', '.') ?></li>
+                <li>
+                  <?= esc_html($limpaRotulo($t['rotulo'] ?? '')) ?> —
+                  R$ <?= number_format($precoExibicao($t, $dados), 2, ',', '.') ?>
+                </li>
               <?php endforeach; ?>
             </ul>
-          <?php else: ?><p>—</p><?php endif; ?>
+          <?php else: ?>
+            <p>—</p>
+          <?php endif; ?>
         </div>
       </td>
 
+      <!-- Coluna 2: Taxas -->
       <td class="col" style="width:50%; padding-left:3mm; vertical-align:top;">
         <div class="card card--ghost">
-          <h3>Taxas</h3>
+          <h3><?= $tipo === 'mensal' ? 'Taxas obrigatórias' : 'Taxas' ?></h3>
+
           <?php if (!empty($taxasFixas)): ?>
             <ul class="lista">
               <?php foreach ($taxasFixas as $t): ?>
-                <li><?= esc_html($limpaRotulo($t['rotulo'] ?? '')) ?> — R$ <?= number_format($t['preco'] ?? 0, 2, ',', '.') ?></li>
+                <li>
+                  <?= esc_html($limpaRotulo($t['rotulo'] ?? '')) ?> —
+                  R$ <?= number_format($precoExibicao($t, $dados), 2, ',', '.') ?>
+                </li>
               <?php endforeach; ?>
             </ul>
-          <?php else: ?><p>—</p><?php endif; ?>
+          <?php else: ?>
+            <p>—</p>
+          <?php endif; ?>
         </div>
       </td>
     </tr>
+
 
   </table>
 </section>
@@ -205,29 +291,53 @@ $wmUrl   = $logoUrl; // marca d’água central
           <th>Valor</th>
         </tr>
       </thead>
-     <tbody>
-      <tr>
-        <td>Diária/Mensal</td>
-        <td>R$ <?= number_format($dados['totais']['base'], 2, ',', '.') ?></td>
-      </tr>
-      <?php foreach ($dados['taxas'] ?? [] as $t): ?>
+      <tbody>
+        <?php
+          $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
+          $qtd  = max(1, intval($dados['totais']['qtd'] ?? 1));
+
+          if ($tipo === 'mensal') {
+            $labelPlano = 'Mensal (30 dias)';
+          } else {
+            $labelPlano = $qtd > 1 ? "Diárias ($qtd dias)" : "Diária";
+          }
+        ?>
         <tr>
-          <td><?= esc_html($limpaRotulo($t['rotulo'] ?? '')) ?></td>
-          <td>R$ <?= number_format($t['preco'] ?? 0, 2, ',', '.') ?></td>
+          <td><?= $labelPlano ?></td>
+          <td>R$ <?= number_format($dados['totais']['base'], 2, ',', '.') ?></td>
         </tr>
-      <?php endforeach; ?>
-      <tr>
-        <td>Subtotal</td>
-        <td>R$ <?= number_format($dados['totais']['subtotal'], 2, ',', '.') ?></td>
-      </tr>
-      <tr class="total">
-        <td>Total Estimado</td>
-        <td>R$ <?= number_format($dados['totais']['total'], 2, ',', '.') ?></td>
-      </tr>
-    </tbody>
+
+        <?php foreach (($dados['taxas'] ?? []) as $t): ?>
+          <?php
+            // No plano mensal, não listar linha de proteção na tabela (já mostramos "incluída" no card)
+            $rot = (string)($t['rotulo'] ?? '');
+            if ($tipo === 'mensal' && preg_match('/prote[cç][aã]o/i', $rot)) {
+              continue;
+            }
+            $rotuloLimpo = $limpaRotulo($rot);
+            if ($rotuloLimpo === '') {
+              continue;
+            }
+          ?>
+          <tr>
+            <td><?= esc_html($rotuloLimpo) ?></td>
+            <td>R$ <?= number_format($precoExibicao($t, $dados), 2, ',', '.') ?></td>
+          </tr>
+        <?php endforeach; ?>
+
+        <tr>
+          <td>Subtotal</td>
+          <td>R$ <?= number_format($dados['totais']['subtotal'], 2, ',', '.') ?></td>
+        </tr>
+        <tr class="total">
+          <td>Total Estimado</td>
+          <td>R$ <?= number_format($dados['totais']['total'], 2, ',', '.') ?></td>
+        </tr>
+      </tbody>
 
     </table>
   </section>
+
 </main>
 
 </body>
