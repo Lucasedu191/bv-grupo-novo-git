@@ -38,6 +38,10 @@ class BVGN_GerarArquivoEndpoint {
           'total'   => floatval($_POST['totais']['total'] ?? 0),
           'tipo'    => sanitize_text_field($_POST['totais']['tipo'] ?? 'diario'),
         ],
+        'local'       => sanitize_text_field($_POST['bvgn_local'] ?? ''),       // Local de retirada
+        'mensagem'    => sanitize_textarea_field($_POST['bvgn_mensagem'] ?? ''),// Mensagem do modal
+
+
         'formato' => sanitize_text_field($_POST['formato'] ?? 'pdf')
       ];
 
