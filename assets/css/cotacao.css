@@ -340,7 +340,7 @@ html, body {
 
 /* card */
 .card{
-  background: #fff;
+  background: #00000000;
   border: 1px solid #e7edf5;        /* borda levinha */
   border-radius: 8px;                /* cantos suaves */
   padding: 6mm;
