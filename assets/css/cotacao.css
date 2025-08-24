@@ -333,6 +333,76 @@ html, body {
 .kv dt{ min-width:28mm; font-weight:700; }
 .kv dd{ margin:0; }
 
+/* ====== Cards caprichados (Cliente | Cotação) ====== */
+/* espaçamento entre as duas colunas (tabela) */
+.cards-2 { margin: 8mm 0 6mm; }
+.cards-2 .col { vertical-align: top; }
+
+/* card */
+.card{
+  background: #fff;
+  border: 1px solid #e7edf5;        /* borda levinha */
+  border-radius: 8px;                /* cantos suaves */
+  padding: 6mm;
+  /* sombra sutil (se o render do PDF ignorar, tudo bem) */
+  box-shadow: 0 1px 0 rgba(0,0,0,.03), 0 12px 30px rgba(15,23,42,.05);
+}
+
+/* título do card */
+.card h3{
+  margin: 0 0 4mm 0;
+  font-size: 13.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  color: #0b0b0b;
+  position: relative;
+}
+.card h3::after{
+  content: "";
+  display: block;
+  height: 2px;
+  width: 36px;
+  margin-top: 6px;
+  background: #cfd7e3;               /* sublinhado discreto */
+}
+
+/* linhas chave-valor */
+.kv{ margin: 0; }
+.kv > div{
+  display: flex;                      /* simples e compatível */
+  gap: 10px;                          /* espaço entre dt e dd */
+  align-items: flex-start;
+  margin: 2.5mm 0;                    /* respiro entre linhas */
+  line-height: 1.35;
+}
+
+/* coluna da “chave” alinhada e forte */
+.kv dt{
+  min-width: 28mm;                    /* alinha as colunas */
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: .01em;
+}
+
+/* coluna do “valor” */
+.kv dd{
+  margin: 0;
+  color: #111827;
+  word-break: break-word;             /* evita estourar */
+}
+
+/* microajustes de tipografia dentro do card */
+.card .kv strong{ font-weight: 700; }
+.card .kv em{ font-style: normal; color: #334155; }
+
+/* responsivo leve na visualização web (no PDF não afeta) */
+@media (max-width: 700px){
+  .cards-2 .col{ display:block; width:100%!important; padding-left:0!important; padding-right:0!important; }
+  .card{ border-radius: 10px; }
+}
+
+
 /* fim cards iniciais */
 
 /*FIM  classes para o template do pdf */
