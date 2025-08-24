@@ -200,6 +200,11 @@
       closeModal('bvgn-cotacao-modal');
       return;
     }
+      let localRetirada = '';
+      const elLocal = cx.querySelector('#bvgn-local-view');
+      if (elLocal && elLocal.textContent.trim()) {
+        localRetirada = elLocal.textContent.trim();
+      }
 
       // ===== Monta carga p/ gerar PDF (mesmo formato do botão antigo) =====
       var carga = {
@@ -215,7 +220,8 @@
         telefone:     numeroDestinoIntl,   // destino fixo (BV)
         bvgn_nome:    payload.nome,
         bvgn_whats:   numeroClienteIntl,   // whatsapp do cliente
-        bvgn_local:   $('#bvgn-local-view').text() || ''
+        bvgn_local:   localRetirada,
+        bvgn_mensagem: payload.mensagem?.slice(0, 200) || '',
       };
 
       // ===== Chama backend, pega URL do PDF e abre o WhatsApp com o link =====

@@ -14,6 +14,8 @@ $retirada  = $fmt($dados['datas']['inicio'] ?? '');
 $devolucao = $fmt($dados['datas']['fim'] ?? '');
 $localRetirada = $dados['bvgn_local'] ?? '—';
 $validade = date('d/m/Y', strtotime('+5 days'));
+$mensagem = trim($dados['bvgn_mensagem'] ?? '');
+
 
 // Quebra as taxas em grupos para exibir no "Detalhes"
 $taxasAll   = $dados['taxas'] ?? [];
@@ -82,6 +84,14 @@ $wmUrl   = $logoUrl; // marca d’água central
           <dl class="kv">
             <div><dt>Nome</dt><dd><?= esc_html($dados['nome'] ?? '—') ?></dd></div>
             <div><dt>WhatsApp</dt><dd><?= esc_html($dados['whats'] ?? '—') ?></dd></div>
+            <?php if ($mensagem !== ''): ?>
+              <section class="cv-mensagem">
+                <div class="card card--ghost">
+                  <h3>Mensagem do cliente</h3>
+                  <p style="margin-top:4px"><?= nl2br(esc_html($mensagem)) ?></p>
+                </div>
+              </section>
+            <?php endif; ?>
           </dl>
         </div>
       </td>

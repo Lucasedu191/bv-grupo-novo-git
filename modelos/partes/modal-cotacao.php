@@ -43,8 +43,8 @@ $nonce          = isset($modal_data['nonce']) ? $modal_data['nonce'] : '';
         </div>
 
         <div class="bvgn-form__group">
-          <label for="bvgn_msg">Mensagem</label>
-          <textarea id="bvgn_msg" name="mensagem" rows="3" placeholder="Detalhes da cotação..."></textarea>
+          <label for="mensagem">Mensagem <small>(opcional)</small></label>
+          <textarea id="bvgn_msg" name="mensagem" maxlength="200" rows="3" placeholder="Detalhes da cotação..."></textarea>
         </div>
 
         <div class="bvgn-form__actions">
