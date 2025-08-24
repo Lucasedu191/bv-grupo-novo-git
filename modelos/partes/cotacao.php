@@ -81,10 +81,9 @@ $wmUrl   = $logoUrl; // marca d’água central
       <!-- Coluna 2: Cotação -->
       <td class="col" style="width:50%; padding-left:3mm; vertical-align:top;">
         <div class="card">
-          <h3>Cotação</h3>
+          <h3>Cotação Nº <?= $codigo ?> </h3>
           <dl class="kv">
             <div><dt>Data</dt><dd><?= $data ?></dd></div>
-            <div><dt>Nº</dt><dd><?= $codigo ?></dd></div>
             <div><dt>Validade</dt><dd><?= $validade ?></dd></div>
           </dl>
         </div>
