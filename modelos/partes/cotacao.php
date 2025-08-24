@@ -2,7 +2,7 @@
 $cssPath = BVGN_DIR . 'assets/css/cotacao.css';
 $css = file_exists($cssPath) ? file_get_contents($cssPath) : '';
 $data = date('d/m/Y');
-$codigo = strtoupper(substr(wp_hash(microtime()), 0, 5));
+$codigo = str_pad((string) random_int(10000, 99999), 5, '0', STR_PAD_LEFT);
 
 $validade = date('d/m/Y', strtotime('+5 days'));
 
@@ -65,27 +65,33 @@ $wmUrl   = $logoUrl; // marca d’água central
 <main class="cotacao-container">
 
   <section class="cv-cards">
-    <div class="card-grid-2">
-      <!-- Card: Cliente -->
-      <div class="card">
-        <h3>Cliente</h3>
-        <dl class="kv">
-          <div><dt>Nome</dt><dd><?= esc_html($dados['nome'] ?? '—') ?></dd></div>
-          <div><dt>WhatsApp</dt><dd><?= esc_html($dados['whats'] ?? '—') ?></dd></div>
-        </dl>
-      </div>
+  <table class="cards-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+    <tr>
+      <!-- Coluna 1: Cliente -->
+      <td class="col" style="width:50%; padding-right:3mm; vertical-align:top;">
+        <div class="card">
+          <h3>Cliente</h3>
+          <dl class="kv">
+            <div><dt>Nome</dt><dd><?= esc_html($dados['nome'] ?? '—') ?></dd></div>
+            <div><dt>WhatsApp</dt><dd><?= esc_html($dados['whats'] ?? '—') ?></dd></div>
+          </dl>
+        </div>
+      </td>
 
-      <!-- Card: Cotação -->
-      <div class="card">
-        <h3>Cotação</h3>
-        <dl class="kv">
-          <div><dt>Data</dt><dd><?= $data ?></dd></div>
-          <div><dt>Nº</dt><dd><?= $codigo ?></dd></div>
-          <div><dt>Validade</dt><dd><?= $validade ?></dd></div>
-        </dl>
-      </div>
-    </div>
-  </section>
+      <!-- Coluna 2: Cotação -->
+      <td class="col" style="width:50%; padding-left:3mm; vertical-align:top;">
+        <div class="card">
+          <h3>Cotação</h3>
+          <dl class="kv">
+            <div><dt>Data</dt><dd><?= $data ?></dd></div>
+            <div><dt>Nº</dt><dd><?= $codigo ?></dd></div>
+            <div><dt>Validade</dt><dd><?= $validade ?></dd></div>
+          </dl>
+        </div>
+      </td>
+    </tr>
+  </table>
+</section>
 
   <section class="cv-detalhes">
   <h2>Detalhes</h2>

@@ -319,7 +319,19 @@ html, body {
 }
 
 
+/* Tabela 2 colunas compatível com PDF */
+.cards-2 { width:100%; margin: 8mm 0 6mm; }
+.cards-2 .col { vertical-align: top; }
+.cards-2 .col:first-child { padding-right: 3mm; }
+.cards-2 .col:last-child  { padding-left: 3mm; }
 
+/* Card e KV (se já existir no arquivo, pode ignorar este bloco) */
+.card{ border:1px solid #e2e6ec; background:#fff; border-radius:6px; padding:6mm; }
+.card h3{ margin:0 0 4mm; font-size:13.5px; text-transform:uppercase; letter-spacing:.02em; color:#0b0b0b; }
+.kv{ margin:0; }
+.kv > div{ display:flex; gap:6mm; margin:2mm 0; }
+.kv dt{ min-width:28mm; font-weight:700; }
+.kv dd{ margin:0; }
 
 /* fim cards iniciais */
 
