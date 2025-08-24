@@ -215,6 +215,7 @@
         telefone:     numeroDestinoIntl,   // destino fixo (BV)
         bvgn_nome:    payload.nome,
         bvgn_whats:   numeroClienteIntl,   // whatsapp do cliente
+        bvgn_local:   $('#bvgn-local-view').text() || '',
       };
 
       // ===== Chama backend, pega URL do PDF e abre o WhatsApp com o link =====
