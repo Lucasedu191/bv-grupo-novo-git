@@ -355,7 +355,7 @@ html, body {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: .02em;
-  color: #153b66;
+  color: #000000;
   position: relative;
 }
 .card h3::after{
@@ -403,6 +403,43 @@ html, body {
 }
 
 
+
 /* fim cards iniciais */
+
+.cards-2 { width:100%; margin: 8mm 0 6mm; }
+.cards-2 .col { vertical-align: top; }
+
+.card{
+  background:#fff;
+  border:1px solid #e7edf5;
+  border-radius:8px;
+  padding:6mm;
+  box-shadow:0 1px 0 rgba(0,0,0,.03), 0 12px 30px rgba(15,23,42,.05);
+}
+.card--ghost{
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+.card h3{
+  margin:0 0 4mm;
+  font-size:13.5px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.02em;
+  color:#0b0b0b;
+}
+.card h3::after{content:"";display:block;height:2px;width:36px;margin-top:6px;background:#cfd7e3;}
+
+.kv{margin:0;}
+.kv > div{display:flex;gap:10px;align-items:flex-start;margin:2.5mm 0;line-height:1.35;}
+.kv dt{min-width:28mm;font-weight:700;color:#0f172a;}
+.kv dd{margin:0;color:#111827;word-break:break-word;}
+
+.lista{margin:0;padding-left:18px;}
+.lista li{margin:1.5mm 0;}
+
+.alerta{margin:5mm 0 2mm;padding:4mm 5mm;border:1px solid #f0d9a8;background:#fff8e6;font-size:12px;line-height:1.35;border-radius:4px;}
+
 
 /*FIM  classes para o template do pdf */

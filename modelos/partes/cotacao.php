@@ -4,11 +4,19 @@ $css = file_exists($cssPath) ? file_get_contents($cssPath) : '';
 $data = date('d/m/Y');
 $codigo = str_pad((string) random_int(10000, 99999), 5, '0', STR_PAD_LEFT);
 
+
+$fmt = function($str){
+  if (empty($str)) return '—';
+  $ts = strtotime(str_replace('/', '-', $str));
+  return $ts ? date('d/m/Y', $ts) : $str;
+};
+$retirada  = $fmt($dados['datas']['inicio'] ?? '');
+$devolucao = $fmt($dados['datas']['fim'] ?? '');
+
 $validade = date('d/m/Y', strtotime('+5 days'));
 
 // Quebra as taxas em grupos para exibir no "Detalhes"
 $taxasAll   = $dados['taxas'] ?? [];
-$protecao   = array_values(array_filter($taxasAll, fn($t) => preg_match('/prote[cç][aã]o/i', $t['rotulo'] ?? '')));
 $taxasFixas = array_values(array_filter($taxasAll, fn($t) => preg_match('/taxa|limpeza/i', $t['rotulo'] ?? '')));
 $opcionais  = array_values(array_filter($taxasAll, fn($t) =>
   !preg_match('/prote[cç][aã]o|taxa|limpeza/i', $t['rotulo'] ?? '')
@@ -92,66 +100,62 @@ $wmUrl   = $logoUrl; // marca d’água central
   </table>
 </section>
 
-  <section class="cv-detalhes">
-  <h2>Detalhes</h2>
+  
+  
 
-  <dl class="kv">
-    <div><dt>Plano</dt><dd><?= esc_html($dados['variacaoRotulo'] ?? '—') ?></dd></div>
-    <div><dt>Local de retirada</dt><dd><?= esc_html($dados['retirada'] ?? '—') ?></dd></div>
-    <div>
-      <dt>Período</dt>
-      <dd>
-        <?php
-          $tipo = $dados['totais']['tipo'] ?? 'diario';
-          echo ($tipo === 'mensal')
-            ? '30 dias'
-            : esc_html(($dados['datas']['inicio'] ?? '—') . ' a ' . ($dados['datas']['fim'] ?? '—'));
-        ?>
-      </dd>
-    </div>
-    <div><dt>Retirada</dt><dd><?= esc_html($dados['datas']['inicio'] ?? '—') ?></dd></div>
-    <div><dt>Devolução</dt><dd><?= esc_html($dados['datas']['fim'] ?? '—') ?></dd></div>
-  </dl>
+<section class="cv-blocos">
+    <h2>Detalhes</h2>
+  <table class="cards-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+    <!-- Linha 1: Detalhes (card largura total) -->
+    <tr>
+      <td class="col" colspan="2" style="vertical-align:top; padding: 0;">
+        <div class="card card--ghost">
+          <h3>Detalhes</h3>
+          <dl class="kv">
+            <div><dt>Plano</dt><dd><?= esc_html($dados['variacaoRotulo'] ?? '—') ?></dd></div>
+            <div><dt>Local de retirada</dt><dd><?= esc_html($dados['retirada'] ?? '—') ?></dd></div>
+            <div><dt>Retirada</dt><dd><?= $retirada ?></dd></div>
+            <div><dt>Devolução</dt><dd><?= $devolucao ?></dd></div>
+          </dl>
 
-  <div class="alerta">
-    <strong>Atenção:</strong> o período informado é uma pré-reserva. A confirmação depende da verificação de disponibilidade do veículo pela equipe BV Locadora.
-  </div>
+          <div class="alerta">
+            <strong>Atenção:</strong> o período informado é uma pré-reserva. A confirmação será feita após a verificação de disponibilidade do veículo pela equipe BV Locadora.
+          </div>
+        </div>
+      </td>
+    </tr>
 
-  <div class="grid-3">
-    <div class="sub">
-      <h4>Proteção</h4>
-      <?php if ($protecao): ?>
-        <ul class="lista">
-          <?php foreach ($protecao as $t): ?>
-            <li><?= esc_html($t['rotulo']) ?> — R$ <?= number_format($t['preco'] ?? 0, 2, ',', '.') ?></li>
-          <?php endforeach; ?>
-        </ul>
-      <?php else: ?><p>—</p><?php endif; ?>
-    </div>
+    <!-- Linha 2: Serviços opcionais | Taxas -->
+    <tr>
+      <td class="col" style="width:50%; padding-right:3mm; vertical-align:top;">
+        <div class="card card--ghost">
+          <h3>Serviços opcionais</h3>
+          <?php if (!empty($opcionais)): ?>
+            <ul class="lista">
+              <?php foreach ($opcionais as $t): ?>
+                <li><?= esc_html($t['rotulo']) ?> — R$ <?= number_format($t['preco'] ?? 0, 2, ',', '.') ?></li>
+              <?php endforeach; ?>
+            </ul>
+          <?php else: ?><p>—</p><?php endif; ?>
+        </div>
+      </td>
 
-    <div class="sub">
-      <h4>Serviços opcionais</h4>
-      <?php if ($opcionais): ?>
-        <ul class="lista">
-          <?php foreach ($opcionais as $t): ?>
-            <li><?= esc_html($t['rotulo']) ?> — R$ <?= number_format($t['preco'] ?? 0, 2, ',', '.') ?></li>
-          <?php endforeach; ?>
-        </ul>
-      <?php else: ?><p>—</p><?php endif; ?>
-    </div>
-
-    <div class="sub">
-      <h4>Taxas</h4>
-      <?php if ($taxasFixas): ?>
-        <ul class="lista">
-          <?php foreach ($taxasFixas as $t): ?>
-            <li><?= esc_html($t['rotulo']) ?> — R$ <?= number_format($t['preco'] ?? 0, 2, ',', '.') ?></li>
-          <?php endforeach; ?>
-        </ul>
-      <?php else: ?><p>—</p><?php endif; ?>
-    </div>
-  </div>
+      <td class="col" style="width:50%; padding-left:3mm; vertical-align:top;">
+        <div class="card card--ghost">
+          <h3>Taxas</h3>
+          <?php if (!empty($taxasFixas)): ?>
+            <ul class="lista">
+              <?php foreach ($taxasFixas as $t): ?>
+                <li><?= esc_html($t['rotulo']) ?> — R$ <?= number_format($t['preco'] ?? 0, 2, ',', '.') ?></li>
+              <?php endforeach; ?>
+            </ul>
+          <?php else: ?><p>—</p><?php endif; ?>
+        </div>
+      </td>
+    </tr>
+  </table>
 </section>
+
 
   <section class="cotacao-valores">
     <h2>Valores</h2>
