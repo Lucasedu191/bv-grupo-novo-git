@@ -24,17 +24,35 @@ $limpaRotulo = function($txt){
 };
 
 // Calcula o preço exibido (multiplica quando for diária)
-$precoExibicao = function($t, $dados){
+// Converte "2.000,00" -> 2000.00
+$toFloatBR = function($moeda){
+  $s = preg_replace('/[^\d,\.]/', '', (string)$moeda);
+  // remove separador de milhar e troca vírgula por ponto
+  $s = str_replace('.', '', $s);
+  $s = str_replace(',', '.', $s);
+  return (float)$s;
+};
+
+// Calcula o preço exibido (multiplica quando for diária; injeta caução para "Sem proteção")
+$precoExibicao = function($t, $dados) use ($toFloatBR){
   $p    = floatval($t['preco'] ?? 0);
   $rot  = (string)($t['rotulo'] ?? '');
   $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
   $qtd  = max(1, intval($dados['totais']['qtd'] ?? 1));
 
-  // Se for item "diária" e plano diário → multiplica pelos dias
+  // 1) Se for "Sem proteção" e o preço veio 0, tenta extrair "caução de R$X" do rótulo
+  if ($p == 0 && preg_match('/sem\s+prote[cç][aã]o/i', $rot)) {
+    if (preg_match('/cau[cç][aã]o[^0-9]*([\d\.\,]+)/iu', $rot, $m)) {
+      $p = $toFloatBR($m[1]); // usa o valor do caução extraído do texto
+    }
+  }
+
+  // 2) Se for item "diária" → multiplica (diário × qtd, mensal × 30)
   if (preg_match('/di[áa]ria/i', $rot)) {
     if ($tipo === 'diario')      $p *= $qtd;
     elseif ($tipo === 'mensal')  $p *= 30;
   }
+
   return $p;
 };
 
