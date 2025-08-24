@@ -10,6 +10,18 @@ $fmt = function($str){
   $ts = strtotime(str_replace('/', '-', $str));
   return $ts ? date('d/m/Y', $ts) : $str;
 };
+
+$limpaRotulo = function($txt){
+  $txt = (string)$txt;
+  // remove qualquer parêntese e seu conteúdo: (obrigatória), (isenta caução), etc.
+  $txt = preg_replace('/\s*\([^)]*\)/u', '', $txt);
+  // remove a palavra "Selecionado"
+  $txt = preg_replace('/\bSelecionado\b/iu', '', $txt);
+  // normaliza espaços múltiplos
+  $txt = preg_replace('/\s{2,}/', ' ', $txt);
+  return trim($txt);
+};
+
 $retirada  = $fmt($dados['datas']['inicio'] ?? '');
 $devolucao = $fmt($dados['datas']['fim'] ?? '');
 $localRetirada = $dados['local'] ?? '—';
@@ -159,7 +171,7 @@ $wmUrl   = $logoUrl; // marca d’água central
           <?php if (!empty($opcionais)): ?>
             <ul class="lista">
               <?php foreach ($opcionais as $t): ?>
-                <li><?= esc_html($t['rotulo']) ?> — R$ <?= number_format($t['preco'] ?? 0, 2, ',', '.') ?></li>
+                <li><?= esc_html($limpaRotulo($t['rotulo'] ?? '')) ?> — R$ <?= number_format($t['preco'] ?? 0, 2, ',', '.') ?></li>
               <?php endforeach; ?>
             </ul>
           <?php else: ?><p>—</p><?php endif; ?>
@@ -172,7 +184,7 @@ $wmUrl   = $logoUrl; // marca d’água central
           <?php if (!empty($taxasFixas)): ?>
             <ul class="lista">
               <?php foreach ($taxasFixas as $t): ?>
-                <li><?= esc_html($t['rotulo']) ?> — R$ <?= number_format($t['preco'] ?? 0, 2, ',', '.') ?></li>
+                <li><?= esc_html($limpaRotulo($t['rotulo'] ?? '')) ?> — R$ <?= number_format($t['preco'] ?? 0, 2, ',', '.') ?></li>
               <?php endforeach; ?>
             </ul>
           <?php else: ?><p>—</p><?php endif; ?>
@@ -193,15 +205,27 @@ $wmUrl   = $logoUrl; // marca d’água central
           <th>Valor</th>
         </tr>
       </thead>
-      <tbody>
-        <tr><td>Diária/Mensal</td><td>R$ <?= number_format($dados['totais']['base'], 2, ',', '.') ?></td></tr>
-        <tr><td>Caução</td><td>R$ 2.500,00</td></tr>
-        <?php foreach ($dados['taxas'] ?? [] as $t): ?>
-          <tr><td><?= esc_html($t['rotulo']) ?></td><td>R$ <?= number_format($t['preco'], 2, ',', '.') ?></td></tr>
-        <?php endforeach; ?>
-        <tr><td>Subtotal</td><td>R$ <?= number_format($dados['totais']['subtotal'], 2, ',', '.') ?></td></tr>
-        <tr class="total"><td>Total Estimado</td><td>R$ <?= number_format($dados['totais']['total'], 2, ',', '.') ?></td></tr>
-      </tbody>
+     <tbody>
+      <tr>
+        <td>Diária/Mensal</td>
+        <td>R$ <?= number_format($dados['totais']['base'], 2, ',', '.') ?></td>
+      </tr>
+      <?php foreach ($dados['taxas'] ?? [] as $t): ?>
+        <tr>
+          <td><?= esc_html($limpaRotulo($t['rotulo'] ?? '')) ?></td>
+          <td>R$ <?= number_format($t['preco'] ?? 0, 2, ',', '.') ?></td>
+        </tr>
+      <?php endforeach; ?>
+      <tr>
+        <td>Subtotal</td>
+        <td>R$ <?= number_format($dados['totais']['subtotal'], 2, ',', '.') ?></td>
+      </tr>
+      <tr class="total">
+        <td>Total Estimado</td>
+        <td>R$ <?= number_format($dados['totais']['total'], 2, ',', '.') ?></td>
+      </tr>
+    </tbody>
+
     </table>
   </section>
 </main>
