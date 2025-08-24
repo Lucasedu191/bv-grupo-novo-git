@@ -12,7 +12,7 @@ $fmt = function($str){
 };
 $retirada  = $fmt($dados['datas']['inicio'] ?? '');
 $devolucao = $fmt($dados['datas']['fim'] ?? '');
-$localRetirada = $dados['local'] ?? '—';
+$localRetirada = $dados['local'] ?? $dados['bvgn_local'] ?? '—';
 $validade = date('d/m/Y', strtotime('+5 days'));
 
 // Quebra as taxas em grupos para exibir no "Detalhes"
