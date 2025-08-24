@@ -118,13 +118,13 @@ html, body {
 }
 .titulo-cotacao{
   max-width: 170mm;               /* mesma largura do conteúdo */
-  margin: 8mm auto 6mm;           /* respiro acima/abaixo */
+  margin: 4mm auto 3mm;           /* respiro acima/abaixo */
   font: 800 20px/1.1 Barlow, sans-serif;
   letter-spacing: .02em;
   text-transform: uppercase;
   text-align: center;
   border-bottom: 2px solid #153b66;
-  padding-bottom: 4mm;
+  padding-bottom: 2mm;
 }
 .titulo-cotacao span{ font-weight: 900; }
 
@@ -152,10 +152,10 @@ html, body {
 .cotacao-dados p { margin: 2mm 0; }
 
 /* ===== Seção “Valores” ===== */
-.cotacao-valores { margin-top: 6mm; }
+.cotacao-valores { margin-top: 2mm; }
 .cotacao-valores h2 {
   font-size: 13.5px;
-  margin: 0 0 6mm 0;
+  margin: 0 0 3mm 0;
   letter-spacing: .02em;
   text-transform: uppercase;
   color: #0b0b0b;
@@ -250,7 +250,7 @@ html, body {
 
 
 /* ===== Cards iniciais (2 colunas) ===== */
-.cv-cards { margin: 8mm 0 6mm; }
+.cv-cards { margin: 4mm 0 3mm; }
 .card-grid-2{
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -260,10 +260,10 @@ html, body {
   border: 1px solid #e2e6ec;
   background: #fff;
   border-radius: 6px;
-  padding: 6mm;
+  padding: 3mm;
 }
 .card h3{
-  margin: 0 0 4mm 0;
+  margin: 0 0 2mm 0;
   font-size: 13.5px;
   text-transform: uppercase;
   letter-spacing: .02em;
@@ -327,7 +327,7 @@ html, body {
 
 /* Card e KV (se já existir no arquivo, pode ignorar este bloco) */
 .card{ border:1px solid #e2e6ec; background:#fff; border-radius:6px; padding:6mm; }
-.card h3{ margin:0 0 4mm; font-size:13.5px; text-transform:uppercase; letter-spacing:.02em; color:#0b0b0b; }
+.card h3{ margin:0 0 2mm; font-size:13.5px; text-transform:uppercase; letter-spacing:.02em; color:#0b0b0b; }
 .kv{ margin:0; }
 .kv > div{ display:flex; gap:6mm; margin:2mm 0; }
 .kv dt{ min-width:28mm; font-weight:700; }
@@ -343,7 +343,7 @@ html, body {
   background: #00000000;
   border: 1px solid #e7edf5;        /* borda levinha */
   border-radius: 8px;                /* cantos suaves */
-  padding: 6mm;
+  padding: 3mm;
   /* sombra sutil (se o render do PDF ignorar, tudo bem) */
   box-shadow: 0 1px 0 rgba(0,0,0,.03), 0 12px 30px rgba(15,23,42,.05);
 }
@@ -432,17 +432,17 @@ html, body {
 .card h3::after{content:"";display:block;height:2px;width:36px;margin-top:6px;background:#cfd7e3;}
 
 .kv{margin:0;}
-.kv > div{display:flex;gap:10px;align-items:flex-start;margin:2.5mm 0;line-height:1.35;}
+.kv > div{display:flex;gap:10px;align-items:flex-start;margin:1mm 0;line-height:1.35;}
 .kv dt{min-width:28mm;font-weight:700;color:#0f172a;}
 .kv dd{margin:0;color:#111827;word-break:break-word;}
 
 .lista{margin:0;padding-left:18px;}
 .lista li{margin:1.5mm 0;}
 
-.alerta{margin:5mm 0 2mm;padding:4mm 5mm;border:1px solid #f0d9a8;background:#fff8e6;font-size:12px;line-height:1.35;border-radius:4px;}
+.alerta{margin:3mm 0 2mm;padding:2mm 3mm;border:1px solid #f0d9a8;background:#fff8e6;font-size:12px;line-height:1.35;border-radius:4px;}
 
 /* ===== Detalhes em 3 colunas ===== */
-.cv-detalhes{ margin: 2mm 0 8mm; }
+.cv-detalhes{ margin: 1mm 0 3mm; }
 
 /* tabela 3 colunas dentro do card */
 .kv3{ width:100%; border-collapse:separate; border-spacing: 6mm 0; }
@@ -460,5 +460,47 @@ html, body {
   .kv3{ border-spacing:0; }
 }
 
+/* ====== OVERRIDES — layout compacto para o PDF ====== */
+
+/* Título */
+.titulo-cotacao{
+  margin: 3mm auto 2.5mm;
+  padding-bottom: 2mm;
+}
+
+/* Grids/linhas principais */
+.cv-cards, .cards-2{ margin: 3mm 0 2.5mm; }
+.cards-2 .col:first-child{ padding-right: 1.5mm; }
+.cards-2 .col:last-child{  padding-left:  1.5mm; }
+
+/* Cards */
+.card{ padding: 4mm; }
+.card h3{ margin: 0 0 2.5mm; }
+.card h3::after{ margin-top: 4px; }
+
+/* Pares chave/valor */
+.kv > div{ margin: 1.2mm 0; line-height: 1.25; }
+.kv dt{ min-width: 24mm; }
+
+/* “Detalhes” em 3 colunas */
+.cv-detalhes{ margin: 1.5mm 0 3mm; }
+.kv3{ border-spacing: 3mm 0; }           /* antes: 6mm */
+.kv--stack > div{ margin: 1.5mm 0; }
+
+/* Alerta */
+.alerta{
+  margin: 2.5mm 0 2.5mm;
+  padding: 3mm 4mm;
+  line-height: 1.28;
+}
+
+/* Tabela de valores */
+.cotacao-valores{ margin-top: 3mm; }
+.cotacao-valores h2{ margin: 0 0 3mm 0; }
+.cotacao-valores thead th,
+.cotacao-valores tbody td{ padding: 4px 8px; }
+
+/* Espaços genéricos entre sessões */
+.cv-blocos .card{ margin-bottom: 3mm; }
 
 /*FIM  classes para o template do pdf */
