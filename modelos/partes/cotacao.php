@@ -22,6 +22,11 @@ $opcionais  = array_values(array_filter($taxasAll, fn($t) =>
   !preg_match('/prote[cç][aã]o|taxa|limpeza/i', $t['rotulo'] ?? '')
 ));
 
+// Fallbacks para “Local de retirada”
+$localRetirada = $dados['retirada']
+  ?? ($dados['local_retirada'] ?? ($dados['locais']['retirada'] ?? ($dados['pickup'] ?? '')));
+$localRetirada = $localRetirada !== '' ? $localRetirada : '—';
+
 $logoUrl = 'https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png'; // topo
 $wmUrl   = $logoUrl; // marca d’água central
 ?>
@@ -104,26 +109,44 @@ $wmUrl   = $logoUrl; // marca d’água central
   
 
 <section class="cv-blocos">
-    <h2>Detalhes</h2>
   <table class="cards-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
-    <!-- Linha 1: Detalhes (card largura total) -->
-    <tr>
-      <td class="col" colspan="2" style="vertical-align:top; padding: 0;">
-        <div class="card card--ghost">
-          <h3>Detalhes</h3>
-          <dl class="kv">
+    <section class="cv-detalhes">
+  <div class="card card--ghost">
+    <h3>Detalhes</h3>
+
+    <!-- grade em 3 colunas dentro do card -->
+    <table class="kv3" role="presentation" width="100%" cellspacing="0" cellpadding="0">
+      <tr>
+        <!-- Coluna 1: Plano -->
+        <td>
+          <dl class="kv kv--stack">
             <div><dt>Plano</dt><dd><?= esc_html($dados['variacaoRotulo'] ?? '—') ?></dd></div>
-            <div><dt>Local de retirada</dt><dd><?= esc_html($dados['retirada'] ?? '—') ?></dd></div>
+          </dl>
+        </td>
+
+        <!-- Coluna 2: Local de retirada -->
+        <td>
+          <dl class="kv kv--stack">
+            <div><dt>Local de retirada</dt><dd><?= esc_html($localRetirada) ?></dd></div>
+          </dl>
+        </td>
+
+        <!-- Coluna 3: Retirada e Devolução -->
+        <td>
+          <dl class="kv kv--stack">
             <div><dt>Retirada</dt><dd><?= $retirada ?></dd></div>
             <div><dt>Devolução</dt><dd><?= $devolucao ?></dd></div>
           </dl>
+        </td>
+      </tr>
+    </table>
 
-          <div class="alerta">
-            <strong>Atenção:</strong> o período informado é uma pré-reserva. A confirmação será feita após a verificação de disponibilidade do veículo pela equipe BV Locadora.
-          </div>
-        </div>
-      </td>
-    </tr>
+    <div class="alerta">
+      <strong>Atenção:</strong> o período informado é uma pré-reserva. A confirmação será feita após a verificação de disponibilidade do veículo pela equipe BV Locadora.
+    </div>
+  </div>
+</section>
+
 
     <!-- Linha 2: Serviços opcionais | Taxas -->
     <tr>
