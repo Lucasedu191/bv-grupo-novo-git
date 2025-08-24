@@ -119,11 +119,11 @@ html, body {
 .titulo-cotacao{
   max-width: 170mm;               /* mesma largura do conteúdo */
   margin: 8mm auto 6mm;           /* respiro acima/abaixo */
-  font: 800 20px/1.1 Arial, sans-serif;
+  font: 800 20px/1.1 Barlow, sans-serif;
   letter-spacing: .02em;
   text-transform: uppercase;
-  text-align: right;
-  border-bottom: 2px solid #0b0b0b;
+  text-align: center;
+  border-bottom: 2px solid #153b66;
   padding-bottom: 4mm;
 }
 .titulo-cotacao span{ font-weight: 900; }
@@ -247,5 +247,80 @@ html, body {
 
 /* melhora cores no PDF */
 .pdf-cotacao{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+
+/* ===== Cards iniciais (2 colunas) ===== */
+.cv-cards { margin: 8mm 0 6mm; }
+.card-grid-2{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6mm;
+}
+.card{
+  border: 1px solid #e2e6ec;
+  background: #fff;
+  border-radius: 6px;
+  padding: 6mm;
+}
+.card h3{
+  margin: 0 0 4mm 0;
+  font-size: 13.5px;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  color: #0b0b0b;
+}
+
+/* key-value limpo */
+.kv{ margin: 0; }
+.kv > div{ display: flex; gap: 6mm; margin: 2mm 0; }
+.kv dt{ min-width: 28mm; font-weight: 700; }
+.kv dd{ margin: 0; }
+
+/* ===== Detalhes (uma coluna) ===== */
+.cv-detalhes{ margin: 2mm 0 8mm; }
+.cv-detalhes h2{
+  font-size: 13.5px;
+  margin: 0 0 6mm 0;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  color: #0b0b0b;
+}
+
+/* aviso */
+.alerta{
+  margin: 5mm 0 6mm;
+  padding: 4mm 5mm;
+  border: 1px solid #f0d9a8;
+  background: #fff8e6;
+  font-size: 12px;
+  line-height: 1.35;
+  border-radius: 4px;
+}
+
+/* sub-blocos (proteção, opcionais, taxas) */
+.grid-3{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6mm;
+}
+.sub h4{
+  margin: 0 0 3mm 0;
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+}
+.lista{ margin: 0; padding-left: 18px; }
+.lista li{ margin: 1.5mm 0; }
+
+/* responsivo básico (visualização web) */
+@media (max-width: 700px){
+  .card-grid-2{ grid-template-columns: 1fr; }
+  .grid-3{ grid-template-columns: 1fr; }
+}
+
+
+
+
+/* fim cards iniciais */
 
 /*FIM  classes para o template do pdf */
