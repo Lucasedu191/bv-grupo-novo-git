@@ -79,38 +79,6 @@ $precoExibicao = function($t, $dados) use ($toFloatBR){
 
   return $p;
 };
-// Busca item por palavra-chave no rótulo
-$buscaItem = function(array $lista, string $regex){
-  foreach ($lista as $it) {
-    $r = (string)($it['rotulo'] ?? '');
-    if (preg_match($regex, $r)) return $it;
-  }
-  return null;
-};
-
-// Extrai "R$ 1.234,56" de um texto e retorna float
-$extraiMoeda = function($txt) use ($toFloatBR){
-  if (preg_match('/R\$\s*([\d\.\,]+)/u', (string)$txt, $m)) return $toFloatBR($m[1]);
-  if (preg_match('/([\d\.\,]+)/u', (string)$txt, $m))       return $toFloatBR($m[1]);
-  return 0.0;
-};
-
-// Itens especiais a partir do que chegou em $dados['taxas']
-$protItem   = $buscaItem($taxasAll, '/prote[cç][aã]o/i'); // pode ser "Sem proteção" ou "Proteção básica"
-$caucaoItem = $buscaItem($taxasAll, '/cau[cç][aã]o/i');   // "Caução (aplicado...) — R$ 1000,00"
-
-// Detecta "sem proteção" e tenta achar o valor do caução mesmo que venha 0
-$ehSemProtecao = $protItem && preg_match('/sem\s+prote[cç][aã]o/i', (string)$protItem['rotulo']);
-$caucaoValor   = 0.0;
-if ($ehSemProtecao) {
-  // 1) tenta no próprio rótulo da proteção
-  $caucaoValor = max($caucaoValor, $extraiMoeda($protItem['rotulo'] ?? ''));
-  // 2) tenta num item separado de caução (se existir)
-  if ($caucaoItem) {
-    $caucaoValor = max($caucaoValor, (float)($caucaoItem['preco'] ?? 0));
-    if ($caucaoValor <= 0) $caucaoValor = max($caucaoValor, $extraiMoeda($caucaoItem['rotulo'] ?? ''));
-  }
-}
 
 $retirada  = $fmt($dados['datas']['inicio'] ?? '');
 $devolucao = $fmt($dados['datas']['fim'] ?? '');
@@ -299,22 +267,7 @@ $wmUrl   = $logoUrl; // marca d’água central
             <div>
               <dt>Proteção</dt>
               <dd>
-                <?php
-                  // rótulo base: "Proteção básica" (mensal) OU rótulo limpo do item selecionado (diário)
-                  if ($tipo === 'mensal') {
-                    $protLabel = 'Proteção básica';
-                    $protValor = null; // incluída
-                  } else {
-                    $protLabel = $protItem ? $limpaRotulo($protItem['rotulo'] ?? 'Proteção') : 'Proteção';
-                    $protValor = $protItem ? $precoExibicao($protItem, $dados) : null;
-                  }
-                ?>
                 <?= esc_html($protLabel) ?>
-
-                <?php if ($ehSemProtecao && $caucaoValor > 0): ?>
-                  — caução de R$ <?= number_format($caucaoValor, 2, ',', '.') ?>
-                <?php endif; ?>
-
                 <?php if ($protValor !== null): ?>
                   — R$ <?= number_format($protValor, 2, ',', '.') ?>
                 <?php else: ?>
@@ -324,25 +277,13 @@ $wmUrl   = $logoUrl; // marca d’água central
             </div>
           </div>
 
-
           <!-- (Mensal) Mostrar Caução destacado -->
-          <?php if ($tipo === 'mensal'): ?>
+          <?php if ($tipo === 'mensal' && $caucaoItem): ?>
             <ul class="lista" style="margin-top:2mm">
-              <?php
-                // mostra caução: usa item de caução se existir; se não, tenta extrair do texto da proteção (front costuma mostrar na lateral)
-                $caucaoParaCard = 0.0;
-                if ($caucaoItem) {
-                  $caucaoParaCard = (float)($caucaoItem['preco'] ?? 0);
-                  if ($caucaoParaCard <= 0) $caucaoParaCard = $extraiMoeda($caucaoItem['rotulo'] ?? '');
-                } else {
-                  $caucaoParaCard = max($caucaoParaCard, $extraiMoeda($protItem['rotulo'] ?? ''));
-                }
-              ?>
-              <?php if ($caucaoParaCard > 0): ?>
-                <li>
-                  Caução — R$ <?= number_format($caucaoParaCard, 2, ',', '.') ?>
-                </li>
-              <?php endif; ?>
+              <li>
+                <?= esc_html($limpaRotulo($caucaoItem['rotulo'] ?? 'Caução')) ?> —
+                R$ <?= number_format($precoExibicao($caucaoItem, $dados), 2, ',', '.') ?>
+              </li>
             </ul>
           <?php endif; ?>
 
@@ -422,56 +363,23 @@ $wmUrl   = $logoUrl; // marca d’água central
           <td>R$ <?= number_format($dados['totais']['base'], 2, ',', '.') ?></td>
         </tr>
 
-        <?php
-          $caucaoListado = false;
-          $temSemProtecao = false;
-        ?>
         <?php foreach (($dados['taxas'] ?? []) as $t): ?>
           <?php
-            $rotBruto = (string)($t['rotulo'] ?? '');
-            $rotClean = $limpaRotulo($rotBruto);
-
-            // no mensal, não listar proteção; e marque caução se aparecer
-            if ($tipo === 'mensal' && preg_match('/prote[cç][aã]o/i', $rotBruto)) continue;
-            if (preg_match('/cau[cç][aã]o/i', $rotBruto)) $caucaoListado = true;
-
-            // diário: se for "Sem proteção", não use o preço 0 — use o do caução
-            $preco = $precoExibicao($t, $dados);
-            if ($ehSemProtecao && preg_match('/sem\s+prote[cç][aã]o/i', $rotBruto)) {
-              $temSemProtecao = true;
-              if ($caucaoValor > 0) {
-                $preco    = $caucaoValor;
-                $rotClean = 'Sem proteção — caução de'; // mostra o texto pedido
-              }
+            // No plano mensal, não listar linha de proteção na tabela (já mostramos "incluída" no card)
+            $rot = (string)($t['rotulo'] ?? '');
+            if ($tipo === 'mensal' && preg_match('/prote[cç][aã]o/i', $rot)) {
+              continue;
             }
-
-            if ($rotClean === '') continue;
+            $rotuloLimpo = $limpaRotulo($rot);
+            if ($rotuloLimpo === '') {
+              continue;
+            }
           ?>
           <tr>
-            <td><?= esc_html($rotClean) ?></td>
-            <td>R$ <?= number_format($preco, 2, ',', '.') ?></td>
+            <td><?= esc_html($rotuloLimpo) ?></td>
+            <td>R$ <?= number_format($precoExibicao($t, $dados), 2, ',', '.') ?></td>
           </tr>
         <?php endforeach; ?>
-
-        <?php // Mensal: garantir linha de caução mesmo que não tenha vindo em $dados['taxas'] ?>
-        <?php if ($tipo === 'mensal' && !$caucaoListado): ?>
-          <?php
-            $caucaoParaTabela = 0.0;
-            if ($caucaoItem) {
-              $caucaoParaTabela = (float)($caucaoItem['preco'] ?? 0);
-              if ($caucaoParaTabela <= 0) $caucaoParaTabela = $extraiMoeda($caucaoItem['rotulo'] ?? '');
-            } else {
-              $caucaoParaTabela = max($caucaoParaTabela, $extraiMoeda($protItem['rotulo'] ?? ''));
-            }
-          ?>
-          <?php if ($caucaoParaTabela > 0): ?>
-            <tr>
-              <td>Caução</td>
-              <td>R$ <?= number_format($caucaoParaTabela, 2, ',', '.') ?></td>
-            </tr>
-          <?php endif; ?>
-        <?php endif; ?>
-
 
         <tr>
           <td>Subtotal</td>
