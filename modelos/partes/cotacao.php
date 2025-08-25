@@ -15,39 +15,63 @@ $fmt = function($str){
 
 // Limpa o texto do rótulo para exibição
 $limpaRotulo = function($txt){
-  $txt = (string)$txt;
-  $txt = preg_replace('/\s*\([^)]*\)/u', '', $txt);           // remove "(...)"
-  $txt = preg_replace('/\bSelecionad[oa]r?\b/iu', '', $txt);   // "Selecionado/Selecionar"
-  $txt = preg_replace('/,\s*cauç[aã]o[^—]*/iu', '', $txt);     // ", caução de ..."
-  $txt = preg_replace('/\s{2,}/', ' ', trim($txt));            // espaços
+  $orig = (string)$txt;
+
+  // remove "(...)", "Selecionado/Selecionar", ", caução de ..."
+  $txt = preg_replace('/\s*\([^)]*\)/u', '', $orig);
+  $txt = preg_replace('/\bSelecionad[oa]r?\b/iu', '', $txt);
+  $txt = preg_replace('/,\s*cau[cç][aã]o[^—]*/iu', '', $txt);
+
+  // normaliza espaços
+  $txt = preg_replace('/\s{2,}/', ' ', trim($txt));
+
+  // se esvaziou mas era um rótulo de caução / sem proteção, cria nome padrão
+  if ($txt === '' && preg_match('/cau[cç][aã]o/i', $orig)) $txt = 'Caução';
+  if ($txt === '' && preg_match('/sem\s+prote[cç][aã]o/i', $orig)) $txt = 'Sem proteção';
+
   return $txt;
 };
 
 // Calcula o preço exibido (multiplica quando for diária)
-// Converte "2.000,00" -> 2000.00
+// "2.000,00" -> 2000.00
 $toFloatBR = function($moeda){
   $s = preg_replace('/[^\d,\.]/', '', (string)$moeda);
-  // remove separador de milhar e troca vírgula por ponto
   $s = str_replace('.', '', $s);
   $s = str_replace(',', '.', $s);
   return (float)$s;
 };
 
-// Calcula o preço exibido (multiplica quando for diária; injeta caução para "Sem proteção")
+// Calcula preço exibido: diária × qtd; e injeta caução quando necessário
 $precoExibicao = function($t, $dados) use ($toFloatBR){
-  $p    = floatval($t['preco'] ?? 0);
+  $p    = (float)($t['preco'] ?? 0);
   $rot  = (string)($t['rotulo'] ?? '');
   $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
-  $qtd  = max(1, intval($dados['totais']['qtd'] ?? 1));
+  $qtd  = max(1, (int)($dados['totais']['qtd'] ?? 1));
 
-  // 1) Se for "Sem proteção" e o preço veio 0, tenta extrair "caução de R$X" do rótulo
+  // A) Se for "Sem proteção" e preço veio 0, tentar achar o valor do caução
   if ($p == 0 && preg_match('/sem\s+prote[cç][aã]o/i', $rot)) {
-    if (preg_match('/cau[cç][aã]o[^0-9]*([\d\.\,]+)/iu', $rot, $m)) {
-      $p = $toFloatBR($m[1]); // usa o valor do caução extraído do texto
+    // 1) no próprio rótulo
+    if (preg_match('/cau[cç][aã]o[^0-9]*([\d\.,]+)/iu', $rot, $m)) {
+      $p = $toFloatBR($m[1]);
+    }
+    // 2) em algum outro item com "caução"
+    if ($p == 0) {
+      foreach (($dados['taxas'] ?? []) as $tt) {
+        $r = (string)($tt['rotulo'] ?? '');
+        if (preg_match('/cau[cç][aã]o/i', $r)) {
+          if ((float)($tt['preco'] ?? 0) > 0) { $p = (float)$tt['preco']; break; }
+          if (preg_match('/([\d\.,]+)/', $r, $mm)) { $p = $toFloatBR($mm[1]); break; }
+        }
+      }
     }
   }
 
-  // 2) Se for item "diária" → multiplica (diário × qtd, mensal × 30)
+  // B) Se for um item "Caução ..." e preço 0, extrai do texto
+  if ($p == 0 && preg_match('/cau[cç][aã]o/i', $rot)) {
+    if (preg_match('/([\d\.,]+)/', $rot, $m)) $p = $toFloatBR($m[1]);
+  }
+
+  // C) Itens diários multiplicam
   if (preg_match('/di[áa]ria/i', $rot)) {
     if ($tipo === 'diario')      $p *= $qtd;
     elseif ($tipo === 'mensal')  $p *= 30;
@@ -172,17 +196,11 @@ $wmUrl   = $logoUrl; // marca d’água central
                   <?php
                     $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
                     $qtd  = max(1, intval($dados['totais']['qtd'] ?? 1));
-
-                    if ($tipo === 'mensal') {
-                      $labelPlano = 'Mensal (30 dias)';
-                    } else {
-                      $labelPlano = $qtd > 1 ? "Diárias ($qtd dias)" : "Diária";
-                    }
+                    $labelPlano = ($tipo === 'mensal') ? 'Mensal (30 dias)' : ($qtd > 1 ? "Diárias ($qtd dias)" : "Diária");
                   ?>
                   <div><dt>Plano</dt><dd><?= esc_html($labelPlano) ?></dd></div>
                 </dl>
               </td>
-
 
               <!-- Coluna 2: Local de retirada -->
               <td>
@@ -208,21 +226,21 @@ $wmUrl   = $logoUrl; // marca d’água central
       </td>
     </tr>
 
-        <!-- Linha 2: SERVIÇOS OPCIONAIS | TAXAS -->
-        <?php
-      // detectar tipo e preparar info da proteção
+    <?php
+      // detectar tipo
       $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
 
-      // localizar item de proteção nas taxas enviadas (se vier do front)
-      $protItem = null;
+      // localizar itens especiais nas taxas enviadas
+      $protItem   = null;
+      $caucaoItem = null;
       foreach (($taxasAll ?? []) as $t) {
-        if (preg_match('/prote[cç][aã]o/i', $t['rotulo'] ?? '')) {
-          $protItem = $t;
-          break;
-        }
+        $r = (string)($t['rotulo'] ?? '');
+        if (!$protItem   && preg_match('/prote[cç][aã]o/i', $r)) $protItem   = $t;
+        if (!$caucaoItem && preg_match('/cau[cç][aã]o/i', $r))   $caucaoItem = $t;
+        if ($protItem && $caucaoItem) break;
       }
 
-      // rótulo e valor para exibir na “Proteção”
+      // rótulo/valor da proteção
       if ($tipo === 'mensal') {
         $protLabel = 'Proteção básica';
         $protValor = null; // incluída
@@ -231,12 +249,13 @@ $wmUrl   = $logoUrl; // marca d’água central
           $protLabel = $limpaRotulo($protItem['rotulo'] ?? 'Proteção');
           $protValor = $precoExibicao($protItem, $dados);
         } else {
-          // se não veio item específico, ainda assim mostra “Proteção” sem valor
           $protLabel = 'Proteção';
           $protValor = null;
         }
       }
-        ?>
+    ?>
+
+    <!-- Linha 2: SERVIÇOS OPCIONAIS | TAXAS -->
     <tr>
       <!-- Coluna 1: Serviços opcionais + Proteção -->
       <td class="col" style="width:50%; padding-right:3mm; vertical-align:top;">
@@ -258,12 +277,31 @@ $wmUrl   = $logoUrl; // marca d’água central
             </div>
           </div>
 
-          <!-- Lista de opcionais (já limpa e com preço calculado) -->
+          <!-- (Mensal) Mostrar Caução destacado -->
+          <?php if ($tipo === 'mensal' && $caucaoItem): ?>
+            <ul class="lista" style="margin-top:2mm">
+              <li>
+                <?= esc_html($limpaRotulo($caucaoItem['rotulo'] ?? 'Caução')) ?> —
+                R$ <?= number_format($precoExibicao($caucaoItem, $dados), 2, ',', '.') ?>
+              </li>
+            </ul>
+          <?php endif; ?>
+
+          <!-- Lista de opcionais (limpa rótulo e calcula preço; evita duplicar proteção/caução) -->
           <?php if (!empty($opcionais)): ?>
             <ul class="lista">
               <?php foreach ($opcionais as $t): ?>
+                <?php
+                  $rOrig = (string)($t['rotulo'] ?? '');
+                  // pular proteção sempre (já tratamos acima)
+                  if (preg_match('/prote[cç][aã]o/i', $rOrig)) continue;
+                  // no mensal, pular caução da lista (já mostramos destacado acima)
+                  if ($tipo === 'mensal' && preg_match('/cau[cç][aã]o/i', $rOrig)) continue;
+                  $rClean = $limpaRotulo($rOrig);
+                  if ($rClean === '') continue;
+                ?>
                 <li>
-                  <?= esc_html($limpaRotulo($t['rotulo'] ?? '')) ?> —
+                  <?= esc_html($rClean) ?> —
                   R$ <?= number_format($precoExibicao($t, $dados), 2, ',', '.') ?>
                 </li>
               <?php endforeach; ?>
@@ -283,7 +321,7 @@ $wmUrl   = $logoUrl; // marca d’água central
             <ul class="lista">
               <?php foreach ($taxasFixas as $t): ?>
                 <li>
-                  <?= esc_html($limpaRotulo($t['rotulo'] ?? '')) ?> —
+                  <?= esc_html($limpaRotulo(($t['rotulo'] ?? ''))) ?> —
                   R$ <?= number_format($precoExibicao($t, $dados), 2, ',', '.') ?>
                 </li>
               <?php endforeach; ?>
@@ -295,9 +333,9 @@ $wmUrl   = $logoUrl; // marca d’água central
       </td>
     </tr>
 
-
   </table>
 </section>
+
 
 
   <section class="cotacao-valores">
