@@ -3,7 +3,7 @@
     <label>Local de Retirada</label>
     <div class="bvgn-campo-disabled" id="bvgn-cabecalho-local">
       BV Locadora
-      <div style="font-size: 0.85em; color: #555;">Rua Coronel Mota, 629</div>
+      <!-- <div style="font-size: 0.85em; color: #555;">Rua Coronel Mota, 629</div> -->
     </div>
   </div>
 
