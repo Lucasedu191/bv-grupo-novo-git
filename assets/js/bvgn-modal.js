@@ -209,10 +209,20 @@
       // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(textoFallback);
 
       var waUrl = montarLinkWhats(numeroDestinoIntl, textoFallback);
+
+        // debug
+      console.group('[BVGN][DEBUG] WhatsApp Link');
+      console.log('Número destino:', numeroDestinoIntl);
+      console.log('Mensagem bruta:', texto);
+      console.log('Mensagem encode:', encodeURIComponent(texto));
+      console.log('URL final:', waUrl);
+      console.groupEnd();
       if (navigator.clipboard && document.hasFocus()) {
         navigator.clipboard.writeText(textoFallback).catch(()=>{});
-      } 
-
+         console.warn('[BVGN][DEBUG] Falha ao copiar p/ clipboard:', err);
+      } else {
+          console.warn('[BVGN][DEBUG] Clipboard API indisponível ou documento sem foco');
+      }
       // redireciona usando a aba pré‑aberta (anti-popup)
       abrirWhats(waUrl);
 
