@@ -156,31 +156,29 @@ function calcular($cx){
     $cx.find('.bvgn-taxa input[type=checkbox]:checked').each(function(){
       const rotulo = String($(this).data('rotulo') || '').toLowerCase();
       const preco  = numero($(this).data('preco'));
+      const isDiaria = rotulo.includes('(diaria)');
+      const isCaucao = /cau[cç][aã]o/.test(rotulo);
 
-      // Se for taxa diária e tipo diário → multiplicar pelos dias
-      if (rotulo.includes('(diaria)')) {
-        if (tipo === 'diario') {
-          taxas += preco * qtd;           // diário → por dia
-        } /* mensal: não soma */          // ← ALTERAÇÃO MÍNIMA
+      if (tipo === 'diario') {
+        // diário: diária multiplica por dia; demais, 1x
+        taxas += isDiaria ? (preco * qtd) : preco;
       } else {
-        if (tipo === 'diario') {
-          taxas += preco;                 // não diária → 1x (só no diário)
-        } /* mensal: não soma */          // ← ALTERAÇÃO MÍNIMA
+        // mensal: SOMA 1x todas as taxas, EXCETO caução; nunca multiplica por dias
+        if (!isCaucao) taxas += preco * 30;
       }
     });
 
-    // 3 TAXA FIXA MENSAL — não somar no mensal
-    if (tipo === 'diario') {                                          // ← ALTERAÇÃO MÍNIMA
-      $cx.find('.bvgn-taxa-fixa-input').each(function(){
-        taxas += numero($(this).data('preco'));
-      });
-    }
+    // 3) Taxas fixas (somar em ambos; não há caução aqui)
+    $cx.find('.bvgn-taxa-fixa-input').each(function(){
+      const preco = numero($(this).data('preco'));
+      taxas += (tipo === 'mensal') ? preco * 30 : preco;
+    });
 
     // 4) SUBTOTAL / TOTAL
     // No mensal: mostrar "30 dias" apenas para exibição, mas NÃO multiplicar o preço.
     const dias = (tipo === 'mensal') ? 30 : qtd;                      // usado só para exibir
     const subtotal = (tipo === 'mensal') ? base : (base * dias);      // mensal = 1x; diário = * dias
-    const total    = subtotal + (tipo === 'mensal' ? 0 : taxas);      // taxas já ficam 0 no mensal
+    const total    = subtotal + taxas;      // ← somar taxas também no mensal
 
     $cx.find('.bvgn-subtotal .valor').text(subtotal.toFixed(2).replace('.', ','));
     $cx.find('.bvgn-total .valor').text(total.toFixed(2).replace('.', ','));
@@ -201,8 +199,8 @@ function calcular($cx){
 
     // Exibir valor total das taxas (0 no mensal automaticamente)
     $cx.find('.bvgn-taxas').show();
-    $cx.find('#bvgn-taxas').text((tipo === 'mensal' ? 0 : taxas).toFixed(2).replace('.', ',')); // ← ALTERAÇÃO MÍNIMA
-    $cx.find('#bvgn-taxas-raw').val(tipo === 'mensal' ? 0 : taxas);    
+    $cx.find('#bvgn-taxas').text(taxas.toFixed(2).replace('.', ','));
+    $cx.find('#bvgn-taxas-raw').val(taxas);    
 
     // Subtotal e total (valores crus já estão ali, mas reforçamos)
     $cx.find('#bvgn-subtotal-raw').val(subtotal);
