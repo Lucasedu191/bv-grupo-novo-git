@@ -227,33 +227,49 @@ $wmUrl   = $logoUrl; // marca d’água central
     </tr>
 
     <?php
-      // detectar tipo
-      $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
+      // rótulo/valor da proteção (com detecção de "Sem proteção")
+      $protLabel = 'Proteção';
+      $protValor = null;         // null => "incluída" (só para mensal)
+      $protMultiplica = false;   // diária: só multiplica se tiver proteção paga
 
-      // localizar itens especiais nas taxas enviadas
-      $protItem   = null;
-      $caucaoItem = null;
-      foreach (($taxasAll ?? []) as $t) {
-        $r = (string)($t['rotulo'] ?? '');
-        if (!$protItem   && preg_match('/prote[cç][aã]o/i', $r)) $protItem   = $t;
-        if (!$caucaoItem && preg_match('/cau[cç][aã]o/i', $r))   $caucaoItem = $t;
-        if ($protItem && $caucaoItem) break;
+      // nº de diárias (mín. 1)
+      $dias = 1;
+      if (!empty($dados['datas']['inicio']) && !empty($dados['datas']['fim'])) {
+        $ds = strtotime(str_replace('/', '-', $dados['datas']['inicio']));
+        $de = strtotime(str_replace('/', '-', $dados['datas']['fim']));
+        if ($ds && $de) $dias = max(1, (int)ceil(($de - $ds) / 86400));
       }
 
-      // rótulo/valor da proteção
       if ($tipo === 'mensal') {
+        // Mensal: proteção "incluída" (mantém comportamento atual)
         $protLabel = 'Proteção básica';
-        $protValor = null; // incluída
+        $protValor = null; // exibiremos "— incluída"
+        $protMultiplica = false;
       } else {
+        // Diária
         if ($protItem) {
-          $protLabel = $limpaRotulo($protItem['rotulo'] ?? 'Proteção');
-          $protValor = $precoExibicao($protItem, $dados);
+          $rot = (string)($protItem['rotulo'] ?? '');
+          $ehSemProtecao = (bool)preg_match('/\bsem\s+prote[cç][aã]o\b/i', $rot);
+
+          if ($ehSemProtecao) {
+            // Selecionado "Sem proteção" => não confundir com "incluída"
+            $protLabel = 'Sem proteção';
+            $protValor = 0.0;         // exibir "Sem proteção — R$ 0,00"
+            $protMultiplica = false;  // não multiplica por dias
+          } else {
+            // Proteção paga por dia
+            $protLabel = $limpaRotulo($rot ?: 'Proteção');
+            $protValor = (float)$precoExibicao($protItem, $dados);
+            $protMultiplica = true;   // multiplicar por dias na exibição
+          }
         } else {
-          $protLabel = 'Proteção';
-          $protValor = null;
+          // Não veio item de proteção: tratar como "Sem proteção"
+          $protLabel = 'Sem proteção';
+          $protValor = 0.0;
+          $protMultiplica = false;
         }
       }
-    ?>
+      ?>
 
     <!-- Linha 2: SERVIÇOS OPCIONAIS | TAXAS -->
     <tr>
@@ -266,14 +282,23 @@ $wmUrl   = $logoUrl; // marca d’água central
           <div class="kv" style="margin-bottom: 2mm;">
             <div>
               <dt>Proteção</dt>
-              <dd>
-                <?= esc_html($protLabel) ?>
-                <?php if ($protValor !== null): ?>
-                  — R$ <?= number_format($protValor, 2, ',', '.') ?>
-                <?php else: ?>
-                  — incluída
-                <?php endif; ?>
-              </dd>
+                <dd>
+                  <?php if ($tipo === 'mensal'): ?>
+                    <?= esc_html($protLabel) ?> — incluída
+                  <?php else: ?>
+                    <?php if ($protMultiplica): ?>
+                      <?= esc_html($protLabel) ?>
+                      — R$ <?= number_format($protValor, 2, ',', '.') ?> × <?= $dias ?>
+                      = R$ <?= number_format($protValor * $dias, 2, ',', '.') ?>
+                    <?php else: ?>
+                      <?php if ($caucaoValor > 0): ?>
+                        Sem proteção, caução de — R$ <?= number_format($caucaoValor, 2, ',', '.') ?>
+                      <?php else: ?>
+                        Sem proteção
+                      <?php endif; ?>
+                    <?php endif; ?>
+                  <?php endif; ?>
+                </dd>
             </div>
           </div>
 
