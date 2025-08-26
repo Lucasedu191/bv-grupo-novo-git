@@ -61,10 +61,11 @@
             '<title>Redirecionando…</title>' +
             '<style>' +
               'html,body{height:100%;margin:0}' +
-              'body{display:grid;place-items:center;font:16px system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif;color:#0f172a;background:#fff}' +
-              '.wrap{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}' +
-              '.logo{height:56px;width:auto;display:block}' +
-              '.spin{width:42px;height:42px;border-radius:50%;border:4px solid #ddd;border-top-color:#25d366;animation:spin 1s linear infinite}' +
+              'body{display:grid;place-items:center;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif;color:#0f172a;background:#fff}' +
+              '.wrap{display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;padding:24px}' +
+              '.logo{max-width:160px;width:80%;height:auto;display:block}' +
+              '.spin{width:64px;height:64px;border-radius:50%;border:6px solid #ddd;border-top-color:#25d366;animation:spin 1s linear infinite}' +
+              'p{font-size:clamp(1rem, 4vw, 1.25rem);margin:0}' + // escala conforme viewport
               '@keyframes spin{to{transform:rotate(360deg)}}' +
             '</style></head><body>' +
               '<div class="wrap">' +
