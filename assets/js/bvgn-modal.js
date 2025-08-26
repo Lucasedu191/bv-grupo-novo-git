@@ -208,7 +208,9 @@
 
       var textoFallback = linhasFallback.join('\n');
       // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(textoFallback);
-      var waUrl = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(textoFallback);
+      var waUrl = 'https://web.whatsapp.com/send?phone=' + numero + '&text=' + encodeURIComponent(texto);
+
+
 
       // redireciona usando a aba pré‑aberta (anti-popup)
       abrirWhats(waUrl);
@@ -265,7 +267,7 @@
       var texto = linhas.join('\n');
       // var waLink = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(texto);
       // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
-      var waUrl = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(texto);
+      var waUrl = 'https://web.whatsapp.com/send?phone=' + numero + '&text=' + encodeURIComponent(texto);
 
  
       abrirWhats(waUrl);
@@ -294,7 +296,7 @@
 
       var texto = linhas.join('\n');
       // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
-      var waUrl = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(texto);
+      var waUrl = 'https://web.whatsapp.com/send?phone=' + numero + '&text=' + encodeURIComponent(texto);
 
       abrirWhats(waUrl);
     })
