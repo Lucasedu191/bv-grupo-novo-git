@@ -207,8 +207,8 @@
       if (payload.mensagem) linhasFallback.push('Mensagem: ' + payload.mensagem);
 
       var textoFallback = linhasFallback.join('\n');
-      // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(textoFallback);
-      var waUrl = 'https://web.whatsapp.com/send?phone=' + numero + '&text=' + encodeURIComponent(texto);
+      var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(textoFallback);
+      
 
 
 
@@ -265,9 +265,8 @@
       if (pdfUrl) linhas.push('PDF da cotação: ' + pdfUrl);
 
       var texto = linhas.join('\n');
-      // var waLink = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(texto);
-      // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
-      var waUrl = 'https://web.whatsapp.com/send?phone=' + numero + '&text=' + encodeURIComponent(texto);
+      var waLink = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(texto);
+      
 
  
       abrirWhats(waUrl);
@@ -295,8 +294,8 @@
       if (datas.inicio || datas.fim) linhas.push('Período: ' + (datas.inicio || '—') + ' até ' + (datas.fim || '—'));
 
       var texto = linhas.join('\n');
-      // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
-      var waUrl = 'https://web.whatsapp.com/send?phone=' + numero + '&text=' + encodeURIComponent(texto);
+      var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
+      
 
       abrirWhats(waUrl);
     })
