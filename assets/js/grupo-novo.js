@@ -168,10 +168,20 @@ function calcular($cx){
       }
     });
 
-    // 3) Taxas fixas (somar em ambos; não há caução aqui)
-    $cx.find('.bvgn-taxa-fixa-input').each(function(){
-      const preco = numero($(this).data('preco'));
-      taxas += preco;
+    // 3) Taxas fixas (ex.: limpeza obrigatória, caução)
+    $cx.find('.bvgn-taxa-fixa-input').each(function () {
+      const $el      = $(this);
+      const rotulo   = String($el.data('rotulo') || '').toLowerCase();
+      const preco    = numero($el.data('preco'));
+      const isCaucao = /cau[cç][aã]o/.test(rotulo) || $el.data('tipo') === 'caucao';
+
+      if (isCaucao) {
+        // DIÁRIO: caução entra 1x; MENSAL: não soma (só exibe)
+        if (tipo === 'diario') taxas += preco;
+      } else {
+        // Demais fixas (ex.: limpeza no topo, se estiver aqui): 1x em ambos
+        taxas += preco;
+      }
     });
 
     // 4) SUBTOTAL / TOTAL
