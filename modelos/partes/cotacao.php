@@ -225,7 +225,15 @@ $wmUrl   = $logoUrl; // marca d’água central
         </div>
       </td>
     </tr>
-
+<?php
+// Remoção defensiva de "Sem proteção" do array de opcionais (se vier inserido antes)
+if (!empty($opcionais) && is_array($opcionais)) {
+  foreach ($opcionais as $k => $t) {
+    $r = $limpaRotulo((string)($t['rotulo'] ?? ''));
+    if (preg_match('/\bsem\s+prote[cç][aã]o\b/i', $r)) unset($opcionais[$k]);
+  }
+}
+?>
     <?php
   // Nº de diárias (mín. 1)
   $dias = 1;
