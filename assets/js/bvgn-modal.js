@@ -42,24 +42,25 @@
         waWin = window.open('about:blank', 'bvgn_whats');
         if (waWin && !waWin.closed) {
           // garante render correto no mobile
-          waWin.document.open('text/html', 'replace');
+          waWin.document.open(); // <- evita quirks; antes tinha ('text/html','replace')
 
           waWin.document.write(
             '<!doctype html><html lang="pt-br"><head><meta charset="utf-8">' +
-            '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">' +
+            // viewport corrigido
+            '<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover">' +
             '<title>Redirecionando…</title>' +
             '<style>' +
               'html,body{height:100%;margin:0}' +
               'body{' +
-                'min-height:100svh;' + /* usa altura visível do mobile */
+                'width:100vw;height:100dvh;' + /* ocupa a tela inteira no Android */
                 'display:grid;place-items:center;' +
                 'padding:24px;' +
                 'font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif;' +
-                'font-size:clamp(16px,4.8vw,20px);' + /* aumenta no celular */
+                'font-size:clamp(16px,5vw,20px);' + /* maior no celular */
                 'color:#0f172a;background:#fff' +
               '}' +
-              '.wrap{display:flex;flex-direction:column;align-items:center;gap:22px;text-align:center;max-width:28rem;width:100%}' +
-              '.logo{max-width:220px;width:75%;height:auto;display:block}' +
+              '.wrap{display:flex;flex-direction:column;align-items:center;gap:22px;text-align:center;width:min(92vw,560px)}' +
+              '.logo{width:min(260px,70vw);height:auto;display:block}' +
               '.spin{width:72px;height:72px;border-radius:50%;border:6px solid #e5e7eb;border-top-color:#25d366;animation:spin 1s linear infinite}' +
               'p{margin:0}' +
               '@keyframes spin{to{transform:rotate(360deg)}}' +
@@ -206,7 +207,8 @@
       if (payload.mensagem) linhasFallback.push('Mensagem: ' + payload.mensagem);
 
       var textoFallback = linhasFallback.join('\n');
-      var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(textoFallback);
+      // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(textoFallback);
+      var waUrl = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(textoFallback);
 
       // redireciona usando a aba pré‑aberta (anti-popup)
       abrirWhats(waUrl);
@@ -262,7 +264,8 @@
 
       var texto = linhas.join('\n');
       // var waLink = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(texto);
-      var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
+      // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
+      var waUrl = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(texto);
 
  
       abrirWhats(waUrl);
@@ -290,7 +293,8 @@
       if (datas.inicio || datas.fim) linhas.push('Período: ' + (datas.inicio || '—') + ' até ' + (datas.fim || '—'));
 
       var texto = linhas.join('\n');
-      var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
+      // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
+      var waUrl = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(texto);
 
       abrirWhats(waUrl);
     })
