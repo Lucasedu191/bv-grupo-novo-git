@@ -176,10 +176,11 @@ function calcular($cx){
       });
     }
 
-    // 4) SUBTOTAL / TOTAL — usar 30 dias no mensal e não somar taxas no mensal
-    const dias = (tipo === 'mensal') ? 30 : qtd;                      // ← ALTERAÇÃO MÍNIMA
-    const subtotal = base * dias;                                     // ← ALTERAÇÃO MÍNIMA
-    const total    = subtotal + (tipo === 'mensal' ? 0 : taxas);      // ← ALTERAÇÃO MÍNIMA
+    // 4) SUBTOTAL / TOTAL
+    // No mensal: mostrar "30 dias" apenas para exibição, mas NÃO multiplicar o preço.
+    const dias = (tipo === 'mensal') ? 30 : qtd;                      // usado só para exibir
+    const subtotal = (tipo === 'mensal') ? base : (base * dias);      // mensal = 1x; diário = * dias
+    const total    = subtotal + (tipo === 'mensal' ? 0 : taxas);      // taxas já ficam 0 no mensal
 
     $cx.find('.bvgn-subtotal .valor').text(subtotal.toFixed(2).replace('.', ','));
     $cx.find('.bvgn-total .valor').text(total.toFixed(2).replace('.', ','));
