@@ -40,48 +40,42 @@
       var waWin = null;
       try {
         waWin = window.open('about:blank', 'bvgn_whats');
-         if (waWin && !waWin.closed) {
-            const html = `
-          <!doctype html>
-          <html lang="pt-br">
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-            <title>Redirecionando…</title>
-            <style>
-              html,body{height:100%;margin:0}
-              body{
-                min-height:100svh; /* usa a altura visível no mobile */
-                display:flex;align-items:center;justify-content:center;
-                padding:24px;
-                font-family:system-ui,-apple-system,"Segoe UI",Roboto,Inter,sans-serif;
-                font-size:clamp(16px,4.8vw,20px);
-                color:#0f172a;background:#fff
-              }
-              .wrap{max-width:28rem;width:100%;text-align:center}
-              .logo{display:block;margin:0 auto;max-width:220px;width:70%;height:auto}
-              .spin{width:72px;height:72px;margin:6px auto;border-radius:50%;
-                border:6px solid #e5e7eb;border-top-color:#25d366;animation:spin 1s linear infinite}
-              @keyframes spin{to{transform:rotate(360deg)}}
-              @media (prefers-color-scheme: dark){
-                body{color:#e5e7eb;background:#0b1120}
-                .spin{border-color:#1f2937;border-top-color:#25d366}
-              }
-            </style>
-          </head>
-          <body>
-            <div class="wrap">
-              <img class="logo" src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png" alt="BV Locadora">
-              <div class="spin" aria-hidden="true"></div>
-              <p>Redirecionando para o WhatsApp…</p>
-            </div>
-          </body>
-          </html>`.trim();
+        if (waWin && !waWin.closed) {
+          // garante render correto no mobile
+          waWin.document.open('text/html', 'replace');
 
-            // Carrega a página como documento "de verdade", aplicando o viewport corretamente
-            const url = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
-            waWin.location.replace(url);
-          }
+          waWin.document.write(
+            '<!doctype html><html lang="pt-br"><head><meta charset="utf-8">' +
+            '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">' +
+            '<title>Redirecionando…</title>' +
+            '<style>' +
+              'html,body{height:100%;margin:0}' +
+              'body{' +
+                'min-height:100svh;' + /* usa altura visível do mobile */
+                'display:grid;place-items:center;' +
+                'padding:24px;' +
+                'font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif;' +
+                'font-size:clamp(16px,4.8vw,20px);' + /* aumenta no celular */
+                'color:#0f172a;background:#fff' +
+              '}' +
+              '.wrap{display:flex;flex-direction:column;align-items:center;gap:22px;text-align:center;max-width:28rem;width:100%}' +
+              '.logo{max-width:220px;width:75%;height:auto;display:block}' +
+              '.spin{width:72px;height:72px;border-radius:50%;border:6px solid #e5e7eb;border-top-color:#25d366;animation:spin 1s linear infinite}' +
+              'p{margin:0}' +
+              '@keyframes spin{to{transform:rotate(360deg)}}' +
+              '@media (prefers-color-scheme: dark){body{color:#e5e7eb;background:#0b1120}.spin{border-color:#1f2937;border-top-color:#25d366}}' +
+            '</style></head><body>' +
+              '<div class="wrap">' +
+                '<img class="logo" src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png" alt="BV Locadora">' +
+                '<div class="spin" aria-hidden="true"></div>' +
+                '<p>Redirecionando para o WhatsApp…</p>' +
+              '</div>' +
+            '</body></html>'
+          );
+
+          waWin.document.close(); // importante no mobile
+        }
+
       } catch(e) {
         waWin = null; // se bloqueou
       }
