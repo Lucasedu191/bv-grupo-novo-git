@@ -209,7 +209,9 @@
       // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(textoFallback);
 
       var waUrl = montarLinkWhats(numeroDestinoIntl, textoFallback);
-      try { navigator.clipboard.writeText(textoFallback); } catch(e) {} 
+      if (navigator.clipboard && document.hasFocus()) {
+        navigator.clipboard.writeText(textoFallback).catch(()=>{});
+      } 
 
       // redireciona usando a aba pré‑aberta (anti-popup)
       abrirWhats(waUrl);
@@ -267,9 +269,12 @@
       // var waLink = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(texto);
       // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
       // abrirWhats(waUrl);
-
+        
       var waUrl = montarLinkWhats(numeroDestinoIntl, texto);
-      try { navigator.clipboard.writeText(texto); } catch(e) {}
+      // tenta copiar pro clipboard, mas ignora se não puder
+      if (navigator.clipboard && document.hasFocus()) {
+        navigator.clipboard.writeText(texto).catch(()=>{});
+      }
       abrirWhats(waUrl);
     })
     .fail(function(){
