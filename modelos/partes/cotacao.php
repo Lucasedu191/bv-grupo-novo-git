@@ -227,55 +227,78 @@ $wmUrl   = $logoUrl; // marca d’água central
     </tr>
 
     <?php
-      // nº de diárias (mín. 1)
-      $dias = 1;
-      if (!empty($dados['datas']['inicio']) && !empty($dados['datas']['fim'])) {
-        $ds = strtotime(str_replace('/', '-', $dados['datas']['inicio']));
-        $de = strtotime(str_replace('/', '-', $dados['datas']['fim']));
-        if ($ds && $de) $dias = max(1, (int)ceil(($de - $ds) / 86400));
-      }
+  // Nº de diárias (mín. 1)
+  $dias = 1;
+  if (!empty($dados['datas']['inicio']) && !empty($dados['datas']['fim'])) {
+    $ds = strtotime(str_replace('/', '-', $dados['datas']['inicio']));
+    $de = strtotime(str_replace('/', '-', $dados['datas']['fim']));
+    if ($ds && $de) $dias = max(1, (int)ceil(($de - $ds) / 86400));
+  }
 
-      // defaults
-      $protLabel       = 'Proteção';
-      $protValor       = null;        // null => "— incluída" (apenas mensal)
-      $protMultiplica  = false;       // diária só multiplica se for proteção paga
-      $caucaoValor     = $caucaoItem ? (float)$precoExibicao($caucaoItem, $dados) : 0.0;
+  // Defaults
+  $protLabel       = 'Proteção';
+  $protValor       = null;        // null => "— incluída" (apenas mensal)
+  $protMultiplica  = false;       // diária só multiplica se for proteção paga
 
-      if ($tipo === 'mensal') {
-        // Mensal: proteção incluída
-        $protLabel      = 'Proteção básica';
-        $protValor      = null;       // exibiremos "— incluída"
-        $protMultiplica = false;
+  // CAUÇÃO: tenta pelas taxas; se não vier, tenta em 'totais'
+  $caucaoValor = 0.0;
+  if (!empty($caucaoItem)) {
+    $caucaoValor = (float)$precoExibicao($caucaoItem, $dados);
+  }
+  if ($caucaoValor <= 0) {
+    // Fallbacks comuns no seu fluxo
+    $cands = [
+      $dados['totais']['caucao']            ?? null,
+      $dados['totais']['caucao_total']      ?? null,
+      $dados['totais']['pagto']['caucao']   ?? null,
+      $dados['totais']['pagamento']['caucao'] ?? null,
+    ];
+    foreach ($cands as $v) {
+      if ($v === null) continue;
+      if (is_numeric($v)) { $caucaoValor = (float)$v; break; }
+      // converte "R$ 4.000,00" → 4000.00
+      $s = preg_replace('/[^\d,\.]/', '', (string)$v);
+      $s = str_replace('.', '', $s);
+      $s = str_replace(',', '.', $s);
+      if (is_numeric($s)) { $caucaoValor = (float)$s; break; }
+    }
+  }
+
+  if ($tipo === 'mensal') {
+    // Mensal: proteção incluída
+    $protLabel      = 'Proteção básica';
+    $protValor      = null;       // exibiremos "— incluída"
+    $protMultiplica = false;
+  } else {
+    // Diária
+    if (!empty($protItem)) {
+      $rot = (string)($protItem['rotulo'] ?? '');
+      $ehSemProtecao = (bool)preg_match('/\bsem\s+prote[cç][aã]o\b/i', $rot);
+
+      if ($ehSemProtecao) {
+        // Diária: SEM proteção
+        $protLabel      = 'Sem proteção';
+        $protValor      = 0.0;
+        $protMultiplica = false;  // não multiplica
       } else {
-        // Diária
-        if ($protItem) {
-          $rot = (string)($protItem['rotulo'] ?? '');
-          $ehSemProtecao = (bool)preg_match('/\bsem\s+prote[cç][aã]o\b/i', $rot);
+        // Diária: proteção paga por dia
+        $protLabel = $limpaRotulo($rot ?: 'Proteção');
+        // remove preço colado no rótulo (evita "R$ 45,00 — R$ 45,00")
+        $protLabel = preg_replace('/\s*[–-]\s*R\$\s*[\d\.\,]+/u', '', $protLabel);
+        $protLabel = preg_replace('/R\$\s*[\d\.\,]+/u', '', $protLabel);
+        $protLabel = trim($protLabel);
 
-          if ($ehSemProtecao) {
-            // Diária: SEM proteção
-            $protLabel      = 'Sem proteção';
-            $protValor      = 0.0;
-            $protMultiplica = false;  // não multiplica
-          } else {
-            // Diária: proteção paga por dia
-            $protLabel = $limpaRotulo($rot ?: 'Proteção');
-            // remove qualquer preço colado no rótulo (evita duplicidade)
-            $protLabel = preg_replace('/\s*[–-]\s*R\$\s*[\d\.\,]+/u', '', $protLabel);
-            $protLabel = preg_replace('/R\$\s*[\d\.\,]+/u', '', $protLabel);
-            $protLabel = trim($protLabel);
-
-            $protValor      = (float)$precoExibicao($protItem, $dados);
-            $protMultiplica = true;   // multiplica por $dias
-          }
-        } else {
-          // Não veio item => tratar como "Sem proteção"
-          $protLabel      = 'Sem proteção';
-          $protValor      = 0.0;
-          $protMultiplica = false;
-        }
+        $protValor      = (float)$precoExibicao($protItem, $dados);
+        $protMultiplica = true;   // multiplica por $dias
       }
-    ?>
+    } else {
+      // Não veio item => tratar como "Sem proteção"
+      $protLabel      = 'Sem proteção';
+      $protValor      = 0.0;
+      $protMultiplica = false;
+    }
+  }
+?>
 
     <!-- Linha 2: SERVIÇOS OPCIONAIS | TAXAS -->
     <tr>
@@ -309,7 +332,7 @@ $wmUrl   = $logoUrl; // marca d’água central
           </div>
 
           <!-- (Mensal) Mostrar Caução destacado -->
-          <?php if ($tipo === 'mensal' && $caucaoItem): ?>
+          <?php if ($tipo === 'mensal' && !empty($caucaoItem)): ?>
             <ul class="lista" style="margin-top:2mm">
               <li>
                 <?= esc_html($limpaRotulo($caucaoItem['rotulo'] ?? 'Caução')) ?> —
@@ -326,7 +349,7 @@ $wmUrl   = $logoUrl; // marca d’água central
                   $rOrig  = (string)($t['rotulo'] ?? '');
                   $rClean = $limpaRotulo($rOrig);
 
-                  // pular proteção sempre (inclui "Sem proteção")
+                  // pular qualquer proteção (inclusive "Sem proteção")
                   if (preg_match('/prote[cç][aã]o/i', $rOrig)) continue;
                   if (preg_match('/\bsem\s+prote[cç][aã]o\b/i', $rOrig) || preg_match('/\bsem\s+prote[cç][aã]o\b/i', $rClean)) continue;
 
