@@ -16,6 +16,11 @@ $nonce          = isset($modal_data['nonce']) ? $modal_data['nonce'] : '';
         <img src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png" alt="BV Locadora" style="max-width: 160px; height: auto;">
       </div>
 
+      <!-- Mensagem em destaque -->
+      <div class="bvgn-highlight" style="margin:15px 0; padding:12px; background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; text-align:center; font-weight:600; color:#92400e;">
+        Gere a sua cotação e fale com o consultor.
+      </div>
+
       <button type="button" class="bvgn-modal__close js-bvgn-close-modal" data-bvgn-modal="bvgn-cotacao-modal" aria-label="Fechar">×</button>
       <h3 id="bvgn-cotacao-titulo" class="bvgn-modal__title">Gerar cotação</h3>
       <?php if ($produto_titulo): ?>

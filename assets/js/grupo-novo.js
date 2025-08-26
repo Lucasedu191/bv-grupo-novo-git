@@ -126,11 +126,18 @@ function calcular($cx){
       
       
 
-      const valorProt = preco; // apenas 1x
+      // const valorProt = preco; // apenas 1x
+      //  const valorProt = (tipo === 'diario') ? (preco * qtd) : preco;
+       const valorProt = (tipo === 'diario') ? (preco * qtd) : 0; // ← ALTERAÇÃO MÍNIMA
       taxas += valorProt;
 
       // se houver caução, soma também
-      if (caucao > 0) {
+      // if (caucao > 0) {
+      //   taxas += caucao;
+      // }
+
+      // se houver caução, soma também (só no diário)
+      if (tipo === 'diario' && caucao > 0) {                    // ← ALTERAÇÃO MÍNIMA
         taxas += caucao;
       }
 
@@ -153,24 +160,26 @@ function calcular($cx){
       // Se for taxa diária e tipo diário → multiplicar pelos dias
       if (rotulo.includes('(diaria)')) {
         if (tipo === 'diario') {
-          taxas += preco * qtd;
-        } else if (tipo === 'mensal') {
-          taxas += preco * 30;
-        } else {
-          taxas += preco;
-        }
+          taxas += preco * qtd;           // diário → por dia
+        } /* mensal: não soma */          // ← ALTERAÇÃO MÍNIMA
       } else {
-        taxas += preco;
+        if (tipo === 'diario') {
+          taxas += preco;                 // não diária → 1x (só no diário)
+        } /* mensal: não soma */          // ← ALTERAÇÃO MÍNIMA
       }
     });
 
-    // taxa fixa mensal (se existir) — não multiplica
-    $cx.find('.bvgn-taxa-fixa-input').each(function(){
-      taxas += numero($(this).data('preco'));
-    });
+    // 3 TAXA FIXA MENSAL — não somar no mensal
+    if (tipo === 'diario') {                                          // ← ALTERAÇÃO MÍNIMA
+      $cx.find('.bvgn-taxa-fixa-input').each(function(){
+        taxas += numero($(this).data('preco'));
+      });
+    }
 
-    const subtotal = base * qtd;
-    const total = subtotal + taxas;
+    // 4) SUBTOTAL / TOTAL — usar 30 dias no mensal e não somar taxas no mensal
+    const dias = (tipo === 'mensal') ? 30 : qtd;                      // ← ALTERAÇÃO MÍNIMA
+    const subtotal = base * dias;                                     // ← ALTERAÇÃO MÍNIMA
+    const total    = subtotal + (tipo === 'mensal' ? 0 : taxas);      // ← ALTERAÇÃO MÍNIMA
 
     $cx.find('.bvgn-subtotal .valor').text(subtotal.toFixed(2).replace('.', ','));
     $cx.find('.bvgn-total .valor').text(total.toFixed(2).replace('.', ','));
@@ -184,15 +193,15 @@ function calcular($cx){
     const isMensal = $('.bvgn-variacoes[data-bvgn-tipo="mensal"]').length > 0;
     if (isMensal) qtd = 30;
     
-    // Exibir o período de dias
+    // Exibir o período de dias (usar 'dias' agora)
     $cx.find('.bvgn-dias').show();
-    $cx.find('#bvgn-days-view').text(`${qtd} dia${qtd > 1 ? 's' : ''}`);
-    $cx.find('#bvgn-days-raw').val(qtd);
+    $cx.find('#bvgn-days-view').text(`${dias} dia${dias > 1 ? 's' : ''}`);   // ← ALTERAÇÃO MÍNIMA
+    $cx.find('#bvgn-days-raw').val(dias);                                    // ← ALTERAÇÃO MÍNIMA
 
-    // Exibir o valor total das taxas
+    // Exibir valor total das taxas (0 no mensal automaticamente)
     $cx.find('.bvgn-taxas').show();
-    $cx.find('#bvgn-taxas').text(taxas.toFixed(2).replace('.', ','));
-    $cx.find('#bvgn-taxas-raw').val(taxas);
+    $cx.find('#bvgn-taxas').text((tipo === 'mensal' ? 0 : taxas).toFixed(2).replace('.', ',')); // ← ALTERAÇÃO MÍNIMA
+    $cx.find('#bvgn-taxas-raw').val(tipo === 'mensal' ? 0 : taxas);    
 
     // Subtotal e total (valores crus já estão ali, mas reforçamos)
     $cx.find('#bvgn-subtotal-raw').val(subtotal);
@@ -422,7 +431,7 @@ function calcular($cx){
 
       if (!selecionado) {
       if (dias > 30) {
-        setMsg($cx, 'O período máximo para agendamentos diários é de 30 dias. Para prazos maiores, <a href="/grupos-mensais">acesse os grupos mensais</a>.');
+        setMsg($cx, 'O período máximo para agendamentos diários é de 30 dias. Para prazos maiores, <a href="/planos-mensais">acesse os grupos mensais</a>.');
       } else {
         setMsg($cx, `Nenhum plano cobre ${dias} dias. Tente ajustar o período ou acesse os grupos mensais.`);
       }
