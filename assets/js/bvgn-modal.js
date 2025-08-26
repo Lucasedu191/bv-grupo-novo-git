@@ -40,7 +40,7 @@
       var waWin = null;
       try {
         waWin = window.open('about:blank', 'bvgn_whats');
-        if (waWin && !waWin.closed) {
+         if (waWin && !waWin.closed) {
           // garante render correto no mobile
           waWin.document.open(); // <- evita quirks; antes tinha ('text/html','replace')
 
@@ -208,9 +208,6 @@
 
       var textoFallback = linhasFallback.join('\n');
       var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(textoFallback);
-      
-
-
 
       // redireciona usando a aba pré‑aberta (anti-popup)
       abrirWhats(waUrl);
@@ -265,8 +262,8 @@
       if (pdfUrl) linhas.push('PDF da cotação: ' + pdfUrl);
 
       var texto = linhas.join('\n');
-      var waLink = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(texto);
-      
+      // var waLink = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(texto);
+      var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
 
  
       abrirWhats(waUrl);
@@ -295,7 +292,6 @@
 
       var texto = linhas.join('\n');
       var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
-      
 
       abrirWhats(waUrl);
     })
