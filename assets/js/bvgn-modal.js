@@ -2,6 +2,20 @@
   function qs(s, c){ return (c||document).querySelector(s); }
   function qsa(s, c){ return Array.prototype.slice.call((c||document).querySelectorAll(s)); }
 
+
+
+  // Monta link estável para WhatsApp (funciona melhor no Desktop)
+  function montarLinkWhats(numero, mensagem){
+    const phone = String(numero || '').replace(/\D/g, ''); // só dígitos
+    const msg = encodeURIComponent(
+      String(mensagem || '')
+        .replace(/\u00A0/g, ' ')         // NBSP -> espaço
+        .replace(/[\u2028\u2029]/g, '\n')// line sep -> \n
+        .trim()
+    );
+    return `https://wa.me/${phone}?text=${msg}`; // preferir wa.me ao api.whatsapp
+  }
+
   function openModal(id){
     var el = qs('#'+id);
     if(!el) return;
@@ -192,7 +206,10 @@
       if (payload.mensagem) linhasFallback.push('Mensagem: ' + payload.mensagem);
 
       var textoFallback = linhasFallback.join('\n');
-      var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(textoFallback);
+      // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(textoFallback);
+
+      var waUrl = montarLinkWhats(numeroDestinoIntl, textoFallback);
+      try { navigator.clipboard.writeText(textoFallback); } catch(e) {} 
 
       // redireciona usando a aba pré‑aberta (anti-popup)
       abrirWhats(waUrl);
@@ -248,9 +265,11 @@
 
       var texto = linhas.join('\n');
       // var waLink = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(texto);
-      var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
+      // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
+      // abrirWhats(waUrl);
 
- 
+      var waUrl = montarLinkWhats(numeroDestinoIntl, texto);
+      try { navigator.clipboard.writeText(texto); } catch(e) {}
       abrirWhats(waUrl);
     })
     .fail(function(){
