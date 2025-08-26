@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 9.8.3
+ * Version: 9.8.4
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -198,13 +198,47 @@ add_action('wp_enqueue_scripts', function () {
 
     
     // JS principal
+    // wp_enqueue_script(
+    //   'bvgn-js',
+    //   BVGN_URL . 'assets/js/grupo-novo.js',
+    //   ['jquery'],
+    //   $ver_js,
+    //   true
+    // );
+
+    // === [NOVO] Versão modular em 3 arquivos ===
+    $ver_core   = ( defined('BVGN_DIR') && file_exists(BVGN_DIR.'assets/js/bvgn-core.js') )
+                  ? filemtime(BVGN_DIR.'assets/js/bvgn-core.js')   : '1.0.0';
+    $ver_calc   = ( defined('BVGN_DIR') && file_exists(BVGN_DIR.'assets/js/bvgn-calc.js') )
+                  ? filemtime(BVGN_DIR.'assets/js/bvgn-calc.js')   : '1.0.0';
+    $ver_events = ( defined('BVGN_DIR') && file_exists(BVGN_DIR.'assets/js/bvgn-events.js') )
+                  ? filemtime(BVGN_DIR.'assets/js/bvgn-events.js') : '1.0.0';
+
     wp_enqueue_script(
-      'bvgn-js',
-      BVGN_URL . 'assets/js/grupo-novo.js',
+      'bvgn-core',
+      BVGN_URL . 'assets/js/bvgn-core.js',
       ['jquery'],
-      $ver_js,
+      $ver_core,
       true
     );
+
+    wp_enqueue_script(
+      'bvgn-calc',
+      BVGN_URL . 'assets/js/bvgn-calc.js',
+      ['jquery','bvgn-core'],
+      $ver_calc,
+      true
+    );
+
+    wp_enqueue_script(
+      'bvgn-events',
+      BVGN_URL . 'assets/js/bvgn-events.js',
+      ['jquery','bvgn-core','bvgn-calc'],
+      $ver_events,
+      true
+    );
+
+
 
     // Proteção JS (só quando tem [gn_protecao] no conteúdo)
     if ( $has_post && has_shortcode($post->post_content, 'gn_protecao') ) {
