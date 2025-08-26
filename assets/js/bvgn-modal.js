@@ -6,14 +6,19 @@
 
   // Monta link estável para WhatsApp (funciona melhor no Desktop)
   function montarLinkWhats(numero, mensagem){
-    const phone = String(numero || '').replace(/\D/g, ''); // só dígitos
-    const msg = encodeURIComponent(
+    const phone = String(numero || '').replace(/\D/g, '');
+    const msg   = encodeURIComponent(
       String(mensagem || '')
-        .replace(/\u00A0/g, ' ')         // NBSP -> espaço
-        .replace(/[\u2028\u2029]/g, '\n')// line sep -> \n
+        .replace(/\u00A0/g, ' ')
+        .replace(/[\u2028\u2029]/g, '\n')
         .trim()
     );
-    return `https://wa.me/${phone}?text=${msg}`; // preferir wa.me ao api.whatsapp
+    // detecta mobile de forma simples
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    // desktop → Web; mobile → wa.me
+    const webUrl = `https://web.whatsapp.com/send?phone=${phone}&text=${msg}`;
+    const waUrl  = `https://wa.me/${phone}?text=${msg}`;
+    return { phone, msg, webUrl, waUrl, isMobile };
   }
 
   function openModal(id){
@@ -91,15 +96,58 @@
         nonce:            data.get('nonce') || ''
       };
 
-      function abrirWhats(waUrl){
-      if (waWin && !waWin.closed) {
-        // navega a MESMA aba aberta no clique
-        waWin.location.href = waUrl;   // (pode usar .replace também)
-        return;
+      function abrirWhatsSmart(numero, mensagem){
+        const { phone, msg, webUrl, waUrl, isMobile } = montarLinkWhats(numero, mensagem);
+
+        // DEBUG
+        console.group('[BVGN][DEBUG] WhatsApp');
+        console.log('UA:', navigator.userAgent);
+        console.log('Destino (E.164):', phone);
+        console.log('Mensagem (bruta):', mensagem);
+        console.log('Mensagem (encode):', msg);
+        console.log('URL Web:', webUrl);
+        console.log('URL wa.me:', waUrl);
+        console.log('isMobile:', isMobile);
+        console.groupEnd();
+
+        // copia (sem quebrar fluxo)
+        if (navigator.clipboard && document.hasFocus()) {
+          navigator.clipboard.writeText(mensagem).catch(()=>{});
+        }
+
+        // Desktop → abre Web; Mobile → abre wa.me
+        const url = isMobile ? waUrl : webUrl;
+
+        // abre em nova aba; se popup bloquear, cai no mesmo tab
+        try {
+          const win = window.open(url, '_blank', 'noopener');
+          if (!win) location.href = url;
+        } catch {
+          location.href = url;
+        }
+
+        // DEBUG widget opcional na tela pra você clicar manualmente se quiser
+        try {
+          let dbg = document.getElementById('bvgn-wa-debug');
+          if (!dbg) {
+            dbg = document.createElement('div');
+            dbg.id = 'bvgn-wa-debug';
+            dbg.style.cssText = 'position:fixed;left:12px;bottom:12px;background:#fff;border:1px solid #ddd;padding:8px 10px;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.08);z-index:99999;font:500 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif';
+            dbg.innerHTML = `
+              <div style="margin-bottom:6px;">🔎 <b>Debug WhatsApp</b></div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <a href="${webUrl}" target="_blank" rel="noopener" style="text-decoration:none;padding:6px 10px;border-radius:6px;background:#0ea5e9;color:#fff">Abrir Web</a>
+                <a href="${waUrl}"  target="_blank" rel="noopener" style="text-decoration:none;padding:6px 10px;border-radius:6px;background:#10b981;color:#fff">Abrir wa.me</a>
+                <button id="bvgn-wa-debug-close" style="padding:6px 10px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer">Fechar</button>
+              </div>`;
+            document.body.appendChild(dbg);
+            document.getElementById('bvgn-wa-debug-close').onclick = () => dbg.remove();
+          } else {
+            dbg.querySelectorAll('a')[0].href = webUrl;
+            dbg.querySelectorAll('a')[1].href = waUrl;
+          }
+        } catch {}
       }
-      // Se a aba foi bloqueada, tenta abrir agora em nova aba (degrada com dignidade)
-      window.open(waUrl, '_blank', 'noopener');
-    }
 
       // Normalização (somente dígitos)
       var numeroCliente = (payload.whatsapp || '').replace(/\D/g,'');
@@ -209,7 +257,8 @@
       var textoFallback = linhasFallback.join('\n');
       // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(textoFallback);
 
-      var waUrl = montarLinkWhats(numeroDestinoIntl, textoFallback);
+      abrirWhatsSmart(numeroDestinoIntl, textoFallback);
+      closeModal('bvgn-cotacao-modal');
 
         // debug
       console.group('[BVGN][DEBUG] WhatsApp Link');
@@ -281,7 +330,7 @@
       // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
       // abrirWhats(waUrl);
         
-      var waUrl = montarLinkWhats(numeroDestinoIntl, texto);
+      abrirWhatsSmart(numeroDestinoIntl, texto);
       // tenta copiar pro clipboard, mas ignora se não puder
       if (navigator.clipboard && document.hasFocus()) {
         navigator.clipboard.writeText(texto).catch(()=>{});
