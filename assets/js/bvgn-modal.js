@@ -2,25 +2,6 @@
   function qs(s, c){ return (c||document).querySelector(s); }
   function qsa(s, c){ return Array.prototype.slice.call((c||document).querySelectorAll(s)); }
 
-
-
-  // Monta link estável para WhatsApp (funciona melhor no Desktop)
-  function montarLinkWhats(numero, mensagem){
-    const phone = String(numero || '').replace(/\D/g, '');
-    const msg   = encodeURIComponent(
-      String(mensagem || '')
-        .replace(/\u00A0/g, ' ')
-        .replace(/[\u2028\u2029]/g, '\n')
-        .trim()
-    );
-    // detecta mobile de forma simples
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    // desktop → Web; mobile → wa.me
-    const webUrl = `https://web.whatsapp.com/send?phone=${phone}&text=${msg}`;
-    const waUrl  = `https://wa.me/${phone}?text=${msg}`;
-    return { phone, msg, webUrl, waUrl, isMobile };
-  }
-
   function openModal(id){
     var el = qs('#'+id);
     if(!el) return;
@@ -60,28 +41,47 @@
       try {
         waWin = window.open('about:blank', 'bvgn_whats');
          if (waWin && !waWin.closed) {
-          waWin.document.write(
-            '<!doctype html><html lang="pt-br"><head><meta charset="utf-8">' +
-            '<meta name="viewport" content="width=device-width,initial-scale=1">' +
-            '<title>Redirecionando…</title>' +
-            '<style>' +
-              'html,body{height:100%;margin:0}' +
-              'body{display:grid;place-items:center;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif;color:#0f172a;background:#fff}' +
-              '.wrap{display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;padding:24px}' +
-              '.logo{max-width:160px;width:80%;height:auto;display:block}' +
-              '.spin{width:64px;height:64px;border-radius:50%;border:6px solid #ddd;border-top-color:#25d366;animation:spin 1s linear infinite}' +
-              'p{font-size:clamp(1rem, 4vw, 1.25rem);margin:0}' + // escala conforme viewport
-              '@keyframes spin{to{transform:rotate(360deg)}}' +
-            '</style></head><body>' +
-              '<div class="wrap">' +
-                '<img class="logo" src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png" alt="BV Locadora">' +
-                '<div class="spin"></div>' +
-                '<p>Redirecionando para o WhatsApp…</p>' +
-              '</div>' +
-            '</body></html>'
-          );
-          waWin.document.close();
-        }
+            const html = `
+          <!doctype html>
+          <html lang="pt-br">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+            <title>Redirecionando…</title>
+            <style>
+              html,body{height:100%;margin:0}
+              body{
+                min-height:100svh; /* usa a altura visível no mobile */
+                display:flex;align-items:center;justify-content:center;
+                padding:24px;
+                font-family:system-ui,-apple-system,"Segoe UI",Roboto,Inter,sans-serif;
+                font-size:clamp(16px,4.8vw,20px);
+                color:#0f172a;background:#fff
+              }
+              .wrap{max-width:28rem;width:100%;text-align:center}
+              .logo{display:block;margin:0 auto;max-width:220px;width:70%;height:auto}
+              .spin{width:72px;height:72px;margin:6px auto;border-radius:50%;
+                border:6px solid #e5e7eb;border-top-color:#25d366;animation:spin 1s linear infinite}
+              @keyframes spin{to{transform:rotate(360deg)}}
+              @media (prefers-color-scheme: dark){
+                body{color:#e5e7eb;background:#0b1120}
+                .spin{border-color:#1f2937;border-top-color:#25d366}
+              }
+            </style>
+          </head>
+          <body>
+            <div class="wrap">
+              <img class="logo" src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png" alt="BV Locadora">
+              <div class="spin" aria-hidden="true"></div>
+              <p>Redirecionando para o WhatsApp…</p>
+            </div>
+          </body>
+          </html>`.trim();
+
+            // Carrega a página como documento "de verdade", aplicando o viewport corretamente
+            const url = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+            waWin.location.replace(url);
+          }
       } catch(e) {
         waWin = null; // se bloqueou
       }
@@ -96,58 +96,15 @@
         nonce:            data.get('nonce') || ''
       };
 
-      function abrirWhatsSmart(numero, mensagem){
-        const { phone, msg, webUrl, waUrl, isMobile } = montarLinkWhats(numero, mensagem);
-
-        // DEBUG
-        console.group('[BVGN][DEBUG] WhatsApp');
-        console.log('UA:', navigator.userAgent);
-        console.log('Destino (E.164):', phone);
-        console.log('Mensagem (bruta):', mensagem);
-        console.log('Mensagem (encode):', msg);
-        console.log('URL Web:', webUrl);
-        console.log('URL wa.me:', waUrl);
-        console.log('isMobile:', isMobile);
-        console.groupEnd();
-
-        // copia (sem quebrar fluxo)
-        if (navigator.clipboard && document.hasFocus()) {
-          navigator.clipboard.writeText(mensagem).catch(()=>{});
-        }
-
-        // Desktop → abre Web; Mobile → abre wa.me
-        const url = isMobile ? waUrl : webUrl;
-
-        // abre em nova aba; se popup bloquear, cai no mesmo tab
-        try {
-          const win = window.open(url, '_blank', 'noopener');
-          if (!win) location.href = url;
-        } catch {
-          location.href = url;
-        }
-
-        // DEBUG widget opcional na tela pra você clicar manualmente se quiser
-        try {
-          let dbg = document.getElementById('bvgn-wa-debug');
-          if (!dbg) {
-            dbg = document.createElement('div');
-            dbg.id = 'bvgn-wa-debug';
-            dbg.style.cssText = 'position:fixed;left:12px;bottom:12px;background:#fff;border:1px solid #ddd;padding:8px 10px;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.08);z-index:99999;font:500 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif';
-            dbg.innerHTML = `
-              <div style="margin-bottom:6px;">🔎 <b>Debug WhatsApp</b></div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <a href="${webUrl}" target="_blank" rel="noopener" style="text-decoration:none;padding:6px 10px;border-radius:6px;background:#0ea5e9;color:#fff">Abrir Web</a>
-                <a href="${waUrl}"  target="_blank" rel="noopener" style="text-decoration:none;padding:6px 10px;border-radius:6px;background:#10b981;color:#fff">Abrir wa.me</a>
-                <button id="bvgn-wa-debug-close" style="padding:6px 10px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer">Fechar</button>
-              </div>`;
-            document.body.appendChild(dbg);
-            document.getElementById('bvgn-wa-debug-close').onclick = () => dbg.remove();
-          } else {
-            dbg.querySelectorAll('a')[0].href = webUrl;
-            dbg.querySelectorAll('a')[1].href = waUrl;
-          }
-        } catch {}
+      function abrirWhats(waUrl){
+      if (waWin && !waWin.closed) {
+        // navega a MESMA aba aberta no clique
+        waWin.location.href = waUrl;   // (pode usar .replace também)
+        return;
       }
+      // Se a aba foi bloqueada, tenta abrir agora em nova aba (degrada com dignidade)
+      window.open(waUrl, '_blank', 'noopener');
+    }
 
       // Normalização (somente dígitos)
       var numeroCliente = (payload.whatsapp || '').replace(/\D/g,'');
@@ -255,24 +212,8 @@
       if (payload.mensagem) linhasFallback.push('Mensagem: ' + payload.mensagem);
 
       var textoFallback = linhasFallback.join('\n');
-      // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(textoFallback);
+      var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(textoFallback);
 
-      abrirWhatsSmart(numeroDestinoIntl, textoFallback);
-      closeModal('bvgn-cotacao-modal');
-
-        // debug
-      console.group('[BVGN][DEBUG] WhatsApp Link');
-      console.log('Número destino:', numeroDestinoIntl);
-      console.log('Mensagem bruta:', texto);
-      console.log('Mensagem encode:', encodeURIComponent(texto));
-      console.log('URL final:', waUrl);
-      console.groupEnd();
-      if (navigator.clipboard && document.hasFocus()) {
-        navigator.clipboard.writeText(textoFallback).catch(()=>{});
-         console.warn('[BVGN][DEBUG] Falha ao copiar p/ clipboard:', err);
-      } else {
-          console.warn('[BVGN][DEBUG] Clipboard API indisponível ou documento sem foco');
-      }
       // redireciona usando a aba pré‑aberta (anti-popup)
       abrirWhats(waUrl);
 
@@ -327,14 +268,9 @@
 
       var texto = linhas.join('\n');
       // var waLink = 'https://wa.me/' + numeroDestinoIntl + '?text=' + encodeURIComponent(texto);
-      // var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
-      // abrirWhats(waUrl);
-        
-      abrirWhatsSmart(numeroDestinoIntl, texto);
-      // tenta copiar pro clipboard, mas ignora se não puder
-      if (navigator.clipboard && document.hasFocus()) {
-        navigator.clipboard.writeText(texto).catch(()=>{});
-      }
+      var waUrl = 'https://api.whatsapp.com/send?phone=' + numeroDestinoIntl + '&text=' + encodeURIComponent(texto);
+
+ 
       abrirWhats(waUrl);
     })
     .fail(function(){
