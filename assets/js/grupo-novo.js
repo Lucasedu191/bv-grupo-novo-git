@@ -163,15 +163,15 @@ function calcular($cx){
         // diário: diária multiplica por dia; demais, 1x
         taxas += isDiaria ? (preco * qtd) : preco;
       } else {
-        // mensal: SOMA 1x todas as taxas, EXCETO caução; nunca multiplica por dias
-        if (!isCaucao) taxas += preco * 30;
+         // mensal: NÃO soma caução; diárias = *30; demais (ex.: limpeza) = 1x
+    if (!isCaucao) taxas += isDiaria ? (preco * 30) : preco;
       }
     });
 
     // 3) Taxas fixas (somar em ambos; não há caução aqui)
     $cx.find('.bvgn-taxa-fixa-input').each(function(){
       const preco = numero($(this).data('preco'));
-      taxas += (tipo === 'mensal') ? preco * 30 : preco;
+      taxas += preco;
     });
 
     // 4) SUBTOTAL / TOTAL
