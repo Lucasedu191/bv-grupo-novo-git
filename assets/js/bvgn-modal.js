@@ -167,12 +167,15 @@
         // Proteção (radio) — incluir na lista de taxas selecionadas
         var prot = cx.querySelector('input[name="bvgn_protecao"]:checked');
         if (prot) {
-          var precoProt = prot.dataset.precoDia || '0';
-          var rotuloProt = (prot.closest('label')?.querySelector('.lbl')?.textContent || 'Proteção').trim();
+          var lblEl      = prot.closest('label');
+          var precoProt  = prot.dataset.precoDia || '0';
+          var rotuloTxt  = (lblEl?.textContent || 'Proteção').trim();     // tudo que aparece no label
+          var rotuloHtml = (lblEl?.innerHTML   || rotuloTxt).trim();      // HTML completo
 
           taxasSel.push({
-            rotulo: rotuloProt,
-            preco: precoProt
+            rotulo:      rotuloTxt,
+            rotulo_html: rotuloHtml,   // <-- novo campo
+            preco:       precoProt
           });
         }
 

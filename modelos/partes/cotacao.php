@@ -247,7 +247,10 @@ $wmUrl   = $logoUrl; // marca d’água central
       } else {
         if ($protItem) {
           // $protLabel = $limpaRotulo($protItem['rotulo'] ?? 'Proteção');
-          $protLabel = trim((string)($protItem['rotulo'] ?? 'Proteção')); // usa o texto integral
+           $protLabelHtml = (string)($protItem['rotulo_html'] ?? ''); // preferir HTML completo
+            $protLabelTxt  = (string)($protItem['rotulo'] ?? 'Proteção');
+            $protLabel     = trim($protLabelHtml !== '' ? $protLabelHtml : $protLabelTxt);
+          
 
           $protValor = $precoExibicao($protItem, $dados);
         } else {
@@ -269,7 +272,16 @@ $wmUrl   = $logoUrl; // marca d’água central
             <div>
               <dt>Proteção</dt>
               <dd>
-                <?= esc_html($protLabel) ?>
+                <?php
+                  echo wp_kses(
+                    $protLabel,
+                    [
+                      'b' => [], 'strong' => [], 'i' => [], 'em' => [],
+                      'u' => [], 'small' => [], 'br' => [], 'span' => ['class' => []],
+                      'sup' => [], 'sub' => []
+                    ]
+                  );
+                ?>
                 <?php if ($protValor !== null): ?>
                   — R$ <?= number_format($protValor, 2, ',', '.') ?>
                 <?php else: ?>
