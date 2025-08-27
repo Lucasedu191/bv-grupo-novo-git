@@ -41,10 +41,16 @@ $toFloatBR = function($moeda){
   return (float)$s;
 };
 
+$matchRotulo = function(array $t, string $regex): bool {
+  $txt  = (string)($t['rotulo'] ?? '');
+  $html = (string)($t['rotulo_html'] ?? '');
+  return (bool)(preg_match($regex, $txt) || preg_match($regex, $html));
+};
+
 // Calcula preço exibido: diária × qtd; e injeta caução quando necessário
 $precoExibicao = function($t, $dados) use ($toFloatBR){
   $p    = (float)($t['preco'] ?? 0);
-  $rot  = (string)($t['rotulo'] ?? '');
+  $rot  = (string)($t['rotulo_html'] ?? $t['rotulo'] ?? '');
   $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
   $qtd  = max(1, (int)($dados['totais']['qtd'] ?? 1));
 
@@ -90,9 +96,13 @@ $mensagem = trim($dados['mensagem'] ?? '');
 // Quebra as taxas em grupos para exibir no "Detalhes"
 $taxasAll   = $dados['taxas'] ?? [];
 $taxasFixas = array_values(array_filter($taxasAll, fn($t) => preg_match('/taxa|limpeza/i', $t['rotulo'] ?? '')));
-$opcionais  = array_values(array_filter($taxasAll, fn($t) =>
-  !preg_match('/prote[cç][aã]o|taxa|limpeza/i', $t['rotulo'] ?? '')
-));
+$opcionais  = array_values(array_filter($taxasAll, function($t) use ($matchRotulo){
+  // excluir proteção, taxas e limpeza
+  return !(
+    $matchRotulo($t, '/prote[cç][aã]o/i') ||
+    $matchRotulo($t, '/taxa|limpeza/i')
+  );
+}));
 
 $logoUrl = 'https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png'; // topo
 $wmUrl   = $logoUrl; // marca d’água central
@@ -234,11 +244,17 @@ $wmUrl   = $logoUrl; // marca d’água central
       $protItem   = null;
       $caucaoItem = null;
       foreach (($taxasAll ?? []) as $t) {
-        $r = (string)($t['rotulo'] ?? '');
-        if (!$protItem   && preg_match('/prote[cç][aã]o/i', $r)) $protItem   = $t;
-        if (!$caucaoItem && preg_match('/cau[cç][aã]o/i', $r))   $caucaoItem = $t;
+        if (!$protItem   && $matchRotulo($t, '/prote[cç][aã]o/i')) $protItem   = $t;
+        if (!$caucaoItem && $matchRotulo($t, '/cau[cç][aã]o/i'))   $caucaoItem = $t;
         if ($protItem && $caucaoItem) break;
       }
+
+      $usarCaucaoNoProtecao = false;
+        if ($tipo === 'diario' && $protItem) {
+          if ($matchRotulo($protItem, '/sem\s+prote[cç][aã]o/i')) {
+            $usarCaucaoNoProtecao = true;
+          }
+        }
 
       // rótulo/valor da proteção
       if ($tipo === 'mensal') {
@@ -249,7 +265,7 @@ $wmUrl   = $logoUrl; // marca d’água central
           // $protLabel = $limpaRotulo($protItem['rotulo'] ?? 'Proteção');
            $protLabelHtml = (string)($protItem['rotulo_html'] ?? ''); // preferir HTML completo
             $protLabelTxt  = (string)($protItem['rotulo'] ?? 'Proteção');
-            $protLabel     = trim($protLabelHtml !== '' ? $protLabelHtml : $protLabelTxt);
+            $protLabel = trim((string)($protItem['rotulo_html'] ?? $protItem['rotulo'] ?? 'Proteção'));
           
 
           $protValor = $precoExibicao($protItem, $dados);
@@ -308,9 +324,9 @@ $wmUrl   = $logoUrl; // marca d’água central
                 <?php
                   $rOrig = (string)($t['rotulo'] ?? '');
                   // pular proteção sempre (já tratamos acima)
-                  if (preg_match('/prote[cç][aã]o/i', $rOrig)) continue;
-                  // no mensal, pular caução da lista (já mostramos destacado acima)
-                  if ($tipo === 'mensal' && preg_match('/cau[cç][aã]o/i', $rOrig)) continue;
+                  if ($matchRotulo($t, '/prote[cç][aã]o/i')) continue;
+                  if ($usarCaucaoNoProtecao && $matchRotulo($t, '/cau[cç][aã]o/i')) continue;
+                  if ($tipo === 'mensal' && $matchRotulo($t, '/cau[cç][aã]o/i')) continue;
                   $rClean = $limpaRotulo($rOrig);
                   if ($rClean === '') continue;
                 ?>
@@ -381,9 +397,8 @@ $wmUrl   = $logoUrl; // marca d’água central
           <?php
             // No plano mensal, não listar linha de proteção na tabela (já mostramos "incluída" no card)
             $rot = (string)($t['rotulo'] ?? '');
-            if ($tipo === 'mensal' && preg_match('/prote[cç][aã]o/i', $rot)) {
-              continue;
-            }
+            if ($tipo === 'mensal' && $matchRotulo($t, '/prote[cç][aã]o/i')) continue;
+            if ($usarCaucaoNoProtecao && $matchRotulo($t, '/cau[cç][aã]o/i')) continue;
             $rotuloLimpo = $limpaRotulo($rot);
             if ($rotuloLimpo === '') {
               continue;
