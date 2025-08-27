@@ -71,22 +71,10 @@ $precoExibicao = function($t, $dados) use ($toFloatBR){
     if (preg_match('/([\d\.,]+)/', $rot, $m)) $p = $toFloatBR($m[1]);
   }
 
-  // C) Multiplicação por período:
-  //    - Qualquer item cujo rótulo indique "diária"
-  //    - OU qualquer item de "Proteção" no plano diário (mesmo sem a palavra "diária" no rótulo)
-  $isDiariaPeloRotulo   = preg_match('/di[áa]ria/i', $rot);
-  $isProtecao           = preg_match('/prote[cç][aã]o/i', $rot);
-
-  if ($tipo === 'diario') {
-    if ($isDiariaPeloRotulo || $isProtecao) {
-      $p *= $qtd; // multiplica pelo número de dias escolhidos
-    }
-  } elseif ($tipo === 'mensal') {
-    // Itens de diária no mensal (se existirem) multiplicam por 30;
-    // Proteção no mensal você já trata como "incluída" fora daqui.
-    if ($isDiariaPeloRotulo) {
-      $p *= 30;
-    }
+  // C) Itens diários multiplicam
+  if (preg_match('/di[áa]ria/i', $rot)) {
+    if ($tipo === 'diario')      $p *= $qtd;
+    elseif ($tipo === 'mensal')  $p *= 30;
   }
 
   return $p;
@@ -331,16 +319,10 @@ $wmUrl   = $logoUrl; // marca d’água central
 
           <?php if (!empty($taxasFixas)): ?>
             <ul class="lista">
-              <?php foreach ($taxasFixas as $taxa) : ?>
+              <?php foreach ($taxasFixas as $t): ?>
                 <li>
-                  <?php 
-                    if (stripos($taxa['rotulo'], 'limpeza') !== false) {
-                      // força obrigatória
-                      echo '<strong>' . htmlspecialchars($taxa['rotulo']) . ' (obrigatória)</strong>: ' . wc_price($taxa['valor']);
-                    } else {
-                      echo htmlspecialchars($taxa['rotulo']) . ': ' . wc_price($taxa['valor']);
-                    }
-                  ?>
+                  <?= esc_html($limpaRotulo(($t['rotulo'] ?? ''))) ?> —
+                  R$ <?= number_format($precoExibicao($t, $dados), 2, ',', '.') ?>
                 </li>
               <?php endforeach; ?>
             </ul>
