@@ -41,64 +41,52 @@ $toFloatBR = function($moeda){
   return (float)$s;
 };
 
-// Função para extrair valor da caução de qualquer rótulo
-$extrairCaucao = function($rotulo) use ($toFloatBR) {
-  // Procura padrão "caução de R$ X" ou similar
-  if (preg_match('/cau[cç][aã]o[^0-9]*R?\$?\s*([\d\.,]+)/iu', $rotulo, $m)) {
-    return $toFloatBR($m[1]);
-  }
-  // Procura qualquer número no rótulo de caução
-  if (preg_match('/cau[cç][aã]o/i', $rotulo) && preg_match('/([\d\.,]+)/', $rotulo, $m)) {
-    return $toFloatBR($m[1]);
-  }
-  return 0;
-};
-
-// CORREÇÃO: Função de cálculo de preço para exibição no PDF
-$precoExibicao = function($t, $dados) use ($toFloatBR, $extrairCaucao){
+// Calcula preço exibido: diária × qtd; e injeta caução quando necessário
+$precoExibicao = function($t, $dados) use ($toFloatBR){
   $p    = (float)($t['preco'] ?? 0);
   $rot  = (string)($t['rotulo'] ?? '');
   $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
   $qtd  = max(1, (int)($dados['totais']['qtd'] ?? 1));
 
-  // CASO ESPECIAL: "Sem proteção" no diário
-  if (preg_match('/sem\s+prote[cç][aã]o/i', $rot) && $tipo === 'diario') {
-    // Se o preço veio como 0, tentar extrair caução do rótulo
+  // A) Se for "Sem proteção" e preço veio 0, tentar achar o valor do caução
+  if ($p == 0 && preg_match('/sem\s+prote[cç][aã]o/i', $rot)) {
+    // 1) no próprio rótulo
+    if (preg_match('/cau[cç][aã]o[^0-9]*([\d\.,]+)/iu', $rot, $m)) {
+      $p = $toFloatBR($m[1]);
+    }
+    // 2) em algum outro item com "caução"
     if ($p == 0) {
-      $caucaoValue = $extrairCaucao($rot);
-      if ($caucaoValue > 0) {
-        return $caucaoValue; // valor fixo da caução
-      }
-      
-      // Se não achou no rótulo, procurar em outros itens
       foreach (($dados['taxas'] ?? []) as $tt) {
-        $rr = (string)($tt['rotulo'] ?? '');
-        if (preg_match('/cau[cç][aã]o/i', $rr)) {
-          $caucaoFromOther = $extrairCaucao($rr);
-          if ($caucaoFromOther > 0) {
-            return $caucaoFromOther;
-          }
+        $r = (string)($tt['rotulo'] ?? '');
+        if (preg_match('/cau[cç][aã]o/i', $r)) {
+          if ((float)($tt['preco'] ?? 0) > 0) { $p = (float)$tt['preco']; break; }
+          if (preg_match('/([\d\.,]+)/', $r, $mm)) { $p = $toFloatBR($mm[1]); break; }
         }
       }
     }
-    return $p; // se não achou caução, retorna o que veio
   }
 
-  // CASO ESPECIAL: Proteção com cobertura no diário
-  if (preg_match('/prote[cç][aã]o/i', $rot) && !preg_match('/sem\s+prote[cç][aã]o/i', $rot) && $tipo === 'diario') {
-    // O JavaScript já enviou o valor correto (multiplicado), apenas retorna
-    return $p;
-  }
-
-  // Para itens com "caução" diretamente
+  // B) Se for um item "Caução ..." e preço 0, extrai do texto
   if ($p == 0 && preg_match('/cau[cç][aã]o/i', $rot)) {
-    return $extrairCaucao($rot);
+    if (preg_match('/([\d\.,]+)/', $rot, $m)) $p = $toFloatBR($m[1]);
   }
 
-  // Para outros itens diários (taxas, etc.)
-  if (preg_match('/di[áa]ria/i', $rot)) {
-    if ($tipo === 'diario')      return $p * $qtd;
-    elseif ($tipo === 'mensal')  return $p * 30;
+  // C) Multiplicação por período:
+  //    - Qualquer item cujo rótulo indique "diária"
+  //    - OU qualquer item de "Proteção" no plano diário (mesmo sem a palavra "diária" no rótulo)
+  $isDiariaPeloRotulo   = preg_match('/di[áa]ria/i', $rot);
+  $isProtecao           = preg_match('/prote[cç][aã]o/i', $rot);
+
+  if ($tipo === 'diario') {
+    if ($isDiariaPeloRotulo || $isProtecao) {
+      $p *= $qtd; // multiplica pelo número de dias escolhidos
+    }
+  } elseif ($tipo === 'mensal') {
+    // Itens de diária no mensal (se existirem) multiplicam por 30;
+    // Proteção no mensal você já trata como "incluída" fora daqui.
+    if ($isDiariaPeloRotulo) {
+      $p *= 30;
+    }
   }
 
   return $p;
@@ -251,48 +239,32 @@ $wmUrl   = $logoUrl; // marca d’água central
     </tr>
 
     <?php
-    // SEÇÃO CORRIGIDA - substituir a partir da linha que define $tipo
+      // detectar tipo
+      $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
 
-    $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
-
-    // Localizar itens especiais nas taxas
-    $protItem = null;
-    $caucaoItem = null;
-    foreach (($taxasAll ?? []) as $t) {
-      $r = (string)($t['rotulo'] ?? '');
-      if (!$protItem && preg_match('/prote[cç][aã]o/i', $r)) {
-        $protItem = $t;
+      // localizar itens especiais nas taxas enviadas
+      $protItem   = null;
+      $caucaoItem = null;
+      foreach (($taxasAll ?? []) as $t) {
+        $r = (string)($t['rotulo'] ?? '');
+        if (!$protItem   && preg_match('/prote[cç][aã]o/i', $r)) $protItem   = $t;
+        if (!$caucaoItem && preg_match('/cau[cç][aã]o/i', $r))   $caucaoItem = $t;
+        if ($protItem && $caucaoItem) break;
       }
-      if (!$caucaoItem && preg_match('/cau[cç][aã]o/i', $r)) {
-        $caucaoItem = $t;
-      }
-      if ($protItem && $caucaoItem) break;
-    }
 
-    // Determinar como exibir a proteção
-    if ($tipo === 'mensal') {
-      $protLabel = 'Proteção básica';
-      $protValor = null; // mostra "incluída"
-    } else {
-      // DIÁRIO: mostrar exatamente o que foi selecionado
-      if ($protItem) {
-        $rotOrig = (string)($protItem['rotulo'] ?? '');
-        $protLabel = $limpaRotulo($rotOrig);
-        
-        // Calcular valor para exibição
-        $valorExibir = $precoExibicao($protItem, $dados);
-        
-        // Se for "sem proteção", ajustar o rótulo
-        if (preg_match('/sem\s+prote[cç][aã]o/i', $rotOrig)) {
-          $protLabel = 'Sem proteção';
-        }
-        
-        $protValor = $valorExibir;
+      // rótulo/valor da proteção
+      if ($tipo === 'mensal') {
+        $protLabel = 'Proteção básica';
+        $protValor = null; // incluída
       } else {
-        $protLabel = 'Sem proteção selecionada';
-        $protValor = 0;
+        if ($protItem) {
+          $protLabel = $limpaRotulo($protItem['rotulo'] ?? 'Proteção');
+          $protValor = $precoExibicao($protItem, $dados);
+        } else {
+          $protLabel = 'Proteção';
+          $protValor = null;
+        }
       }
-    }
     ?>
 
     <!-- Linha 2: SERVIÇOS OPCIONAIS | TAXAS -->
@@ -359,10 +331,16 @@ $wmUrl   = $logoUrl; // marca d’água central
 
           <?php if (!empty($taxasFixas)): ?>
             <ul class="lista">
-              <?php foreach ($taxasFixas as $t): ?>
+              <?php foreach ($taxasFixas as $taxa) : ?>
                 <li>
-                  <?= esc_html($limpaRotulo(($t['rotulo'] ?? ''))) ?> —
-                  R$ <?= number_format($precoExibicao($t, $dados), 2, ',', '.') ?>
+                  <?php 
+                    if (stripos($taxa['rotulo'], 'limpeza') !== false) {
+                      // força obrigatória
+                      echo '<strong>' . htmlspecialchars($taxa['rotulo']) . ' (obrigatória)</strong>: ' . wc_price($taxa['valor']);
+                    } else {
+                      echo htmlspecialchars($taxa['rotulo']) . ': ' . wc_price($taxa['valor']);
+                    }
+                  ?>
                 </li>
               <?php endforeach; ?>
             </ul>
@@ -404,35 +382,22 @@ $wmUrl   = $logoUrl; // marca d’água central
         </tr>
 
         <?php foreach (($dados['taxas'] ?? []) as $t): ?>
-        <?php
-          $rot = (string)($t['rotulo'] ?? '');
-          
-          // No plano mensal, não listar proteção na tabela (já mostramos "incluída" no card)
-          if ($tipo === 'mensal' && preg_match('/prote[cç][aã]o/i', $rot)) {
-            continue;
-          }
-          
-          // No plano diário, se for "sem proteção" com valor 0, pular da tabela 
-          // (o valor da caução já aparece como "Sem proteção" no card)
-          if ($tipo === 'diario' && preg_match('/sem\s+prote[cç][aã]o/i', $rot) && $precoExibicao($t, $dados) == 0) {
-            continue;
-          }
-          
-          $rotuloLimpo = $limpaRotulo($rot);
-          if ($rotuloLimpo === '') {
-            continue;
-          }
-          
-          $valorExibir = $precoExibicao($t, $dados);
-          if ($valorExibir <= 0) {
-            continue; // pula itens com valor 0
-          }
-        ?>
-        <tr>
-          <td><?= esc_html($rotuloLimpo) ?></td>
-          <td>R$ <?= number_format($valorExibir, 2, ',', '.') ?></td>
-        </tr>
-      <?php endforeach; ?>
+          <?php
+            // No plano mensal, não listar linha de proteção na tabela (já mostramos "incluída" no card)
+            $rot = (string)($t['rotulo'] ?? '');
+            if ($tipo === 'mensal' && preg_match('/prote[cç][aã]o/i', $rot)) {
+              continue;
+            }
+            $rotuloLimpo = $limpaRotulo($rot);
+            if ($rotuloLimpo === '') {
+              continue;
+            }
+          ?>
+          <tr>
+            <td><?= esc_html($rotuloLimpo) ?></td>
+            <td>R$ <?= number_format($precoExibicao($t, $dados), 2, ',', '.') ?></td>
+          </tr>
+        <?php endforeach; ?>
 
         <tr>
           <td>Subtotal</td>
