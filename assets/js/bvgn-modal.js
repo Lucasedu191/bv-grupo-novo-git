@@ -92,13 +92,19 @@
       };
 
       function abrirWhats(waUrl){
-      if (waWin && !waWin.closed) {
-        // navega a MESMA aba aberta no clique
-        waWin.location.href = waUrl;   // (pode usar .replace também)
-        return;
-      }
-      // Se a aba foi bloqueada, tenta abrir agora em nova aba (degrada com dignidade)
-      window.open(waUrl, '_blank', 'noopener');
+
+        // Se a função de conversão existir, dispara o evento e só então abre o WhatsApp
+        if (typeof gtag_report_conversion === 'function') {
+          gtag_report_conversion(waUrl); // envia a conversão e redireciona para waUrl
+          return;                        // evita abrir o link duas vezes
+        }
+        if (waWin && !waWin.closed) {
+          // navega a MESMA aba aberta no clique
+          waWin.location.href = waUrl;   // (pode usar .replace também)
+          return;
+        }
+        // Se a aba foi bloqueada, tenta abrir agora em nova aba (degrada com dignidade)
+        window.open(waUrl, '_blank', 'noopener');
     }
 
       // Normalização (somente dígitos)
