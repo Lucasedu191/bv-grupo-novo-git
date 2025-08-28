@@ -174,14 +174,16 @@
         var prot = cx.querySelector('input[name="bvgn_protecao"]:checked');
         if (prot) {
           var lblEl      = prot.closest('label');
-          var precoProt  = prot.dataset.precoDia || '0';
           var rotuloTxt  = (lblEl?.textContent || 'Proteção').trim();     // tudo que aparece no label
           var rotuloHtml = (lblEl?.innerHTML   || rotuloTxt).trim();      // HTML completo
+          var valorProt  = parseFloat(prot.dataset.precoTotal || '0');
+          var caucaoProt = parseFloat(prot.dataset.caucao || '0');
+          var precoTotal = valorProt + caucaoProt;
 
           taxasSel.push({
             rotulo:      rotuloTxt,
             rotulo_html: rotuloHtml,   // <-- novo campo
-            preco:       precoProt
+            preco:       precoTotal.toString()
           });
         }
 

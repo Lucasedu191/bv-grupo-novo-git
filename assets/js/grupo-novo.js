@@ -119,29 +119,23 @@ function calcular($cx){
     // 1. Proteção (radio) — baseado no atributo data-preco-dia
     const $prot = $cx.find('input[name="bvgn_protecao"]:checked');
     if ($prot.length) {
-      const preco = numero($prot.data('preco-dia'));
+      const preco  = numero($prot.data('preco-dia'));
       const caucao = numero($prot.data('caucao'));
-      const nomeProt = String($prot.closest('label').find('.texto').clone().children().remove().end().text()).trim();
-      const precoProt = numero($prot.data('preco-dia'));
-      
-      
+      const nomeProt = String(
+        $prot.closest('label').find('.texto').clone().children().remove().end().text()
+      ).trim();
 
-      // const valorProt = preco; // apenas 1x
-      //  const valorProt = (tipo === 'diario') ? (preco * qtd) : preco;
-       const valorProt = (tipo === 'diario') ? (preco * qtd) : 0; // ← ALTERAÇÃO MÍNIMA
+      // valor total da proteção (multiplica pelos dias do período)
+      const valorProt = preco * qtd;
+      $prot.attr('data-preco-total', valorProt); // usado ao enviar dados
       taxas += valorProt;
 
-      // se houver caução, soma também
-      // if (caucao > 0) {
-      //   taxas += caucao;
-      // }
-
-      // se houver caução, soma também (só no diário)
-      if (tipo === 'diario' && caucao > 0) {                    // ← ALTERAÇÃO MÍNIMA
+      // se houver caução, soma também (apenas uma vez)
+      if (caucao > 0) {
         taxas += caucao;
       }
 
-      const rotuloProt = `${nomeProt} — R$ ${precoProt.toFixed(2).replace('.', ',')}`;
+      const rotuloProt = `${nomeProt} — R$ ${valorProt.toFixed(2).replace('.', ',')}`;
       // adiciona na lista detalhada (caso esteja mostrando os itens)
       if ($cx.find('#bvgn-taxas-itens').length) {
         $cx.find('#bvgn-taxas-itens').append(`<li>${rotuloProt}</li>`);
@@ -251,12 +245,12 @@ function calcular($cx){
       $cx.find('.bvgn-protecao').show();
       $cx.find('#bvgn-protecao-view').text('Proteção básica — incluída');
     } else if ($prot.length) {
-      const nomeProt = String($prot.closest('label').find('.texto').clone().children().remove().end().text()).trim();
-      const precoProt = numero($prot.data('preco-dia'));
-      const caucao = numero($prot.data('caucao'));
-      const valorExibir = precoProt + caucao;
-
-      const rotuloProt = `${nomeProt} — R$ ${valorExibir.toFixed(2).replace('.', ',')}`;
+      const nomeProt = String(
+        $prot.closest('label').find('.texto').clone().children().remove().end().text()
+      ).trim();
+      const valorProt = numero($prot.data('preco-total')) ||
+        (numero($prot.data('preco-dia')) * qtd);
+      const rotuloProt = `${nomeProt} — R$ ${valorProt.toFixed(2).replace('.', ',')}`;
       $cx.find('.bvgn-protecao').show();
       $cx.find('#bvgn-protecao-view').text(rotuloProt);
     } else {

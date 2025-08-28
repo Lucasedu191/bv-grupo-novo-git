@@ -71,8 +71,8 @@ $precoExibicao = function($t, $dados) use ($toFloatBR){
     if (preg_match('/([\d\.,]+)/', $rot, $m)) $p = $toFloatBR($m[1]);
   }
 
-  // C) Itens diários multiplicam
-  if (preg_match('/di[áa]ria/i', $rot)) {
+  // C) Itens diários multiplicam; proteção também multiplica mesmo sem "diária" no rótulo
+  if (preg_match('/di[áa]ria/i', $rot) || preg_match('/prote[cç][aã]o/i', $rot)) {
     if ($tipo === 'diario')      $p *= $qtd;
     elseif ($tipo === 'mensal')  $p *= 30;
   }
