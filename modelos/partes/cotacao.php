@@ -286,7 +286,7 @@ $wmUrl   = $logoUrl; // marca d’água central
                 <?= esc_html($protLabel) ?>
                 <?php if ($protValor !== null): ?>
                   — R$ <?= number_format($protValor, 2, ',', '.') ?>
-                <?php else: ?>
+                <?php elseif ($tipo === 'mensal'): ?>
                   — incluída
                 <?php endif; ?>
               </dd>

@@ -127,21 +127,22 @@ function calcular($cx){
 
       // valor total da proteção (multiplica pelos dias do período)
       const valorProt = preco * qtd;
-      $prot.attr('data-preco-total', valorProt); // usado ao enviar dados
+      const valorTotalProt = valorProt + (caucao > 0 ? caucao : 0);
+
+      // guarda total (inclui caução quando houver)
+      $prot.attr('data-preco-total', valorTotalProt); // usado ao enviar dados
+
+      // acumula nas taxas
       taxas += valorProt;
+      if (caucao > 0) taxas += caucao; // caução entra 1x no diário
 
-      // se houver caução, soma também (apenas uma vez)
-      if (caucao > 0) {
-        taxas += caucao;
-      }
-
-      const rotuloProt = `${nomeProt} — R$ ${valorProt.toFixed(2).replace('.', ',')}`;
+      const rotuloProt = `${nomeProt} — R$ ${valorTotalProt.toFixed(2).replace('.', ',')}`;
       // adiciona na lista detalhada (caso esteja mostrando os itens)
       if ($cx.find('#bvgn-taxas-itens').length) {
         $cx.find('#bvgn-taxas-itens').append(`<li>${rotuloProt}</li>`);
       }
 
-      // Exibir resumo
+      // Exibir resumo (mostra o total incluindo caução quando for "sem proteção")
       $cx.find('.bvgn-protecao').show();
       $cx.find('#bvgn-protecao-view').text(rotuloProt);
     }
