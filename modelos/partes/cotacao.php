@@ -278,20 +278,22 @@ $wmUrl   = $logoUrl; // marca d’água central
         <div class="card card--ghost">
           <h3><?= $tipo === 'mensal' ? 'Taxas e serviços opcionais' : 'Serviços opcionais' ?></h3>
 
-          <!-- Proteção -->
-          <div class="kv" style="margin-bottom: 2mm;">
-            <div>
-              <dt>Proteção</dt>
-              <dd>
-                <?= esc_html($protLabel) ?>
-                <?php if ($protValor !== null): ?>
-                  — R$ <?= number_format($protValor, 2, ',', '.') ?>
-                <?php elseif ($tipo === 'mensal'): ?>
-                  — incluída
-                <?php endif; ?>
-              </dd>
+          <?php if ($tipo === 'mensal'): ?>
+            <!-- Proteção (apenas no mensal) -->
+            <div class="kv" style="margin-bottom: 2mm;">
+              <div>
+                <dt>Proteção</dt>
+                <dd>
+                  <?= esc_html($protLabel) ?>
+                  <?php if ($protValor !== null): ?>
+                    — R$ <?= number_format($protValor, 2, ',', '.') ?>
+                  <?php else: ?>
+                    — incluída
+                  <?php endif; ?>
+                </dd>
+              </div>
             </div>
-          </div>
+          <?php endif; ?>
 
           <!-- (Mensal) Mostrar Caução destacado -->
           <?php if ($tipo === 'mensal' && $caucaoItem): ?>
