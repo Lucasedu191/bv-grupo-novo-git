@@ -187,8 +187,8 @@ $wmUrl   = $logoUrl; // marca d’água central
         <div class="card card--ghost">
           <h3>Detalhes</h3>
 
-          <!-- grade 3 colunas dentro do card -->
-          <table class="kv3" role="presentation" width="100%" cellspacing="0" cellpadding="0">
+          <!-- grade 4 colunas dentro do card -->
+          <table class="kv3 kv4" role="presentation" width="100%" cellspacing="0" cellpadding="0">
             <tr>
               <!-- Coluna 1: Plano -->
               <td>
@@ -202,14 +202,30 @@ $wmUrl   = $logoUrl; // marca d’água central
                 </dl>
               </td>
 
-              <!-- Coluna 2: Local de retirada -->
+              <!-- Coluna 2: Grupo (nome do produto) -->
+              <td>
+                <?php
+                  $produtoNome = '';
+                  if (isset($produto) && is_object($produto) && method_exists($produto, 'get_name')) {
+                    $produtoNome = (string) $produto->get_name();
+                  } elseif (!empty($dados['variacaoRotulo'])) {
+                    // fallback: usa rótulo da variação se existir
+                    $produtoNome = (string) $dados['variacaoRotulo'];
+                  }
+                ?>
+                <dl class="kv kv--stack">
+                  <div><dt>Grupo</dt><dd><?= esc_html($produtoNome ?: '—') ?></dd></div>
+                </dl>
+              </td>
+
+              <!-- Coluna 3: Local de retirada -->
               <td>
                 <dl class="kv kv--stack">
                   <div><dt>Local de retirada</dt><dd><?= esc_html($localRetirada) ?></dd></div>
                 </dl>
               </td>
 
-              <!-- Coluna 3: Retirada e Devolução -->
+              <!-- Coluna 4: Retirada e Devolução -->
               <td>
                 <dl class="kv kv--stack">
                   <div><dt>Retirada</dt><dd><?= $retirada ?></dd></div>

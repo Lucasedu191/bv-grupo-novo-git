@@ -441,12 +441,15 @@ html, body {
 
 .alerta{margin:3mm 0 2mm;padding:2mm 3mm;border:1px solid #f0d9a8;background:#fff8e6;font-size:12px;line-height:1.35;border-radius:4px;}
 
-/* ===== Detalhes em 3 colunas ===== */
+/* ===== Detalhes em 3/4 colunas ===== */
 .cv-detalhes{ margin: 1mm 0 3mm; }
 
 /* tabela 3 colunas dentro do card */
 .kv3{ width:100%; border-collapse:separate; border-spacing: 6mm 0; }
 .kv3 td{ width:33.333%; vertical-align:top; padding:0; }
+
+/* tabela 4 colunas dentro do card (use junto com .kv3 para herdar espaçamentos) */
+.kv4 td{ width:25%; vertical-align:top; padding:0; }
 
 /* dentro do grid, as linhas ficam “empilhadas”: label em cima, valor embaixo */
 .kv--stack{ margin:0; }
@@ -458,6 +461,7 @@ html, body {
 @media (max-width: 700px){
   .kv3, .kv3 tr, .kv3 td{ display:block; width:100% !important; }
   .kv3{ border-spacing:0; }
+  .kv4, .kv4 tr, .kv4 td{ display:block; width:100% !important; }
 }
 
 /* ====== OVERRIDES — layout compacto para o PDF ====== */

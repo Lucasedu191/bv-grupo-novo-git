@@ -48,7 +48,7 @@ $precoP = $protecao[$cor]['premium'];
 
   <label class="bvgn-taxa">
     <input type="radio" name="bvgn_protecao" value="sem"
-           data-preco-dia="0" data-caucao="<?php echo esc_attr($caucao); ?>" checked>
+           data-preco-dia="0" data-caucao="<?php echo esc_attr($caucao); ?>">
     <span class="lbl">
       <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos01.svg'; ?>" alt="">
       <span class="texto">Sem proteção, </br> caução de</span>
@@ -59,7 +59,7 @@ $precoP = $protecao[$cor]['premium'];
 
   <label class="bvgn-taxa">
     <input type="radio" name="bvgn_protecao" value="basica"
-           data-preco-dia="<?php echo esc_attr($precoB); ?>" data-caucao="0">
+           data-preco-dia="<?php echo esc_attr($precoB); ?>" data-caucao="0" checked>
     <span class="lbl">
       <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos02.svg'; ?>" alt="">
       <span class="texto">Proteção Básica</span>
