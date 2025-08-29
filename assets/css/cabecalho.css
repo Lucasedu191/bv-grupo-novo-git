@@ -95,12 +95,26 @@
     padding-right: 0 !important;
     max-width: 100% !important;
   }
+  /* Remove padding lateral aplicado na seção (era 70px) */
+  .elementor-2731 .elementor-element.elementor-element-8bb71d9{
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
   .elementor-element-8bb71d9 .elementor-column,
   .elementor-element-8bb71d9 .elementor-widget-wrap,
   .elementor-element-8bb71d9 .elementor-widget-container,
   .elementor-element-8bb71d9 .elementor-shortcode{
     width: 100% !important;
     max-width: 100% !important;
+  }
+  /* Força a coluna do formulário (3ab023b0) a ocupar 100% */
+  .elementor-element-8bb71d9 .elementor-element-3ab023b0{
+    width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+  /* Garante que a coluna da logo (21052a63) não ocupe espaço quando oculta */
+  .elementor-element-8bb71d9 .elementor-element-21052a63{
+    display: none !important;
   }
   .elementor-element-8bb71d9 .bvgn-agendamento-form{
     width: 100% !important;
