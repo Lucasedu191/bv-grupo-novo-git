@@ -65,6 +65,25 @@
   color: #163c67;
 }
 
+/* Estiliza campos do Flatpickr visíveis (desktop e mobile) */
+.bvgn-agendamento-form input.flatpickr-input[readonly]:not([type="hidden"]),
+.bvgn-agendamento-form input.flatpickr-mobile {
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 2px solid #163c67; /* borda escura ao preencher */
+  border-radius: 8px;
+  background-color: #ffffff;
+  width: 100%;
+  box-sizing: border-box;
+}
+.bvgn-agendamento-form input.flatpickr-input[readonly]:not([type="hidden"]):hover,
+.bvgn-agendamento-form input.flatpickr-input[readonly]:not([type="hidden"]):focus,
+.bvgn-agendamento-form input.flatpickr-mobile:hover,
+.bvgn-agendamento-form input.flatpickr-mobile:focus {
+  border-color: #0b2a4b;
+  outline: none;
+}
+
 @media (max-width: 700px) {
   .bvgn-agendamento-form {
     flex-direction: column;
@@ -75,6 +94,9 @@
     width: 100%;
   }
 }
+
+/* Oculta o bloco mobile no produto */
+body.single-product .bvgn-agendamento-form--mobile { display: none !important; }
 
 /* === FLATPICKR CUSTOMIZADO BV LOCADORA === */
 
