@@ -16,6 +16,7 @@ class BVGN_ShortcodesPT {
     add_shortcode('gn_botao_cotacao', [__CLASS__,'botao_cotacao']); // format="html|pdf" phone="+55..."
     add_shortcode('gn_botao_cotacao_popup', [__CLASS__,'botao_cotacao_popup']); // botão + modal
     add_shortcode('bvgn_agendamento_header', [__CLASS__, 'agendamento_header']); // calendario no cabeçalho
+    add_shortcode('bvgn_agendamento_header_mobile', [__CLASS__, 'agendamento_header_mobile']); // calendario mobile
   }
 
   private static function resolver_produto_id($atts){
@@ -141,5 +142,12 @@ public static function agendamento_header($atts = [], $content = '') {
   include BVGN_CAMINHO . 'inclui/cabecalho-agendamento.php';
   return ob_get_clean();
 }
+
+  // agendamento no cabeçalho (mobile)
+  public static function agendamento_header_mobile($atts = [], $content = '') {
+    ob_start();
+    include BVGN_CAMINHO . 'inclui/cabecalho-agendamento-mobile.php';
+    return ob_get_clean();
+  }
 }
 BVGN_ShortcodesPT::init();

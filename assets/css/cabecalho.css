@@ -7,7 +7,7 @@
   padding: 20px;
   background: #ffffff;
   border-radius: 10px;
-  max-width: 100%;
+  max-width: 960px;
   margin: 0 auto;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
@@ -34,7 +34,6 @@
   border-radius: 8px;
   background-color: #ffffff;
   transition: border-color 0.3s ease;
-  width: 100%;
 }
 
 .bvgn-campo input[type="text"]:hover,
@@ -70,59 +69,10 @@
   .bvgn-agendamento-form {
     flex-direction: column;
     align-items: stretch;
-    width: 100%;
-    max-width: 100%;
-    /* ocupar 100% dentro da coluna, sem vazar o container */
-    margin-left: 0;
-    margin-right: 0;
-    border-radius: 8px;
-    padding-left: 12px;
-    padding-right: 12px;
   }
 
   .bvgn-botao button {
     width: 100%;
-  }
-
-  /* Oculta o calendário do cabeçalho em páginas de produto (WooCommerce) no mobile */
-  body.single-product .bvgn-agendamento-form {
-    display: none !important;
-  }
-
-  /* ===== Correções específicas para a seção do Elementor (id 8bb71d9) ===== */
-  .elementor-element-8bb71d9 .elementor-container{
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    max-width: 100% !important;
-  }
-  /* Remove padding lateral aplicado na seção (era 70px) */
-  .elementor-2731 .elementor-element.elementor-element-8bb71d9{
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-  }
-  .elementor-element-8bb71d9 .elementor-column,
-  .elementor-element-8bb71d9 .elementor-widget-wrap,
-  .elementor-element-8bb71d9 .elementor-widget-container,
-  .elementor-element-8bb71d9 .elementor-shortcode{
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  /* Força a coluna do formulário (3ab023b0) a ocupar 100% */
-  .elementor-element-8bb71d9 .elementor-element-3ab023b0{
-    width: 100% !important;
-    flex: 1 1 100% !important;
-  }
-  /* Garante que a coluna da logo (21052a63) não ocupe espaço quando oculta */
-  .elementor-element-8bb71d9 .elementor-element-21052a63{
-    display: none !important;
-  }
-  .elementor-element-8bb71d9 .bvgn-agendamento-form{
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  /* Flatpickr em mobile vira input[type=date]; garanta largura total */
-  .bvgn-campo input.flatpickr-mobile{
-    width: 100% !important;
   }
 }
 
