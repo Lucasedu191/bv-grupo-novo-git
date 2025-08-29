@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 9.9.20
+ * Version: 9.9.21
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -137,6 +137,14 @@ add_action('wp_enqueue_scripts', function () {
       'https://cdn.jsdelivr.net/npm/flatpickr',
       [],
       null,
+      true
+    );
+    // Inicialização do Flatpickr no agendamento da página do produto
+    wp_enqueue_script(
+      'bvgn-agendamento-flatpickr',
+      BVGN_URL . 'assets/js/agendamento-flatpickr.js',
+      ['flatpickr-js'],
+      file_exists(BVGN_DIR . 'assets/js/agendamento-flatpickr.js') ? filemtime(BVGN_DIR . 'assets/js/agendamento-flatpickr.js') : '1.0.0',
       true
     );
     // fim CSS do Flatpickr calendário cabecalho

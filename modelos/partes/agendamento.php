@@ -2,7 +2,7 @@
 $tipo = $a['type'] ?? 'diario';
 ?>
 <?php if ($tipo === 'diario'): ?>
-  <div class="bvgn-agendamento" data-bvgn-tipo="diario">
+  <div class="bvgn-agendamento bvgn-agendamento--diaria" data-bvgn-tipo="diario">
     <label>
       Retirada:
       <input type="date" id="bv-date-start" class="bvgn-data-inicio">
