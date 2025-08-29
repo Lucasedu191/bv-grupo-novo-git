@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         console.log('[BVGN] Flatpickr fim inicializado');
 
-        flatpickr(inicioEl, {
+        const inicioPicker = flatpickr(inicioEl, {
           altInput: true,
           altFormat: 'd/m/Y',
           dateFormat: 'Y-m-d',
@@ -47,6 +47,25 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         });
         console.log('[BVGN] Flatpickr início inicializado');
+
+        // Pré-preenche a partir do localStorage, se existir
+        try {
+          const agRaw = localStorage.getItem('bvgn_agendamento');
+          if (agRaw) {
+            const ag = JSON.parse(agRaw);
+            if (ag && ag.inicio && ag.fim) {
+              // Define minDate do fim de acordo com o início salvo
+              const s = new Date(ag.inicio);
+              if (!isNaN(s)) fimPicker.set('minDate', s);
+              // Aplica datas salvas
+              inicioPicker.setDate(ag.inicio, true);
+              fimPicker.setDate(ag.fim, true);
+              console.log('[BVGN] Datas restauradas do storage:', ag);
+            }
+          }
+        } catch (err) {
+          console.warn('[BVGN] Não foi possível restaurar datas salvas:', err);
+        }
       } catch (e) {
         console.error('[BVGN] Erro ao inicializar o Flatpickr:', e);
       }
