@@ -107,3 +107,41 @@
   /* garante que nosso container ocupe tudo */
   .bvgn-container{ padding-left: 12px; padding-right: 12px; }
 }
+
+/* ===============================
+   SM+ — Ajustes finos mobile (até 767px)
+   =============================== */
+@media (max-width: 767px) {
+  /* Cards genéricos (ajuste mobile) */
+  .card-protecao,
+  .card-opcional,
+  .card-taxa {
+    padding: 12px 14px !important; /* reduz espaço interno */
+    margin: 8px 0 !important;      /* aproxima os cards */
+  }
+
+  /* Espaçamento interno entre elementos do card */
+  .card-protecao > * + *,
+  .card-opcional > * + *,
+  .card-taxa > * + * {
+    margin-top: 8px;
+  }
+
+  /* Último card com menos respiro */
+  .card-protecao:last-child,
+  .card-opcional:last-child,
+  .card-taxa:last-child {
+    margin-bottom: 6px !important;
+  }
+
+  /* Containers de grid/flex que agrupam os cards */
+  .cards-grid,
+  .grid-opcionais,
+  .lista-opcionais,
+  .elementor-grid {
+    gap: 8px !important;
+    row-gap: 8px !important;
+    column-gap: 8px !important;
+  }
+}
+/* fim ajuste mobile */
