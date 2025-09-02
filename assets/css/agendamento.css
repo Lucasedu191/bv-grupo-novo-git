@@ -25,9 +25,11 @@
   gap: 16px 20px;
 }
 
-/* Mensal: esconde */
+/* Mensal: 1 coluna (campo informativo) */
 .bvgn-agendamento--mensal {
-  display: none !important;
+  display: grid !important;
+  grid-template-columns: 1fr;
+  gap: 16px 20px;
 }
 
 /* Labels */
