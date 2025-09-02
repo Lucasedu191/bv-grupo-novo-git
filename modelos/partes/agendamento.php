@@ -16,6 +16,12 @@ $tipo = $a['type'] ?? 'diario';
   <div id="bv-date-msg" class="bvgn-msg"></div>
 <?php else: ?>
   <div class="bvgn-agendamento bvgn-agendamento--mensal" data-bvgn-tipo="mensal">
-    <em>Plano Mensal: Não é necessário selecionar datas.</em>
+    <label>
+      Data de Retirada :
+      <input type="date" id="bv-date-start-mensal" class="bvgn-data-inicio" placeholder="Selecione a data">
+    </label>
+    <div class="bvgn-tip" style="font-size:12px;color:#555;margin-top:6px;">
+      Informativo: não altera valores. A devolução é considerada como 30 dias.
+    </div>
   </div>
 <?php endif; ?>

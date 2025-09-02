@@ -307,10 +307,10 @@ function calcular($cx){
   function aplicarRegrasECalcular($cx){
     const tipo = getTipo($cx);
 
-    // plano mensal: esconder bloco de datas (se existir) e limpar msg
+    // plano mensal: manter bloco visível (campo de retirada é informativo) e limpar msg
     const $wrapAg = $cx.find('.bvgn-agendamento');
     if(tipo === 'mensal'){
-      if($wrapAg.length){ $wrapAg.hide(); setMsg($cx, ''); }
+      if($wrapAg.length){ $wrapAg.show(); setMsg($cx, ''); }
       calcular($cx);
       return;
     } else {
@@ -484,6 +484,14 @@ function calcular($cx){
         }, 150); // dá um pequeno tempo para DOM renderizar
 
         console.log('[BVGN] Datas preenchidas a partir do localStorage:', { isoInicio, isoFim });
+      } else if (dados.inicio) {
+        // fallback: se só a data de início existir, preenche ao menos a retirada
+        const parts = String(dados.inicio).split('-');
+        const isoInicio = (parts[0] && parts[0].length === 4)
+          ? dados.inicio
+          : `${parts[2]}-${parts[1]}-${parts[0]}`;
+        $('.bvgn-data-inicio').val(isoInicio).trigger('change');
+        console.log('[BVGN] Data de retirada preenchida a partir do localStorage:', { isoInicio });
       }
     } catch (e) {
       console.warn('[BVGN] Erro ao carregar dados do agendamento:', e);

@@ -86,6 +86,14 @@ $localRetirada = $dados['local'] ?? '—';
 $validade = date('d/m/Y', strtotime('+5 days'));
 $mensagem = trim($dados['mensagem'] ?? '');
 
+// Tipo principal da cotação
+$tipoMain = strtolower($dados['totais']['tipo'] ?? 'diario');
+
+// Para plano mensal, a devolução é exibida como "30 dias"
+if ($tipoMain === 'mensal') {
+  $devolucao = '30 dias';
+}
+
 
 // Quebra as taxas em grupos para exibir no "Detalhes"
 $taxasAll   = $dados['taxas'] ?? [];
@@ -238,6 +246,11 @@ $wmUrl   = $logoUrl; // marca d’água central
           <div class="alerta">
             <strong>Atenção:</strong> o período informado é uma pré-reserva. A confirmação será feita após a verificação de disponibilidade do veículo pela equipe BV Locadora.
           </div>
+          <?php if ($tipoMain === 'mensal'): ?>
+            <div class="alerta">
+              Sua pré reserva tem 30 dias ou mais. Conte com toda a economia, autonomia e flexibilidade do Aluguel Mensal.
+            </div>
+          <?php endif; ?>
         </div>
       </td>
     </tr>
