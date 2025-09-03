@@ -88,16 +88,17 @@ document.addEventListener('DOMContentLoaded', function () {
           return;
         }
 
-        if (dias > 30) {
-          window.location.href = '/planos-mensais';
-          return;
-        }
-
+        // Sempre persiste as datas antes de redirecionar (inclusive > 30)
         localStorage.setItem('bvgn_agendamento', JSON.stringify({
           inicio: inicioEl.value,
           fim: fimEl.value,
           local: local
         }));
+
+        if (dias > 30) {
+          window.location.href = '/planos-mensais';
+          return;
+        }
 
         window.location.href = '/planos-diarios';
       });
@@ -169,13 +170,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const dias = (fim - inicio) / 86400000;
         if (dias < 0) { alert('A data final deve ser depois da data inicial.'); return; }
 
-        if (dias > 30) { window.location.href = '/planos-mensais'; return; }
-
+        // Persistir SEMPRE antes do redirecionamento
         localStorage.setItem('bvgn_agendamento', JSON.stringify({
           inicio: inicioEl.value,
           fim: fimEl.value,
           local: local
         }));
+
+        if (dias > 30) { window.location.href = '/planos-mensais'; return; }
+
         window.location.href = '/planos-diarios';
       });
     }

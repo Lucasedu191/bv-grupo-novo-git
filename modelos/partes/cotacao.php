@@ -246,9 +246,9 @@ $wmUrl   = $logoUrl; // marca d’água central
           <div class="alerta">
             <div><strong>Atenção:</strong> o período informado é uma pré-reserva. A confirmação será feita após a verificação de disponibilidade do veículo pela equipe BV Locadora.</div>
             <?php if ($tipoMain === 'mensal'): ?>
-              <div style="margin-top: 3px;">
-                Sua pré reserva tem 30 dias ou mais. Conte com toda a economia, autonomia e flexibilidade do Aluguel Mensal.
-              </div>
+              <div style="margin-top: 3px;"><em>
+                Sua pré-reserva tem 30 dias ou mais. Conte com toda a economia, autonomia e flexibilidade do Aluguel Mensal.
+              </em></div>
             <?php endif; ?>
           </div>
         </div>

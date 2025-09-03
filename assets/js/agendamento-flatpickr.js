@@ -2,7 +2,7 @@
   function initFor(container){
     var inicio = container.querySelector('.bvgn-data-inicio');
     var fim    = container.querySelector('.bvgn-data-fim');
-    if (!inicio || !fim || !window.flatpickr) return false;
+    if (!inicio || !window.flatpickr) return false; // permite containers sem 'fim' (mensal)
 
     // Evita reinicializar
     if (inicio.classList.contains('fp-inited') || fim.classList.contains('fp-inited')) return true;
@@ -16,14 +16,17 @@
         flatpickr.localize(flatpickr.l10ns.pt);
       }
 
-      var fimPicker = flatpickr(fim, {
-        altInput: true,
-        altFormat: 'd/m/Y',
-        dateFormat: 'Y-m-d',
-        minDate: hoje,
-        maxDate: maxG,
-        monthSelectorType: 'static'
-      });
+      var fimPicker = null;
+      if (fim) {
+        fimPicker = flatpickr(fim, {
+          altInput: true,
+          altFormat: 'd/m/Y',
+          dateFormat: 'Y-m-d',
+          minDate: hoje,
+          maxDate: maxG,
+          monthSelectorType: 'static'
+        });
+      }
 
       var inicioPicker = flatpickr(inicio, {
         altInput: true,
@@ -32,7 +35,7 @@
         minDate: hoje,
         maxDate: maxG,
         monthSelectorType: 'static',
-        onChange: function(sel){ if (sel.length) fimPicker.set('minDate', sel[0]); }
+        onChange: function(sel){ if (sel.length && fimPicker) fimPicker.set('minDate', sel[0]); }
       });
 
       // Restaura valores do localStorage (se existirem)
@@ -42,9 +45,9 @@
           var ag = JSON.parse(raw);
           if (ag && ag.inicio && ag.fim) {
             var s = new Date(ag.inicio);
-            if (!isNaN(s)) fimPicker.set('minDate', s);
+            if (!isNaN(s) && fimPicker) fimPicker.set('minDate', s);
             inicioPicker.setDate(ag.inicio, true);
-            fimPicker.setDate(ag.fim, true);
+            if (fimPicker && ag.fim) fimPicker.setDate(ag.fim, true);
           }
         }
       } catch(_){}
