@@ -42,25 +42,57 @@ class BVGN_GerarArquivoEndpoint {
         'mensagem'    => sanitize_textarea_field($_POST['bvgn_mensagem'] ?? ''),// Mensagem do modal
 
 
-        'formato' => sanitize_text_field($_POST['formato'] ?? 'pdf')
+        'formato' => 'pdf' // HTML não é mais salvo
       ];
 
-      // === IDENTIFICADOR DO ARQUIVO ===
+      // === IDENTIFICADOR / REGISTRO DA COTAÇÃO ===
       $produto = function_exists('wc_get_product') ? wc_get_product($dados['produtoId']) : null;
       $slugProd = $produto ? sanitize_title(preg_split('/[\-–]/', $produto->get_name())[0]) : 'produto';
-      $dataHora = date('d-m-Y_Hi');
-      $nome = "cotacao-{$slugProd}-{$dataHora}";
+
+      // Cria um registro no admin (CPT) para listar as cotações
+      $post_id = wp_insert_post([
+        'post_type'   => 'bvgn_cotacao',
+        'post_status' => 'publish',
+        'post_title'  => sprintf('Cotação %s - %s', date_i18n('d/m/Y H:i'), $produto ? $produto->get_name() : 'Produto'),
+      ], true);
+      if (is_wp_error($post_id)) {
+        throw new Exception('Falha ao registrar a cotação no admin.');
+      }
+
+      // Guarda metadados para consulta no admin
+      update_post_meta($post_id, 'produto_id', $dados['produtoId']);
+      update_post_meta($post_id, 'cliente_nome', $dados['nome']);
+      update_post_meta($post_id, 'cliente_whats', $dados['whats']);
+      update_post_meta($post_id, 'variacao_rotulo', $dados['variacaoRotulo']);
+      update_post_meta($post_id, 'datas_inicio', $dados['datas']['inicio']);
+      update_post_meta($post_id, 'datas_fim', $dados['datas']['fim']);
+      update_post_meta($post_id, 'totais_base', $dados['totais']['base']);
+      update_post_meta($post_id, 'totais_taxas', $dados['totais']['taxas']);
+      update_post_meta($post_id, 'totais_qtd', $dados['totais']['qtd']);
+      update_post_meta($post_id, 'totais_subtotal', $dados['totais']['subtotal']);
+      update_post_meta($post_id, 'totais_total', $dados['totais']['total']);
+      update_post_meta($post_id, 'totais_tipo', $dados['totais']['tipo']);
+      update_post_meta($post_id, 'local_retirada', $dados['local']);
+      update_post_meta($post_id, 'mensagem', $dados['mensagem']);
+
+      // Gera o código da cotação (5 dígitos) e mantém o mesmo no PDF e no template
+      $codigo = str_pad((string) random_int(10000, 99999), 5, '0', STR_PAD_LEFT);
+      update_post_meta($post_id, 'codigo', $codigo);
+
+      // Nome do arquivo: grupo_data_e_codigo.pdf
+      $dataCurta = date('d-m-Y');
+      $nome_base = sprintf('%s_%s_e_%s', $slugProd, $dataCurta, $codigo);
 
       // === GERAR HTML VIA TEMPLATE ===
       ob_start();
+      // disponibiliza $codigo ao template
       include BVGN_CAMINHO . 'modelos/partes/cotacao.php';
       $html = ob_get_clean();
 
-      // === SALVAR HTML PARA DEBUG / BACKUP ===
+      // === PREPARA DIRETÓRIO ===
       $base = BVGN_DIR_ARQUIVOS;
       $urlBase = BVGN_URL_ARQUIVOS;
       if (!file_exists($base)) wp_mkdir_p($base);
-      file_put_contents("$base/{$nome}.html", $html);
       
 
       // === GERAR PDF COM DOMPDF ===
@@ -83,13 +115,17 @@ class BVGN_GerarArquivoEndpoint {
           $font = $dompdf->getFontMetrics()->get_font("Helvetica", "normal");
           $canvas->page_text(520, 820, "Página {PAGE_NUM} de {PAGE_COUNT}", $font, 9, [0, 0, 0]);
 
-          $arquivo_pdf = "$base/{$nome}.pdf";
+          $arquivo_pdf = "$base/{$nome_base}.pdf";
           file_put_contents($arquivo_pdf, $dompdf->output());
         }
       }
 
-      // === RESPONDER COM LINK GERADO ===
-      $url = $arquivo_pdf ? "$urlBase/{$nome}.pdf" : "$urlBase/{$nome}.html";
+      // Só trabalhamos com PDF agora
+      if (!$arquivo_pdf) {
+        throw new Exception('Não foi possível gerar o PDF.');
+      }
+      $url = "$urlBase/{$nome_base}.pdf";
+      update_post_meta($post_id, 'pdf_url', esc_url_raw($url));
       wp_send_json_success(['url' => $url]);
 
     } catch (Throwable $e) {

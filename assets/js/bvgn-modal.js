@@ -96,7 +96,19 @@
         // Se a função de conversão existir, dispara o evento e só então abre o WhatsApp
         if (typeof gtag_report_conversion === 'function') {
           gtag_report_conversion(waUrl); // envia a conversão e redireciona para waUrl
-          return;                        // evita abrir o link duas vezes
+          // Fallback: se a conversão não redirecionar, abrimos o WhatsApp
+          setTimeout(function(){
+            try {
+              if (waWin && !waWin.closed) {
+                waWin.location.href = waUrl;
+              } else {
+                window.open(waUrl, '_blank', 'noopener');
+              }
+            } catch(_) {
+              try { window.open(waUrl, '_blank', 'noopener'); } catch(e) {}
+            }
+          }, 1200);
+          return;                        // evita abrir o link duas vezes; fallback acima garante abertura
         }
         if (waWin && !waWin.closed) {
           // navega a MESMA aba aberta no clique

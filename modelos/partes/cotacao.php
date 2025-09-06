@@ -2,7 +2,10 @@
 $cssPath = BVGN_DIR . 'assets/css/cotacao.css';
 $css = file_exists($cssPath) ? file_get_contents($cssPath) : '';
 $data = date('d/m/Y');
-$codigo = str_pad((string) random_int(10000, 99999), 5, '0', STR_PAD_LEFT);
+// Usa código recebido do endpoint; se não vier, gera um novo
+if (!isset($codigo) || $codigo === '') {
+  $codigo = str_pad((string) random_int(10000, 99999), 5, '0', STR_PAD_LEFT);
+}
 
 
 $fmt = function($str){

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 9.9.25
+ * Version: 9.9.26
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -80,6 +80,93 @@ require_once BVGN_CAMINHO.'inclui/ShortcodesPT.php';
 require_once BVGN_CAMINHO.'inclui/RenderPT.php';
 require_once BVGN_CAMINHO.'inclui/GerarArquivoEndpoint.php';
 require_once BVGN_CAMINHO.'inclui/IntegracoesPT.php';
+
+// === Admin: Registro CPT "Cotações" e colunas ===
+add_action('init', function(){
+  register_post_type('bvgn_cotacao', [
+    'labels' => [
+      'name'               => 'Cotações',
+      'singular_name'      => 'Cotação',
+      'menu_name'          => 'Cotações',
+      'add_new'            => 'Adicionar nova',
+      'add_new_item'       => 'Adicionar cotação',
+      'edit_item'          => 'Editar cotação',
+      'new_item'           => 'Nova cotação',
+      'view_item'          => 'Ver cotação',
+      'search_items'       => 'Buscar cotações',
+      'not_found'          => 'Nenhuma cotação encontrada',
+      'not_found_in_trash' => 'Nenhuma cotação na lixeira',
+    ],
+    'public'       => false,
+    'show_ui'      => true,
+    'show_in_menu' => true,
+    'menu_icon'    => 'dashicons-media-document',
+    'supports'     => ['title'],
+    'capability_type' => 'post',
+  ]);
+});
+
+// Colunas personalizadas da lista
+add_filter('manage_bvgn_cotacao_posts_columns', function($columns){
+  $novo = [
+    'cb'      => $columns['cb'] ?? '<input type="checkbox" />',
+    'title'   => 'Título',
+    'codigo'  => 'Código',
+    'produto' => 'Produto',
+    'cliente' => 'Cliente',
+    'whats'   => 'WhatsApp',
+    'periodo' => 'Período',
+    'total'   => 'Total',
+    'pdf'     => 'PDF',
+    'date'    => 'Data',
+  ];
+  return $novo;
+});
+
+add_action('manage_bvgn_cotacao_posts_custom_column', function($col, $post_id){
+  switch($col){
+    case 'codigo':
+      $cod = get_post_meta($post_id, 'codigo', true);
+      echo $cod !== '' ? esc_html($cod) : '-';
+      break;
+    case 'produto':
+      $pid = intval(get_post_meta($post_id, 'produto_id', true));
+      echo $pid ? esc_html(get_the_title($pid)) : '-';
+      break;
+    case 'cliente':
+      echo esc_html(get_post_meta($post_id, 'cliente_nome', true));
+      break;
+    case 'whats':
+      echo esc_html(get_post_meta($post_id, 'cliente_whats', true));
+      break;
+    case 'periodo':
+      $i = get_post_meta($post_id, 'datas_inicio', true);
+      $f = get_post_meta($post_id, 'datas_fim', true);
+      echo esc_html(trim(($i ?: '—').' a '.($f ?: '—')));
+      break;
+    case 'total':
+      $t = get_post_meta($post_id, 'totais_total', true);
+      if ($t !== '') {
+        // formata em BRL se possível
+        if (function_exists('wc_price')) {
+          echo wp_kses_post(wc_price((float)$t));
+        } else {
+          echo 'R$ ' . number_format((float)$t, 2, ',', '.');
+        }
+      } else {
+        echo '-';
+      }
+      break;
+    case 'pdf':
+      $url = esc_url(get_post_meta($post_id, 'pdf_url', true));
+      if ($url) {
+        echo '<a href="'.$url.'" target="_blank">Abrir PDF</a>';
+      } else {
+        echo '-';
+      }
+      break;
+  }
+}, 10, 2);
 
 add_action('init', function(){
   if (!file_exists(BVGN_DIR_ARQUIVOS)) wp_mkdir_p(BVGN_DIR_ARQUIVOS);
