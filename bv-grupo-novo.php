@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 9.9.31
+ * Version: 9.9.32
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -106,15 +106,15 @@ add_action('init', function(){
     'capability_type'   => 'post',
     'map_meta_cap'      => true,
     'capabilities'      => [
-      // somente visualização no admin (sem criar/editar/excluir)
-      'create_posts'       => 'do_not_allow',
-      'edit_post'          => 'do_not_allow',
-      'edit_posts'         => 'manage_options', // permite ver a lista (admins)
-      'edit_others_posts'  => 'do_not_allow',
-      'publish_posts'      => 'do_not_allow',
-      'delete_post'        => 'do_not_allow',
-      'delete_posts'       => 'do_not_allow',
-      'delete_others_posts'=> 'do_not_allow',
+      // somente visualização no admin (sem criar/editar/publicar); permitir excluir para admins
+      'create_posts'        => 'do_not_allow',
+      'edit_post'           => 'do_not_allow',
+      'edit_posts'          => 'manage_options', // ver a lista (admins)
+      'edit_others_posts'   => 'do_not_allow',
+      'publish_posts'       => 'do_not_allow',
+      'delete_post'         => 'manage_options',
+      'delete_posts'        => 'manage_options',
+      'delete_others_posts' => 'manage_options',
       // leitura segue padrão 'read'
     ],
   ]);
@@ -125,7 +125,6 @@ add_filter('post_row_actions', function($actions, $post){
   if ($post->post_type === 'bvgn_cotacao') {
     unset($actions['edit']);
     unset($actions['inline hide-if-no-js']); // Quick Edit
-    unset($actions['trash']);
     unset($actions['view']);
     // Remover ações de duplicar/clonar adicionadas por plugins de terceiros
     foreach ($actions as $key => $label) {
@@ -141,11 +140,10 @@ add_filter('post_row_actions', function($actions, $post){
     }
   }
   return $actions;
-}, 10, 2);
+}, 99, 2);
 
 add_filter('bulk_actions-edit_bvgn_cotacao', function($bulk_actions){
   unset($bulk_actions['edit']);
-  unset($bulk_actions['trash']);
   // Remover ações de duplicar/clonar de plugins de terceiros
   foreach ($bulk_actions as $key => $label) {
     $txt = is_string($label) ? wp_strip_all_tags($label) : '';
