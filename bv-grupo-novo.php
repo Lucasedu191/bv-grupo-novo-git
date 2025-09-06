@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 9.9.28
+ * Version: 9.9.29
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -106,10 +106,43 @@ add_action('init', function(){
     'capability_type'   => 'post',
     'map_meta_cap'      => true,
     'capabilities'      => [
-      // impede criar novas pelo admin; somente via código
-      'create_posts' => 'do_not_allow',
+      // somente visualização no admin (sem criar/editar/excluir)
+      'create_posts'       => 'do_not_allow',
+      'edit_post'          => 'do_not_allow',
+      'edit_posts'         => 'do_not_allow',
+      'edit_others_posts'  => 'do_not_allow',
+      'publish_posts'      => 'do_not_allow',
+      'delete_post'        => 'do_not_allow',
+      'delete_posts'       => 'do_not_allow',
+      'delete_others_posts'=> 'do_not_allow',
+      // leitura segue padrão 'read'
     ],
   ]);
+});
+
+// Remove ações de linha (Editar/Quick Edit/Lixeira) e ações em massa
+add_filter('post_row_actions', function($actions, $post){
+  if ($post->post_type === 'bvgn_cotacao') {
+    unset($actions['edit']);
+    unset($actions['inline hide-if-no-js']); // Quick Edit
+    unset($actions['trash']);
+    unset($actions['view']);
+  }
+  return $actions;
+}, 10, 2);
+
+add_filter('bulk_actions-edit_bvgn_cotacao', function($bulk_actions){
+  unset($bulk_actions['edit']);
+  unset($bulk_actions['trash']);
+  return $bulk_actions;
+});
+
+// Garante ordenação: mais recentes primeiro
+add_action('pre_get_posts', function($q){
+  if (is_admin() && $q->is_main_query() && $q->get('post_type') === 'bvgn_cotacao') {
+    $q->set('orderby', 'date');
+    $q->set('order', 'DESC');
+  }
 });
 
 // Colunas personalizadas da lista
