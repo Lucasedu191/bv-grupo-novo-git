@@ -22,7 +22,8 @@ $limpaRotulo = function($txt){
 
   // remove "(...)", "Selecionado/Selecionar", ", caução de ..."
   $txt = preg_replace('/\s*\([^)]*\)/u', '', $orig);
-  $txt = preg_replace('/\bSelecionad[oa]r?\b/iu', '', $txt);
+  // remove "Selecionar", "Selecionado", "Selecionada" (com variações de acento/caixa)
+  $txt = preg_replace('/\bSelecion(?:ar|ado|ada)\b/iu', '', $txt);
   $txt = preg_replace('/,\s*cau[cç][aã]o[^—]*/iu', '', $txt);
 
   // normaliza espaços

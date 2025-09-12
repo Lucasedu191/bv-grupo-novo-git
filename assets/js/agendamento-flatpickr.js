@@ -56,6 +56,14 @@
             // usa setDate para garantir atualização do altInput
             inicioPicker.setDate(ag.inicio, true);
             if (fimPicker && ag.fim) fimPicker.setDate(ag.fim, true);
+            // reforço pós-init (alguns temas atrasam o altInput)
+            setTimeout(function(){
+              try {
+                if (inicio && inicio._flatpickr && (!inicio.value || (inicio._flatpickr.altInput && !inicio._flatpickr.altInput.value))) {
+                  inicio._flatpickr.setDate(ag.inicio, true);
+                }
+              } catch(_){}
+            }, 180);
           }
         }
       } catch(_){}

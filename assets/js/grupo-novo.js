@@ -491,6 +491,7 @@ function calcular($cx){
         document.querySelectorAll('.bvgn-data-inicio').forEach(function(el){
           if (el && el._flatpickr) {
             el._flatpickr.setDate(isoInicio, true);
+            setTimeout(function(){ try { if (el._flatpickr && (!el.value || (el._flatpickr.altInput && !el._flatpickr.altInput.value))) el._flatpickr.setDate(isoInicio, true); } catch(_){} }, 160);
           } else {
             $(el).val(isoInicio).trigger('change');
           }
@@ -501,6 +502,7 @@ function calcular($cx){
             const s = parseISODateLocal(isoInicio);
             if (s && el._flatpickr) el._flatpickr.set('minDate', s);
             el._flatpickr.setDate(isoFim, true);
+            setTimeout(function(){ try { if (el._flatpickr && (!el.value || (el._flatpickr.altInput && !el._flatpickr.altInput.value))) el._flatpickr.setDate(isoFim, true); } catch(_){} }, 160);
           } else {
             $(el).val(isoFim).trigger('change');
           }
@@ -521,6 +523,7 @@ function calcular($cx){
         document.querySelectorAll('.bvgn-data-inicio').forEach(function(el){
           if (el && el._flatpickr) {
             el._flatpickr.setDate(isoInicio, true);
+            setTimeout(function(){ try { if (el._flatpickr && (!el.value || (el._flatpickr.altInput && !el._flatpickr.altInput.value))) el._flatpickr.setDate(isoInicio, true); } catch(_){} }, 160);
           } else {
             $(el).val(isoInicio).trigger('change');
           }
