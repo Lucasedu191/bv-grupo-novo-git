@@ -385,16 +385,19 @@ $wmUrl   = $logoUrl; // marca d’água central
         <?php
           $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
           $qtd  = max(1, intval($dados['totais']['qtd'] ?? 1));
-
-          if ($tipo === 'mensal') {
-            $labelPlano = 'Mensal (30 dias)';
+          $base = (float)($dados['totais']['base'] ?? 0);
+          if ($tipo === 'diario') {
+            $labelPlano = sprintf('Diárias (%d × R$ %s)', $qtd, number_format($base, 2, ',', '.'));
+            $valorPlano = $base * $qtd;
           } else {
-            $labelPlano = $qtd > 1 ? "Diárias ($qtd dias)" : "Diária";
+            // mantemos apresentação atual para mensal
+            $labelPlano = 'Mensal (30 dias)';
+            $valorPlano = $base; // exibição do valor base mensal
           }
         ?>
         <tr>
-          <td><?= $labelPlano ?></td>
-          <td>R$ <?= number_format($dados['totais']['base'], 2, ',', '.') ?></td>
+          <td><?= esc_html($labelPlano) ?></td>
+          <td>R$ <?= number_format($valorPlano, 2, ',', '.') ?></td>
         </tr>
 
         <?php foreach (($dados['taxas'] ?? []) as $t): ?>
@@ -415,10 +418,6 @@ $wmUrl   = $logoUrl; // marca d’água central
           </tr>
         <?php endforeach; ?>
 
-        <tr>
-          <td>Subtotal</td>
-          <td>R$ <?= number_format($dados['totais']['subtotal'], 2, ',', '.') ?></td>
-        </tr>
         <tr class="total">
           <td>Total Estimado</td>
           <td>R$ <?= number_format($dados['totais']['total'], 2, ',', '.') ?></td>

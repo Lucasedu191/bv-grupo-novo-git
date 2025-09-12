@@ -231,13 +231,21 @@ function calcular($cx){
       $cx.find('.bvgn-taxas-lista').show();
     }
 
-    // Exibir plano selecionado (variação)
+    // Exibir plano selecionado (variação) / Por dia (diário)
     const $var = $cx.find('.bvgn-variacao input[type=radio]:checked');
     if ($var.length) {
-      const rotulo = String($var.data('rotulo') || 'Plano selecionado');
-      const preco  = numero($var.data('preco') || base);
+      const rotuloVar = String($var.data('rotulo') || 'Plano selecionado');
+      const precoUnit = numero($var.data('preco') || base);
       $cx.find('.bvgn-var').show();
-      $cx.find('#bvgn-var-view').text(`${rotulo} — R$ ${preco.toFixed(2).replace('.', ',')}`);
+      if (tipo === 'diario') {
+        const diasLabel = `${qtd} dia${qtd > 1 ? 's' : ''}`;
+        const totalDiarias = (precoUnit * qtd);
+        const unitBR = precoUnit.toFixed(2).replace('.', ',');
+        const totalBR = totalDiarias.toFixed(2).replace('.', ',');
+        $cx.find('#bvgn-var-view').text(`Por dia: ${diasLabel} × R$ ${unitBR} — total R$ ${totalBR}`);
+      } else {
+        $cx.find('#bvgn-var-view').text(`${rotuloVar} — R$ ${precoUnit.toFixed(2).replace('.', ',')}`);
+      }
     }
 
     // Preencher proteção no resumo (bloco lateral)
@@ -469,15 +477,34 @@ function calcular($cx){
           const [d, m, y] = parts;
           return `${y}-${m}-${d}`;
         }
+        function parseISODateLocal(str){
+          if(!str) return null;
+          const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(str));
+          if(!m) return null;
+          return new Date(Number(m[1]), Number(m[2])-1, Number(m[3]), 0,0,0,0);
+        }
 
         const isoInicio = toISO(dados.inicio);
         const isoFim = toISO(dados.fim);
 
-        
-        
-
-        $('.bvgn-data-inicio').val(isoInicio).trigger('change');
-        $('.bvgn-data-fim').val(isoFim).trigger('change');
+        // Preenche inputs; se flatpickr estiver anexado, use setDate para refletir no altInput
+        document.querySelectorAll('.bvgn-data-inicio').forEach(function(el){
+          if (el && el._flatpickr) {
+            el._flatpickr.setDate(isoInicio, true);
+          } else {
+            $(el).val(isoInicio).trigger('change');
+          }
+        });
+        document.querySelectorAll('.bvgn-data-fim').forEach(function(el){
+          if (el && el._flatpickr) {
+            // ajusta minDate do fim com base no início
+            const s = parseISODateLocal(isoInicio);
+            if (s && el._flatpickr) el._flatpickr.set('minDate', s);
+            el._flatpickr.setDate(isoFim, true);
+          } else {
+            $(el).val(isoFim).trigger('change');
+          }
+        });
 
         setTimeout(function(){
           $('.bvgn-data-fim').trigger('change');
@@ -490,7 +517,14 @@ function calcular($cx){
         const isoInicio = (parts[0] && parts[0].length === 4)
           ? dados.inicio
           : `${parts[2]}-${parts[1]}-${parts[0]}`;
-        $('.bvgn-data-inicio').val(isoInicio).trigger('change');
+        // idem: preferir setDate quando flatpickr existir
+        document.querySelectorAll('.bvgn-data-inicio').forEach(function(el){
+          if (el && el._flatpickr) {
+            el._flatpickr.setDate(isoInicio, true);
+          } else {
+            $(el).val(isoInicio).trigger('change');
+          }
+        });
         console.log('[BVGN] Data de retirada preenchida a partir do localStorage:', { isoInicio });
       }
     } catch (e) {

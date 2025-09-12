@@ -30,19 +30,11 @@ $tipo = $a['type'] ?? 'diario';
       <span class="resumo-valor" id="bvgn-opcionais-view">–</span>
     </div>
 
-    <div class="resumo-linha">
-      <span class="resumo-label"><?php esc_html_e('Taxas:', 'bvgn'); ?></span>
-      <div class="bvgn-taxas-detalhes" id="bvgn-taxas-itens" style="display:none; flex-direction: column; gap: 4px;"></div>
-      <span class="resumo-valor">R$ <span class="valor" id="bvgn-taxas">0,00</span></span>
-    </div>
-
-    <div class="resumo-linha">
-      <span class="resumo-label"><?php esc_html_e('Subtotal:', 'bvgn'); ?></span>
-      <span class="resumo-valor">R$ <span class="valor" id="bvgn-subtotal-view">0,00</span></span>
-    </div>
+    <!-- Linha de Taxas removida conforme requisito -->
+    <!-- Linha de Subtotal removida conforme requisito -->
 
     <div class="resumo-linha total">
-      <span class="resumo-label"><?php esc_html_e('Total:', 'bvgn'); ?></span>
+      <span class="resumo-label"><?php esc_html_e('Total Estimado:', 'bvgn'); ?></span>
       <span class="resumo-valor destaque">R$ <span class="valor" id="bvgn-total-view">0,00</span></span>
     </div>
   </div>
@@ -50,7 +42,7 @@ $tipo = $a['type'] ?? 'diario';
   <!-- Hidden para envio posterior -->
   <input type="hidden" id="bvgn-days-raw" name="bvgn_dias" value="1" />
   <input type="hidden" id="bvgn-taxas-raw" name="bvgn_taxas" value="0" />
-  <input type="hidden" id="bvgn-subtotal-raw-hidden" name="bvgn_subtotal" value="0" />
-  <input type="hidden" id="bvgn-total-raw-hidden" name="bvgn_total" value="0" />
+  <input type="hidden" id="bvgn-subtotal-raw" name="bvgn_subtotal" value="0" />
+  <input type="hidden" id="bvgn-total-raw" name="bvgn_total" value="0" />
 
 </div>
