@@ -15,6 +15,24 @@ document.addEventListener('DOMContentLoaded', function () {
       const maxGlobal = new Date();
       maxGlobal.setMonth(maxGlobal.getMonth() + 6);
 
+      // Helper: pega valor ISO (YYYY-MM-DD) mesmo no mobile
+      function getISOValue(el){
+        if (!el) return '';
+        try {
+          var fp = el._flatpickr;
+          if (fp && fp.selectedDates && fp.selectedDates.length) {
+            return fp.formatDate(fp.selectedDates[0], 'Y-m-d');
+          }
+          // flatpickr mobile cria um input.flatpickr-mobile
+          var mob = el.parentElement ? el.parentElement.querySelector('input.flatpickr-mobile') : null;
+          if (mob && mob.value) {
+            // browsers retornam YYYY-MM-DD nesse input
+            return String(mob.value);
+          }
+          return el.value || '';
+        } catch(_) { return el.value || ''; }
+      }
+
       try {
         flatpickr.localize(flatpickr.l10ns.pt);
 
@@ -71,11 +89,13 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       btn.addEventListener('click', () => {
-        const inicio = new Date(inicioEl.value);
-        const fim = new Date(fimEl.value);
+        const inicioISO = getISOValue(inicioEl);
+        const fimISO = getISOValue(fimEl);
+        const inicio = new Date(inicioISO);
+        const fim = new Date(fimISO);
         const local = document.getElementById('bvgn-cabecalho-local').textContent || 'BV Locadora, Rua Coronel Mota, 629';
 
-        if (!inicioEl.value || !fimEl.value) {
+        if (!inicioISO || !fimISO) {
           alert('Preencha as duas datas.');
           return;
         }
@@ -90,8 +110,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Sempre persiste as datas antes de redirecionar (inclusive > 30)
         localStorage.setItem('bvgn_agendamento', JSON.stringify({
-          inicio: inicioEl.value,
-          fim: fimEl.value,
+          inicio: inicioISO,
+          fim: fimISO,
           local: local
         }));
 
@@ -119,6 +139,20 @@ document.addEventListener('DOMContentLoaded', function () {
       const hoje = new Date();
       const maxGlobal = new Date();
       maxGlobal.setMonth(maxGlobal.getMonth() + 6);
+
+      // Helper: pega valor ISO (YYYY-MM-DD) mesmo no mobile
+      function getISOValue(el){
+        if (!el) return '';
+        try {
+          var fp = el._flatpickr;
+          if (fp && fp.selectedDates && fp.selectedDates.length) {
+            return fp.formatDate(fp.selectedDates[0], 'Y-m-d');
+          }
+          var mob = el.parentElement ? el.parentElement.querySelector('input.flatpickr-mobile') : null;
+          if (mob && mob.value) return String(mob.value);
+          return el.value || '';
+        } catch(_) { return el.value || ''; }
+      }
 
       try {
         flatpickr.localize(flatpickr.l10ns.pt);
@@ -162,18 +196,20 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       btn.addEventListener('click', () => {
-        const inicio = new Date(inicioEl.value);
-        const fim = new Date(fimEl.value);
+        const inicioISO = getISOValue(inicioEl);
+        const fimISO = getISOValue(fimEl);
+        const inicio = new Date(inicioISO);
+        const fim = new Date(fimISO);
         const local = (localEl && localEl.textContent) ? localEl.textContent : 'BV Locadora, Rua Coronel Mota, 629';
 
-        if (!inicioEl.value || !fimEl.value) { alert('Preencha as duas datas.'); return; }
+        if (!inicioISO || !fimISO) { alert('Preencha as duas datas.'); return; }
         const dias = (fim - inicio) / 86400000;
         if (dias < 0) { alert('A data final deve ser depois da data inicial.'); return; }
 
         // Persistir SEMPRE antes do redirecionamento
         localStorage.setItem('bvgn_agendamento', JSON.stringify({
-          inicio: inicioEl.value,
-          fim: fimEl.value,
+          inicio: inicioISO,
+          fim: fimISO,
           local: local
         }));
 
