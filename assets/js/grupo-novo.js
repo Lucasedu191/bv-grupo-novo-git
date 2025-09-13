@@ -17,8 +17,11 @@ function diferencaDiasSeguro(inicioStr, fimStr){
   const s = parseISODateLocal(inicioStr);
   const e = parseISODateLocal(fimStr);
   if(!s || !e) return 0;
-  const ms = e.setHours(0,0,0,0) - s.setHours(0,0,0,0);
-  return Math.max(Math.floor(ms / 86400000), 1);
+  // usa meio‑dia para evitar problemas de DST (23h/25h)
+  const sMid = new Date(s.getFullYear(), s.getMonth(), s.getDate(), 12, 0, 0, 0);
+  const eMid = new Date(e.getFullYear(), e.getMonth(), e.getDate(), 12, 0, 0, 0);
+  const ms = eMid - sMid;
+  return Math.max(Math.round(ms / 86400000), 1);
 }
 
 // helper ISO
@@ -116,27 +119,31 @@ function calcular($cx){
     // soma taxas
     let taxas = 0;
 
-    // 1. Proteção (radio) — baseado no atributo data-preco-dia
+    // 1. Proteção (radio) — baseado no atributo data-preco-dia (apenas no diário)
     const $prot = $cx.find('input[name="bvgn_protecao"]:checked');
-    if ($prot.length) {
+    if (tipo === 'diario' && $prot.length) {
       const preco  = numero($prot.data('preco-dia'));
       const caucao = numero($prot.data('caucao'));
       const nomeProt = String(
         $prot.closest('label').find('.texto').clone().children().remove().end().text()
       ).trim();
 
-      // valor total da proteção (multiplica pelos dias do período)
-      const valorProt = preco * qtd;
-      const valorTotalProt = valorProt + (caucao > 0 ? caucao : 0);
+      // valor da proteção por dias (multiplica pelos dias do período)
+      const valorProtDias = preco * qtd;
+      const valorTotalProt = valorProtDias + (caucao > 0 ? caucao : 0);
 
       // guarda total (inclui caução quando houver)
       $prot.attr('data-preco-total', valorTotalProt); // usado ao enviar dados
 
       // acumula nas taxas
-      taxas += valorProt;
+      taxas += valorProtDias;
       if (caucao > 0) taxas += caucao; // caução entra 1x no diário
 
-      const rotuloProt = `${nomeProt} — R$ ${valorTotalProt.toFixed(2).replace('.', ',')}`;
+      // rótulo detalhado como a diária (Qtd × Unitário — total)
+      const diasLabel = `${qtd} dia${qtd > 1 ? 's' : ''}`;
+      const unitBR    = preco.toFixed(2).replace('.', ',');
+      const totalBR   = valorProtDias.toFixed(2).replace('.', ',');
+      const rotuloProt = `${nomeProt} — ${diasLabel} × R$ ${unitBR} — total R$ ${totalBR}`;
       // adiciona na lista detalhada (caso esteja mostrando os itens)
       if ($cx.find('#bvgn-taxas-itens').length) {
         $cx.find('#bvgn-taxas-itens').append(`<li>${rotuloProt}</li>`);
@@ -257,9 +264,12 @@ function calcular($cx){
       const nomeProt = String(
         $prot.closest('label').find('.texto').clone().children().remove().end().text()
       ).trim();
-      const valorProt = numero($prot.data('preco-total')) ||
-        (numero($prot.data('preco-dia')) * qtd);
-      const rotuloProt = `${nomeProt} — R$ ${valorProt.toFixed(2).replace('.', ',')}`;
+      const precoDia = numero($prot.data('preco-dia'));
+      const valorProtDias = precoDia * qtd;
+      const diasLabel = `${qtd} dia${qtd > 1 ? 's' : ''}`;
+      const unitBR  = precoDia.toFixed(2).replace('.', ',');
+      const totalBR = valorProtDias.toFixed(2).replace('.', ',');
+      const rotuloProt = `${nomeProt} — ${diasLabel} × R$ ${unitBR} — total R$ ${totalBR}`;
       $cx.find('.bvgn-protecao').show();
       $cx.find('#bvgn-protecao-view').text(rotuloProt);
     } else {
