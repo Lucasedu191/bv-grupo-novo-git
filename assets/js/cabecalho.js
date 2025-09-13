@@ -14,6 +14,14 @@ document.addEventListener('DOMContentLoaded', function () {
       const hoje = new Date();
       const maxGlobal = new Date();
       maxGlobal.setMonth(maxGlobal.getMonth() + 6);
+      // ISO local (YYYY-MM-DD) para evitar fuso/UTC no minDate
+      function toLocalISO(d){
+        const y = d.getFullYear();
+        const m = String(d.getMonth()+1).padStart(2,'0');
+        const dd= String(d.getDate()).padStart(2,'0');
+        return `${y}-${m}-${dd}`;
+      }
+      const hojeIso = toLocalISO(hoje);
 
       // Helper: pega valor ISO (YYYY-MM-DD) mesmo no mobile
       function getISOValue(el){
@@ -55,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
           altInput: true,
           altFormat: 'd/m/Y',
           dateFormat: 'Y-m-d',
-          minDate: hoje,
+          minDate: hojeIso,
           maxDate: maxGlobal,
           // defaultDate: new Date(hoje.getTime() + 86400000)
           placeholder: 'Data...',
@@ -79,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
           altInput: true,
           altFormat: 'd/m/Y',
           dateFormat: 'Y-m-d',
-          minDate: hoje,
+          minDate: hojeIso,
           maxDate: maxGlobal,
           // defaultDate: hoje,
           placeholder: 'Data...',

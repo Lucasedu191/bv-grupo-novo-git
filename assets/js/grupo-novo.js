@@ -490,9 +490,23 @@ function calcular($cx){
         const isoInicio = toISO(dados.inicio);
         const isoFim = toISO(dados.fim);
 
-        // Preenche inputs (comportamento original)
-        $('.bvgn-data-inicio').val(isoInicio).trigger('change');
-        $('.bvgn-data-fim').val(isoFim).trigger('change');
+        // Preenche inputs; se flatpickr estiver anexado, use setDate para refletir no altInput
+        document.querySelectorAll('.bvgn-data-inicio').forEach(function(el){
+          if (el && el._flatpickr) {
+            el._flatpickr.setDate(isoInicio, true);
+          } else {
+            jQuery(el).val(isoInicio).trigger('change');
+          }
+        });
+        document.querySelectorAll('.bvgn-data-fim').forEach(function(el){
+          if (el && el._flatpickr) {
+            // ajusta minDate do fim com base no início
+            try { el._flatpickr.set('minDate', isoInicio); } catch(_){}
+            el._flatpickr.setDate(isoFim, true);
+          } else {
+            jQuery(el).val(isoFim).trigger('change');
+          }
+        });
 
         setTimeout(function(){
           $('.bvgn-data-fim').trigger('change');
@@ -505,7 +519,14 @@ function calcular($cx){
         const isoInicio = (parts[0] && parts[0].length === 4)
           ? dados.inicio
           : `${parts[2]}-${parts[1]}-${parts[0]}`;
-        $('.bvgn-data-inicio').val(isoInicio).trigger('change');
+        // idem: preferir setDate quando flatpickr existir
+        document.querySelectorAll('.bvgn-data-inicio').forEach(function(el){
+          if (el && el._flatpickr) {
+            el._flatpickr.setDate(isoInicio, true);
+          } else {
+            jQuery(el).val(isoInicio).trigger('change');
+          }
+        });
         console.log('[BVGN] Data de retirada preenchida a partir do localStorage:', { isoInicio });
       }
     } catch (e) {
