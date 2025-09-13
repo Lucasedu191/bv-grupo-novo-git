@@ -33,6 +33,21 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch(_) { return el.value || ''; }
       }
 
+      // Força sincronizar o valor nos 3 alvos do flatpickr (input, altInput e mobileInput)
+      function syncFlatpickrDisplay(fp, iso){
+        try {
+          if (!fp) return;
+          var fmtBR = null;
+          if (iso) {
+            var d = fp.parseDate(iso, 'Y-m-d');
+            if (d) fmtBR = fp.formatDate(d, 'd/m/Y');
+          }
+          if (iso) fp.input.value = iso; // input base (hidden/readonly)
+          if (fp.altInput && fmtBR) fp.altInput.value = fmtBR; // máscara visível desktop
+          if (fp.mobileInput && iso) fp.mobileInput.value = iso; // nativo mobile
+        } catch(_){}
+      }
+
       try {
         flatpickr.localize(flatpickr.l10ns.pt);
 
@@ -44,7 +59,19 @@ document.addEventListener('DOMContentLoaded', function () {
           maxDate: maxGlobal,
           // defaultDate: new Date(hoje.getTime() + 86400000)
           placeholder: 'Data...',
-          monthSelectorType: 'static'
+          monthSelectorType: 'static',
+          onChange: function(selected){
+            if (selected && selected.length) {
+              var iso = this.formatDate(selected[0], 'Y-m-d');
+              syncFlatpickrDisplay(this, iso);
+            }
+          },
+          onValueUpdate: function(sel){
+            if (sel && sel.length) {
+              var iso = this.formatDate(sel[0], 'Y-m-d');
+              syncFlatpickrDisplay(this, iso);
+            }
+          }
         });
         console.log('[BVGN] Flatpickr fim inicializado');
 
@@ -60,7 +87,15 @@ document.addEventListener('DOMContentLoaded', function () {
           onChange: function (selectedDates) {
             if (selectedDates.length) {
               fimPicker.set('minDate', selectedDates[0]);
+              var iso = this.formatDate(selectedDates[0], 'Y-m-d');
+              syncFlatpickrDisplay(this, iso);
               console.log('[BVGN] Data de início alterada:', selectedDates[0]);
+            }
+          },
+          onValueUpdate: function(sel){
+            if (sel && sel.length) {
+              var iso = this.formatDate(sel[0], 'Y-m-d');
+              syncFlatpickrDisplay(this, iso);
             }
           }
         });
@@ -78,6 +113,8 @@ document.addEventListener('DOMContentLoaded', function () {
               // Aplica datas salvas
               inicioPicker.setDate(ag.inicio, true);
               fimPicker.setDate(ag.fim, true);
+              syncFlatpickrDisplay(inicioPicker, ag.inicio);
+              syncFlatpickrDisplay(fimPicker, ag.fim);
               console.log('[BVGN] Datas restauradas do storage:', ag);
               // Reforço: alguns temas atrasam o altInput; reaplica se ficar vazio
               setTimeout(() => {
@@ -85,6 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
                   const alt = inicioPicker && inicioPicker.altInput ? inicioPicker.altInput.value : '';
                   if ((!inicioEl.value && !alt) && ag.inicio) {
                     inicioPicker.setDate(ag.inicio, true);
+                    syncFlatpickrDisplay(inicioPicker, ag.inicio);
                   }
                 } catch(_) {}
               }, 180);
