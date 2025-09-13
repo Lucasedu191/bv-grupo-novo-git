@@ -79,6 +79,15 @@ document.addEventListener('DOMContentLoaded', function () {
               inicioPicker.setDate(ag.inicio, true);
               fimPicker.setDate(ag.fim, true);
               console.log('[BVGN] Datas restauradas do storage:', ag);
+              // Reforço: alguns temas atrasam o altInput; reaplica se ficar vazio
+              setTimeout(() => {
+                try {
+                  const alt = inicioPicker && inicioPicker.altInput ? inicioPicker.altInput.value : '';
+                  if ((!inicioEl.value && !alt) && ag.inicio) {
+                    inicioPicker.setDate(ag.inicio, true);
+                  }
+                } catch(_) {}
+              }, 180);
             }
           }
         } catch (err) {
@@ -188,6 +197,14 @@ document.addEventListener('DOMContentLoaded', function () {
               if (!isNaN(s)) fimPicker.set('minDate', s);
               inicioPicker.setDate(ag.inicio, true);
               fimPicker.setDate(ag.fim, true);
+              setTimeout(() => {
+                try {
+                  const alt = inicioPicker && inicioPicker.altInput ? inicioPicker.altInput.value : '';
+                  if ((!inicioEl.value && !alt) && ag.inicio) {
+                    inicioPicker.setDate(ag.inicio, true);
+                  }
+                } catch(_) {}
+              }, 180);
             }
           }
         } catch (_) {}
