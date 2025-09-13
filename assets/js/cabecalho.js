@@ -15,13 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
       const maxGlobal = new Date();
       maxGlobal.setMonth(maxGlobal.getMonth() + 6);
 
-      function parseISODateLocal(str){
-        if(!str) return null;
-        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(str));
-        if(!m) return null;
-        return new Date(Number(m[1]), Number(m[2])-1, Number(m[3]), 0,0,0,0);
-      }
-
       try {
         flatpickr.localize(flatpickr.l10ns.pt);
 
@@ -62,8 +55,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const ag = JSON.parse(agRaw);
             if (ag && ag.inicio && ag.fim) {
               // Define minDate do fim de acordo com o início salvo
-            const s = parseISODateLocal(ag.inicio);
-            if (s) fimPicker.set('minDate', s);
+              const s = new Date(ag.inicio);
+              if (!isNaN(s)) fimPicker.set('minDate', s);
               // Aplica datas salvas
               inicioPicker.setDate(ag.inicio, true);
               fimPicker.setDate(ag.fim, true);

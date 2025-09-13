@@ -477,36 +477,12 @@ function calcular($cx){
           const [d, m, y] = parts;
           return `${y}-${m}-${d}`;
         }
-        function parseISODateLocal(str){
-          if(!str) return null;
-          const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(str));
-          if(!m) return null;
-          return new Date(Number(m[1]), Number(m[2])-1, Number(m[3]), 0,0,0,0);
-        }
-
         const isoInicio = toISO(dados.inicio);
         const isoFim = toISO(dados.fim);
 
-        // Preenche inputs; se flatpickr estiver anexado, use setDate para refletir no altInput
-        document.querySelectorAll('.bvgn-data-inicio').forEach(function(el){
-          if (el && el._flatpickr) {
-            el._flatpickr.setDate(isoInicio, true);
-            setTimeout(function(){ try { if (el._flatpickr && (!el.value || (el._flatpickr.altInput && !el._flatpickr.altInput.value))) el._flatpickr.setDate(isoInicio, true); } catch(_){} }, 160);
-          } else {
-            $(el).val(isoInicio).trigger('change');
-          }
-        });
-        document.querySelectorAll('.bvgn-data-fim').forEach(function(el){
-          if (el && el._flatpickr) {
-            // ajusta minDate do fim com base no início
-            const s = parseISODateLocal(isoInicio);
-            if (s && el._flatpickr) el._flatpickr.set('minDate', s);
-            el._flatpickr.setDate(isoFim, true);
-            setTimeout(function(){ try { if (el._flatpickr && (!el.value || (el._flatpickr.altInput && !el._flatpickr.altInput.value))) el._flatpickr.setDate(isoFim, true); } catch(_){} }, 160);
-          } else {
-            $(el).val(isoFim).trigger('change');
-          }
-        });
+        // Preenche inputs (comportamento original)
+        $('.bvgn-data-inicio').val(isoInicio).trigger('change');
+        $('.bvgn-data-fim').val(isoFim).trigger('change');
 
         setTimeout(function(){
           $('.bvgn-data-fim').trigger('change');
@@ -519,15 +495,7 @@ function calcular($cx){
         const isoInicio = (parts[0] && parts[0].length === 4)
           ? dados.inicio
           : `${parts[2]}-${parts[1]}-${parts[0]}`;
-        // idem: preferir setDate quando flatpickr existir
-        document.querySelectorAll('.bvgn-data-inicio').forEach(function(el){
-          if (el && el._flatpickr) {
-            el._flatpickr.setDate(isoInicio, true);
-            setTimeout(function(){ try { if (el._flatpickr && (!el.value || (el._flatpickr.altInput && !el._flatpickr.altInput.value))) el._flatpickr.setDate(isoInicio, true); } catch(_){} }, 160);
-          } else {
-            $(el).val(isoInicio).trigger('change');
-          }
-        });
+        $('.bvgn-data-inicio').val(isoInicio).trigger('change');
         console.log('[BVGN] Data de retirada preenchida a partir do localStorage:', { isoInicio });
       }
     } catch (e) {
