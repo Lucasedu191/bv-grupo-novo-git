@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
           altInput: true,
           altFormat: 'd/m/Y',
           dateFormat: 'Y-m-d',
-          minDate: hoje,
+          minDate: 'today',
           maxDate: maxGlobal,
           monthSelectorType: 'static'
         });
@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function () {
           altInput: true,
           altFormat: 'd/m/Y',
           dateFormat: 'Y-m-d',
-          minDate: hoje,
+          minDate: 'today',
           maxDate: maxGlobal,
           monthSelectorType: 'static',
           onChange: function (selectedDates) {
