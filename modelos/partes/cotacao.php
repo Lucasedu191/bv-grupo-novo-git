@@ -265,6 +265,7 @@ $wmUrl   = $logoUrl; // marca d’água central
     <?php
       // detectar tipo
       $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
+      $qtdDias = max(1, intval($dados['totais']['qtd'] ?? 1));
 
       // localizar itens especiais nas taxas enviadas
       $protItem   = null;
@@ -419,13 +420,21 @@ $wmUrl   = $logoUrl; // marca d’água central
           <tr>
             <?php
               $itemLabel = $rotuloLimpo;
-              if ($tipo === 'diario' && preg_match('/condutor|cadeirinh/i', $rot)) {
-                $unit = isset($t['preco']) ? (is_numeric($t['preco']) ? (float)$t['preco'] : $toFloatBR($t['preco'])) : 0;
-                $itemLabel .= ' R$ ' . number_format($unit, 2, ',', '.') . ' (x ' . intval($qtd) . ' dias)';
+              $valorItem = $precoExibicao($t, $dados);
+              if (
+                $tipo === 'diario' && (
+                  preg_match('/condutor|cadeirinh/i', $rot) ||
+                  preg_match('/prote[c��][aǜ]o/i', $rot) ||
+                  preg_match('/di[ǭa]ria/i', $rot)
+                )
+              ) {
+                $q = max(1, (int)$qtd);
+                $unit = ($q > 0) ? ($valorItem / $q) : $valorItem;
+                $itemLabel .= ' R$ ' . number_format($unit, 2, ',', '.') . ' (x ' . $q . ' dias)';
               }
             ?>
             <td><?= esc_html($itemLabel) ?></td>
-            <td>R$ <?= number_format($precoExibicao($t, $dados), 2, ',', '.') ?></td>
+            <td>R$ <?= number_format($valorItem, 2, ',', '.') ?></td>
           </tr>
         <?php endforeach; ?>
 

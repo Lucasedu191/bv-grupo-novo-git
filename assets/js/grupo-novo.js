@@ -286,8 +286,8 @@ function calcular($cx){
       const rotulo = String($(this).data('rotulo') || '').trim();
       const preco = numero($(this).data('preco'));
       if (rotulo) {
-        // Para plano diário, exibir formato "valor x dias" nos opcionais Cadeirinha e Condutor adicional
-        if (tipo === 'diario' && /(condutor|cadeirinh)/i.test(rotulo)) {
+        // Para plano diário, padronizar exibindo "valor x dias" nos opcionais por dia
+        if (tipo === 'diario' && (/(condutor|cadeirinh)/i.test(rotulo) || /\(diaria\)/i.test(rotulo))) {
           const total = preco * qtd;
           opcionais.push(`${rotulo} – R$ ${preco.toFixed(2).replace('.', ',')} x ${qtd} dias`);
         } else {
