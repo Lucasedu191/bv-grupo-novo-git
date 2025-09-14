@@ -417,7 +417,13 @@ $wmUrl   = $logoUrl; // marca d’água central
             }
           ?>
           <tr>
-            <?php $itemLabel = $rotuloLimpo; if ($tipo === 'diario' && preg_match('/condutor|cadeirinh/i', $rot)) { $itemLabel .= ' (x ' . intval($qtd) . ' dias)'; } ?>
+            <?php
+              $itemLabel = $rotuloLimpo;
+              if ($tipo === 'diario' && preg_match('/condutor|cadeirinh/i', $rot)) {
+                $unit = isset($t['preco']) ? (is_numeric($t['preco']) ? (float)$t['preco'] : $toFloatBR($t['preco'])) : 0;
+                $itemLabel .= ' R$ ' . number_format($unit, 2, ',', '.') . ' (x ' . intval($qtd) . ' dias)';
+              }
+            ?>
             <td><?= esc_html($itemLabel) ?></td>
             <td>R$ <?= number_format($precoExibicao($t, $dados), 2, ',', '.') ?></td>
           </tr>
