@@ -80,6 +80,9 @@ $precoExibicao = function($t, $dados) use ($toFloatBR){
     if ($tipo === 'diario')      $p *= $qtd;
     elseif ($tipo === 'mensal')  $p *= 30;
   }
+  
+  // Extra: opcionais específicos (Condutor adicional, Cadeirinha) multiplicam pelos dias apenas no plano diário
+  
 
   return $p;
 };
@@ -414,7 +417,8 @@ $wmUrl   = $logoUrl; // marca d’água central
             }
           ?>
           <tr>
-            <td><?= esc_html($rotuloLimpo) ?></td>
+            <?php $itemLabel = $rotuloLimpo; if ($tipo === 'diario' && preg_match('/condutor|cadeirinh/i', $rot)) { $itemLabel .= ' (x ' . intval($qtd) . ' dias)'; } ?>
+            <td><?= esc_html($itemLabel) ?></td>
             <td>R$ <?= number_format($precoExibicao($t, $dados), 2, ',', '.') ?></td>
           </tr>
         <?php endforeach; ?>
