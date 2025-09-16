@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 9.9.48
+ * Version: 9.9.49
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -109,7 +109,9 @@ add_action('init', function(){
     'capabilities'      => [
       // somente visualização no admin (sem criar/editar/publicar/excluir)
       'create_posts'        => 'do_not_allow',
-      'edit_post'           => 'do_not_allow',
+      // Permite "edit_post" para exibir checkboxes na lista;
+      // bloquearemos a tela de edição via hook abaixo
+      'edit_post'           => 'read',
       'edit_posts'          => 'read',           // qualquer usuário logado vê a lista
       'edit_others_posts'   => 'do_not_allow',
       'publish_posts'       => 'do_not_allow',
@@ -119,6 +121,17 @@ add_action('init', function(){
       // leitura segue padrão 'read'
     ],
   ]);
+});
+
+// Bloqueia a tela de edição para o CPT, mantendo apenas listagem/exports
+add_action('load-post.php', function(){
+  if (!is_admin()) return;
+  $post_id = isset($_GET['post']) ? intval($_GET['post']) : 0;
+  if (!$post_id) return;
+  if (get_post_type($post_id) !== 'bvgn_cotacao') return;
+  // Impede edição: redireciona para a listagem
+  wp_safe_redirect(admin_url('edit.php?post_type=bvgn_cotacao'));
+  exit;
 });
 
 // Remove ações de linha (Editar/Quick Edit/Lixeira) e ações em massa
@@ -144,7 +157,8 @@ add_filter('post_row_actions', function($actions, $post){
   return $actions;
 }, 99, 2);
 
-add_filter('bulk_actions-edit_bvgn_cotacao', function($bulk_actions){
+// Corrige hook: usa hífen, não sublinhado
+add_filter('bulk_actions-edit-bvgn_cotacao', function($bulk_actions){
   unset($bulk_actions['edit']);
   unset($bulk_actions['trash']);
   // Remover ações de duplicar/clonar de plugins de terceiros
