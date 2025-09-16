@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 9.9.49
+ * Version: 9.9.50
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -107,18 +107,18 @@ add_action('init', function(){
     'capability_type'   => 'post',
     'map_meta_cap'      => true,
     'capabilities'      => [
-      // somente visualização no admin (sem criar/editar/publicar/excluir)
-      'create_posts'        => 'do_not_allow',
-      // Permite "edit_post" para exibir checkboxes na lista;
-      // bloquearemos a tela de edição via hook abaixo
-      'edit_post'           => 'read',
-      'edit_posts'          => 'read',           // qualquer usuário logado vê a lista
-      'edit_others_posts'   => 'do_not_allow',
-      'publish_posts'       => 'do_not_allow',
-      'delete_post'         => 'do_not_allow',
-      'delete_posts'        => 'do_not_allow',
-      'delete_others_posts' => 'do_not_allow',
-      // leitura segue padrão 'read'
+      // somente administração pode editar/selecionar; sem criar/publicar/excluir
+      'create_posts'           => 'do_not_allow',
+      'edit_post'              => 'manage_options',
+      'edit_posts'             => 'manage_options',
+      'edit_others_posts'      => 'manage_options',
+      'publish_posts'          => 'do_not_allow',
+      'delete_post'            => 'do_not_allow',
+      'delete_posts'           => 'do_not_allow',
+      'delete_others_posts'    => 'do_not_allow',
+      'read_private_posts'     => 'manage_options',
+      // leitura geral
+      'read_post'              => 'read',
     ],
   ]);
 });
@@ -129,6 +129,8 @@ add_action('load-post.php', function(){
   $post_id = isset($_GET['post']) ? intval($_GET['post']) : 0;
   if (!$post_id) return;
   if (get_post_type($post_id) !== 'bvgn_cotacao') return;
+  // Admin pode abrir normalmente
+  if (current_user_can('manage_options')) return;
   // Impede edição: redireciona para a listagem
   wp_safe_redirect(admin_url('edit.php?post_type=bvgn_cotacao'));
   exit;

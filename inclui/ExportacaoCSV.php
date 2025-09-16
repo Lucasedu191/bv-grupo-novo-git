@@ -10,7 +10,7 @@ add_filter('bulk_actions-edit-bvgn_cotacao', function($bulk_actions){
 // Botão de exportar tudo na listagem
 add_action('restrict_manage_posts', function($post_type){
   if ($post_type !== 'bvgn_cotacao') return;
-  if (!current_user_can('edit_posts')) return;
+  if (!current_user_can('manage_options')) return;
   $url = wp_nonce_url(admin_url('edit.php?post_type=bvgn_cotacao&bvgn_export_all=csv'), 'bvgn_export_all');
   echo '<a href="'.esc_url($url).'" class="button" style="margin-left:8px;">Exportar CSV (Excel)</a>';
 });
@@ -20,7 +20,7 @@ add_action('admin_init', function(){
   if (!is_admin()) return;
   if (!isset($_GET['bvgn_export_all']) || $_GET['bvgn_export_all'] !== 'csv') return;
   if (!wp_verify_nonce($_GET['_wpnonce'] ?? '', 'bvgn_export_all')) return;
-  if (!current_user_can('edit_posts')) return;
+  if (!current_user_can('manage_options')) return;
 
   $q = new WP_Query([
     'post_type'      => 'bvgn_cotacao',
@@ -61,7 +61,7 @@ add_action('load-edit.php', function(){
   if ($do === '-1') $do = $_REQUEST['action2'] ?? '';
   if ($do !== 'bvgn_export_selected') return;
 
-  if (!current_user_can('edit_posts')) return;
+  if (!current_user_can('manage_options')) return;
   check_admin_referer('bulk-posts');
 
   $ids = isset($_REQUEST['post']) ? array_map('intval', (array) $_REQUEST['post']) : [];
