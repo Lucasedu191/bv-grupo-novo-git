@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 9.9.53
+ * Version: 9.9.54
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -106,21 +106,6 @@ add_action('init', function(){
     'supports'          => ['title'],
     'capability_type'   => 'post',
     'map_meta_cap'      => true,
-    'capabilities'      => [
-      // Bloqueia criar/publicar/excluir
-      'create_posts'           => 'do_not_allow',
-      'publish_posts'          => 'do_not_allow',
-      'delete_post'            => 'do_not_allow',
-      'delete_posts'           => 'do_not_allow',
-      'delete_others_posts'    => 'do_not_allow',
-      // Lista acessível a qualquer usuário logado
-      'edit_posts'             => 'read',
-      'read_private_posts'     => 'read',
-      'read_post'              => 'read',
-      // Edição apenas para quem já tem poder de editar posts
-      'edit_post'              => 'edit_posts',
-      'edit_others_posts'      => 'edit_others_posts',
-    ],
   ]);
 });
 
@@ -147,6 +132,17 @@ add_filter('post_row_actions', function($actions, $post){
   }
   return $actions;
 }, 99, 2);
+
+// Bloqueia a deleção de cotações via capabilities, mesmo por URL
+add_filter('map_meta_cap', function($caps, $cap, $user_id, $args){
+  if ($cap === 'delete_post') {
+    $post_id = isset($args[0]) ? intval($args[0]) : 0;
+    if ($post_id && get_post_type($post_id) === 'bvgn_cotacao') {
+      return ['do_not_allow'];
+    }
+  }
+  return $caps;
+}, 10, 4);
 
 // Corrige hook: usa hífen, não sublinhado
 add_filter('bulk_actions-edit-bvgn_cotacao', function($bulk_actions){
