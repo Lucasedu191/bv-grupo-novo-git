@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 9.9.51
+ * Version: 9.9.52
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -107,16 +107,19 @@ add_action('init', function(){
     'capability_type'   => 'post',
     'map_meta_cap'      => true,
     'capabilities'      => [
-      // somente visualização no admin (sem criar/editar/publicar/excluir)
-      'create_posts'        => 'do_not_allow',
-      'edit_post'           => 'do_not_allow',
-      'edit_posts'          => 'read',           // qualquer usuário logado vê a lista
-      'edit_others_posts'   => 'do_not_allow',
-      'publish_posts'       => 'do_not_allow',
-      'delete_post'         => 'do_not_allow',
-      'delete_posts'        => 'do_not_allow',
-      'delete_others_posts' => 'do_not_allow',
-      // leitura segue padrão 'read'
+      // Permitir editar (mostrar checkboxes e tela de edição), mas não deletar/criar/publicar
+      'create_posts'           => 'do_not_allow',
+      'publish_posts'          => 'do_not_allow',
+      'delete_post'            => 'do_not_allow',
+      'delete_posts'           => 'do_not_allow',
+      'delete_others_posts'    => 'do_not_allow',
+      // Edição liberada para papéis que já podem editar posts
+      'edit_post'              => 'edit_posts',
+      'edit_posts'             => 'edit_posts',
+      'edit_others_posts'      => 'edit_others_posts',
+      // Leitura
+      'read_post'              => 'read',
+      'read_private_posts'     => 'read',
     ],
   ]);
 });
@@ -124,12 +127,10 @@ add_action('init', function(){
 // Bloqueia a tela de edição para o CPT, mantendo apenas listagem/exports
 // Removido o bloqueio de edição/redirect para evitar impacto no acesso ao admin
 
-// Remove ações de linha (Editar/Quick Edit/Lixeira) e ações em massa
+// Remove ações de linha (Quick Edit/Lixeira) e ações em massa
 add_filter('post_row_actions', function($actions, $post){
   if ($post->post_type === 'bvgn_cotacao') {
-    unset($actions['edit']);
     unset($actions['inline hide-if-no-js']); // Quick Edit
-    unset($actions['view']);
     unset($actions['trash']);
     // Remover ações de duplicar/clonar adicionadas por plugins de terceiros
     foreach ($actions as $key => $label) {
