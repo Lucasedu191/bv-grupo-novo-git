@@ -1,8 +1,8 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-// Adiciona ação em massa para exportar selecionados
-add_filter('bulk_actions-edit_bvgn_cotacao', function($bulk_actions){
+// Adiciona ação em massa para exportar selecionados (hook correto com hífen)
+add_filter('bulk_actions-edit-bvgn_cotacao', function($bulk_actions){
   $bulk_actions['bvgn_export_selected'] = 'Exportar CSV (selecionados)';
   return $bulk_actions;
 });
@@ -139,4 +139,3 @@ function bvgn_exportacao_csv_row($post_id){
   unset($v);
   return $row;
 }
-
