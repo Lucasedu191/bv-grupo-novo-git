@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>BV Grupo Novo – Guia do Desenvolvedor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root{
+      --ink:#0b1220; --muted:#475569; --acc:#0ea5e9; --bg:#fff; --border:#e5e7eb;
+    }
+    html,body{background:var(--bg); color:var(--ink); font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif;}
+    .container{max-width:980px;margin:32px auto;padding:0 16px}
+    h1{font-size:28px;margin:0 0 16px}
+    h2{font-size:20px;margin:28px 0 8px}
+    h3{font-size:16px;margin:18px 0 6px}
+    code, pre{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background:#f8fafc; border:1px solid var(--border); border-radius:6px}
+    code{padding:0 4px}
+    pre{padding:12px; overflow:auto}
+    .muted{color:var(--muted)}
+    .grid{display:grid; gap:16px}
+    .cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .card{border:1px solid var(--border); border-radius:10px; padding:16px}
+    .badge{display:inline-block; background:#eef2ff; color:#3730a3; padding:2px 8px; border-radius:999px; font-size:12px}
+    .kbd{border:1px solid var(--border); padding:1px 6px; border-radius:4px; background:#f8fafc}
+    table{border-collapse:collapse; width:100%;}
+    th,td{border:1px solid var(--border); padding:8px; text-align:left}
+    th{background:#f1f5f9}
+    .file{font-weight:600}
+    @media print{.container{margin:0;padding:0} a[href]:after{content:" (" attr(href) ")"; color:#64748b;}}
+  </style>
+  <meta name="description" content="Guia rápido para entender a estrutura e os fluxos do plugin BV Grupo Novo.">
+  <meta name="author" content="BV Locadora">
+  <meta name="created" content="2025-09-13">
+</head>
+<body>
+  <div class="container">
+    <h1>BV Grupo Novo <span class="badge">Guia do Desenvolvedor</span></h1>
+    <p class="muted">Este documento explica a estrutura do plugin, os fluxos principais (agendamento, cálculo e geração de PDF), onde alterar textos/estilos e como gerar este guia em PDF.</p>
+
+    <h2>Visão Geral</h2>
+    <ul>
+      <li>Plugin WordPress/ WooCommerce para cotação de grupos de veículos com plano diário e mensal.</li>
+      <li>Fluxo do usuário: escolhe datas (cabeçalho → produto), configura opcionais e envia → backend gera PDF e retorna link (usado no WhatsApp).</li>
+      <li>O plugin registra a cotação no admin (CPT <code>bvgn_cotacao</code>) com metadados úteis.</li>
+    </ul>
+
+    <h2>Estrutura de Pastas</h2>
+    <table>
+      <thead><tr><th>Pasta/Arquivo</th><th>Função</th></tr></thead>
+      <tbody>
+        <tr><td class="file">bv-grupo-novo.php</td><td>Bootstrap: define constantes, enfileira assets, shortcodes e integra update checker.</td></tr>
+        <tr><td class="file">inclui/ShortcodesPT.php</td><td>Shortcodes: <code>[gn_agendamento]</code>, <code>[gn_variacoes]</code>, <code>[gn_totais]</code>, cabeçalho desktop/mobile.</td></tr>
+        <tr><td class="file">inclui/GerarArquivoEndpoint.php</td><td>AJAX <code>bvgn_gerar_arquivo</code>: cria post <code>bvgn_cotacao</code>, salva metas e gera PDF (Dompdf).</td></tr>
+        <tr><td class="file">inclui/cabecalho-agendamento*.php</td><td>Markup do calendário no topo (desktop e mobile).</td></tr>
+        <tr><td class="file">modelos/partes/*.php</td><td>Partes de UI (agendamento, taxas/proteção, totais) e template do PDF (<code>cotacao.php</code>).</td></tr>
+        <tr><td class="file">assets/js/cabecalho.js</td><td>Flatpickr no cabeçalho (desktop e mobile), sincroniza localStorage <code>bvgn_agendamento</code>.</td></tr>
+        <tr><td class="file">assets/js/grupo-novo.js</td><td>Lógica de cálculo, normalização de datas, resumo lateral, seleção automática de variação.</td></tr>
+        <tr><td class="file">assets/js/bvgn-modal.js</td><td>Fluxo do modal, chamada AJAX para PDF e abertura do WhatsApp.</td></tr>
+        <tr><td class="file">assets/js/agendamento-flatpickr.js</td><td>Flatpickr na página do produto (atualmente desativado via enqueue comentado).</td></tr>
+        <tr><td class="file">assets/css/*.css</td><td>Estilos do cabeçalho e da página de grupo; estilos do PDF ficam em <code>assets/css/cotacao.css</code>.</td></tr>
+        <tr><td class="file">vendor/</td><td>Dompdf e dependências (composer).</td></tr>
+        <tr><td class="file">docs/</td><td>Este guia e script para gerar PDF do guia.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Fluxos Principais</h2>
+    <h3>1) Agendamento (Cabeçalho)</h3>
+    <ul>
+      <li>Arquivos: <code>inclui/cabecalho-agendamento.php</code>, <code>inclui/cabecalho-agendamento-mobile.php</code>, <code>assets/js/cabecalho.js</code>.</li>
+      <li>Flatpickr com <code>minDate</code> padronizado para aceitar “hoje” no mobile (<code>'today'</code>).</li>
+      <li>Valores persistidos em <code>localStorage.bvgn_agendamento</code> como ISO YYYY-MM-DD.</li>
+    </ul>
+
+    <h3>2) Página do Produto</h3>
+    <ul>
+      <li>Agendamento diário/mensal em <code>modelos/partes/agendamento.php</code> (inputs <code>.bvgn-data-inicio</code>, <code>.bvgn-data-fim</code>).</li>
+      <li>Cálculo e resumo: <code>assets/js/grupo-novo.js</code> → funções <code>diferencaDiasSeguro</code>, <code>calcular</code>.</li>
+      <li>Regras: diárias multiplicam por dias; mensal usa “30 dias” para exibição; opcionais “Condutor” e “Cadeirinha” mostram “x N dias” no diário (resumo e PDF).</li>
+    </ul>
+
+    <h3>3) Envio/Modal e PDF</h3>
+    <ul>
+      <li><code>assets/js/bvgn-modal.js</code> coleta dados (variação, datas, taxas selecionadas, totais) e chama <code>BVGN_GerarArquivoEndpoint</code>.</li>
+      <li>Backend em <code>inclui/GerarArquivoEndpoint.php</code> cria o post, salva metas e renderiza <code>modelos/partes/cotacao.php</code> via Dompdf.</li>
+      <li>PDF: Título, detalhes, “Serviços Opcionais” e tabela “Valores”. Na tabela, itens diários exibem “R$ unitário (x N dias)” e a coluna “Valor” traz o total.</li>
+    </ul>
+
+    <h2>Pontos de Customização</h2>
+    <ul>
+      <li>Mudar textos do PDF: <code>modelos/partes/cotacao.php</code>.</li>
+      <li>Regras de cálculo/labels do resumo: <code>assets/js/grupo-novo.js</code>.</li>
+      <li>Comportamento do calendário no topo: <code>assets/js/cabecalho.js</code>.</li>
+      <li>Ativar Flatpickr no produto: em <code>bv-grupo-novo.php</code>, descomentar o enqueue de <code>assets/js/agendamento-flatpickr.js</code>.</li>
+      <li>Atualizar logo do PDF: <code>$logoUrl</code> em <code>modelos/partes/cotacao.php</code>.</li>
+    </ul>
+
+    <h2>Estrutura do CPT (Admin)</h2>
+    <ul>
+      <li>Tipo: <code>bvgn_cotacao</code> – colunas incluem tipo (diário/mensal), produto, cliente, período e link para PDF.</li>
+      <li>Metas: <code>datas_inicio</code>, <code>datas_fim</code>, <code>totais_total</code>, <code>pdf_url</code>, entre outras.</li>
+    </ul>
+
+    <h2>Boas Práticas no Projeto</h2>
+    <ul>
+      <li>Datas sempre em ISO local (YYYY-MM-DD) para evitar problemas de fuso.</li>
+      <li>Escape em HTML usando <code>esc_html</code> e <code>wp_kses_post</code> quando aplicável.</li>
+      <li>Evitar dependência de tema: usar seletores do próprio plugin (<code>.bvgn-*</code>).</li>
+      <li>Manter <code>vendor/</code> presente para geração de PDF (Dompdf).</li>
+    </ul>
+
+    <h2>Como Gerar ESTE Guia em PDF</h2>
+    <ol>
+      <li>Com PHP CLI disponível, execute: <code>php docs/build-docs.php</code>.</li>
+      <li>O arquivo será salvo em <code>docs/DEVELOPER_GUIDE.pdf</code>.</li>
+      <li>Alternativa: abrir este HTML no navegador e imprimir em PDF.</li>
+    </ol>
+
+    <h2>Índice Rápido de Arquivos</h2>
+    <div class="grid cols-2">
+      <div class="card">
+        <h3>PHP</h3>
+        <ul>
+          <li><code>bv-grupo-novo.php</code></li>
+          <li><code>inclui/ShortcodesPT.php</code></li>
+          <li><code>inclui/GerarArquivoEndpoint.php</code></li>
+          <li><code>inclui/cabecalho-agendamento*.php</code></li>
+          <li><code>modelos/partes/*.php</code></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>JS/CSS</h3>
+        <ul>
+          <li><code>assets/js/cabecalho.js</code></li>
+          <li><code>assets/js/grupo-novo.js</code></li>
+          <li><code>assets/js/bvgn-modal.js</code></li>
+          <li><code>assets/js/agendamento-flatpickr.js</code></li>
+          <li><code>assets/css/*.css</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>Notas e Dicas</h2>
+    <ul>
+      <li>Para “hoje” no mobile, usar <code>minDate: 'today'</code> no Flatpickr resolve diferenças de fuso/UTC.</li>
+      <li>Para manter consistência, labels do PDF indicam “(x N dias)” e o total aparece na coluna à direita.</li>
+      <li>O endpoint já gera um código da cotação (5 dígitos) e guarda a URL do PDF em <code>pdf_url</code>.</li>
+    </ul>
+
+    <p class="muted">Versão do guia: 1.0</p>
+  </div>
+</body>
+</html>
+
