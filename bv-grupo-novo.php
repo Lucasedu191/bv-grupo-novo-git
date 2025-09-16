@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 9.9.52
+ * Version: 9.9.53
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -107,19 +107,19 @@ add_action('init', function(){
     'capability_type'   => 'post',
     'map_meta_cap'      => true,
     'capabilities'      => [
-      // Permitir editar (mostrar checkboxes e tela de edição), mas não deletar/criar/publicar
+      // Bloqueia criar/publicar/excluir
       'create_posts'           => 'do_not_allow',
       'publish_posts'          => 'do_not_allow',
       'delete_post'            => 'do_not_allow',
       'delete_posts'           => 'do_not_allow',
       'delete_others_posts'    => 'do_not_allow',
-      // Edição liberada para papéis que já podem editar posts
-      'edit_post'              => 'edit_posts',
-      'edit_posts'             => 'edit_posts',
-      'edit_others_posts'      => 'edit_others_posts',
-      // Leitura
-      'read_post'              => 'read',
+      // Lista acessível a qualquer usuário logado
+      'edit_posts'             => 'read',
       'read_private_posts'     => 'read',
+      'read_post'              => 'read',
+      // Edição apenas para quem já tem poder de editar posts
+      'edit_post'              => 'edit_posts',
+      'edit_others_posts'      => 'edit_others_posts',
     ],
   ]);
 });
