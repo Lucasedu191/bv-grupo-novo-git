@@ -11,7 +11,7 @@ if (!$p) return;
 
 // Detecta grupo (meta ou título)
 $grupo = get_post_meta($p->get_id(), '_bvgn_grupo', true);
-if (!$grupo && preg_match('/Grupo\s+([A-H])/', $p->get_name(), $m)) {
+if (!$grupo && preg_match('/Grupo\s+([A-I])/', $p->get_name(), $m)) {
   $grupo = strtoupper($m[1]);
 }
 if (!$grupo) $grupo = 'A';
@@ -20,7 +20,8 @@ if (!$grupo) $grupo = 'A';
 $grupo_cor = [
   'A' => 'verde', 'B' => 'verde', 'C' => 'verde',
   'D' => 'azul',  'E' => 'azul',  'F' => 'azul', 'G' => 'azul',
-  'H' => 'laranja'
+  'H' => 'laranja',
+  'I' => 'azul'
 ];
 
 // Tabela de proteção por cor
@@ -33,7 +34,7 @@ $protecao = [
 // Caução por grupo
 $caucao = match ($grupo) {
   'A'     => 2000,
-  'B','C','D','E','F','G' => 4000,
+  'B','C','D','E','F','G','I' => 4000,
   'H'     => 8000,
   default => 0
 };
@@ -81,6 +82,3 @@ $precoP = $protecao[$cor]['premium'];
     </span>
   </label>
 </div>
-
-
-
