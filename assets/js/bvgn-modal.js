@@ -165,8 +165,14 @@
       var taxasSel = [];
       var totais = null;
       var infoCliente = '';
+      var grupoProduto = '';
+      var caucaoObrigatorioGrupo = false;
 
       if (cx) {
+        grupoProduto = (cx.getAttribute('data-produto-grupo') || '').trim().toUpperCase();
+        const caucaoCard = cx.querySelector('.bvgn-taxa[data-bvgn-caucao-card]');
+        caucaoObrigatorioGrupo = (grupoProduto === 'H' && !!caucaoCard);
+
         var vChecked = cx.querySelector('.bvgn-variacao input[type=radio]:checked');
         if (vChecked) variacaoRotulo = (vChecked.dataset.rotulo || '').trim();
 
@@ -190,12 +196,16 @@
           var rotuloHtml = (lblEl?.innerHTML   || rotuloTxt).trim();      // HTML completo
           var valorProt  = parseFloat(prot.dataset.precoTotal || '0');
           var caucaoProt = parseFloat(prot.dataset.caucao || '0');
-          var precoTotal = valorProt + caucaoProt;
+          var precoEnvio = valorProt;
+
+          if (caucaoObrigatorioGrupo && caucaoProt > 0) {
+            precoEnvio = Math.max(0, valorProt - caucaoProt);
+          }
 
           taxasSel.push({
             rotulo:      rotuloTxt,
             rotulo_html: rotuloHtml,   // <-- novo campo
-            preco:       precoTotal.toString()
+            preco:       precoEnvio.toString()
           });
         }
 

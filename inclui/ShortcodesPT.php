@@ -30,6 +30,23 @@ class BVGN_ShortcodesPT {
         }
       }
     }
+    $a['produto_id'] = intval($a['produto_id']);
+
+    // Descobre o grupo (letra) do produto, quando aplicável.
+    $grupo = '';
+    if ($a['produto_id']) {
+      $metaGrupo = get_post_meta($a['produto_id'], '_bvgn_grupo', true);
+      if (!empty($metaGrupo)) {
+        $grupo = strtoupper($metaGrupo);
+      } else {
+        $titulo = get_the_title($a['produto_id']);
+        if ($titulo && preg_match('/Grupo\s+([A-Z])/i', $titulo, $m)) {
+          $grupo = strtoupper($m[1]);
+        }
+      }
+    }
+    $a['grupo'] = $grupo;
+
     return $a;
   }
 
@@ -45,7 +62,8 @@ class BVGN_ShortcodesPT {
 
   public static function envolver($atts, $conteudo=''){
     $a = self::resolver_produto_id($atts);
-    return '<div class="bvgn-container" data-produto-id="'.esc_attr($a['produto_id']).'">'.do_shortcode($conteudo).'</div>';
+    $grupoAttr = !empty($a['grupo']) ? ' data-produto-grupo="'.esc_attr($a['grupo']).'"' : '';
+    return '<div class="bvgn-container" data-produto-id="'.esc_attr($a['produto_id']).'"'.$grupoAttr.'>'.do_shortcode($conteudo).'</div>';
   }
 
   public static function imagem($atts){
@@ -71,7 +89,9 @@ class BVGN_ShortcodesPT {
   }
 
   public static function taxas($atts){
+    $atts = shortcode_atts(['produto_id'=>0,'type'=>'auto'], $atts);
     $a = self::resolver_produto_id($atts);
+    $a['type'] = self::resolver_tipo($a['produto_id'], $atts['type']);
     ob_start(); $GLOBALS['a']=$a; include BVGN_CAMINHO.'modelos/partes/taxas.php'; return ob_get_clean();
   }
   

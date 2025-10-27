@@ -6,15 +6,24 @@
  */
 if (!defined('ABSPATH')) exit;
 
-$p = wc_get_product($a['produto_id'] ?? 0);
+$produto_id = $a['produto_id'] ?? 0;
+$p = $produto_id ? wc_get_product($produto_id) : null;
 if (!$p) return;
 
-// Detecta grupo (meta ou título)
-$grupo = get_post_meta($p->get_id(), '_bvgn_grupo', true);
-if (!$grupo && preg_match('/Grupo\s+([A-I])/', $p->get_name(), $m)) {
-  $grupo = strtoupper($m[1]);
+// Detecta grupo (meta, título ou valor repassado pelo shortcode)
+$grupo = '';
+if (!empty($a['grupo'])) {
+  $grupo = strtoupper($a['grupo']);
+} else {
+  $grupoMeta = get_post_meta($p->get_id(), '_bvgn_grupo', true);
+  if (!empty($grupoMeta)) {
+    $grupo = strtoupper($grupoMeta);
+  } elseif (preg_match('/Grupo\s+([A-I])/i', $p->get_name(), $m)) {
+    $grupo = strtoupper($m[1]);
+  }
 }
 if (!$grupo) $grupo = 'A';
+$isGrupoH = ($grupo === 'H');
 
 // Mapeamento cor x grupo
 $grupo_cor = [
@@ -31,11 +40,11 @@ $protecao = [
   'laranja' => ['basica' => 65,  'premium' => 125],
 ];
 
-// Caução por grupo
+// Caução por grupo (grupo H diário recebe valor fixo de R$ 4.000,00)
 $caucao = match ($grupo) {
   'A'     => 2000,
   'B','C','D','E','F','G','I' => 4000,
-  'H'     => 8000,
+  'H'     => 4000,
   default => 0
 };
 
@@ -44,7 +53,10 @@ $precoB = $protecao[$cor]['basica'];
 $precoP = $protecao[$cor]['premium'];
 ?>
 
-<div class="bvgn-taxas bvgn-cards-3">
+<div class="bvgn-taxas bvgn-cards-3"
+     data-bvgn-protecao-grupo="<?php echo esc_attr($grupo); ?>"
+     data-bvgn-caucao-fixo="<?php echo esc_attr(number_format((float)$caucao, 2, '.', '')); ?>"
+     data-bvgn-caucao-obrigatorio="<?php echo $isGrupoH ? '1' : '0'; ?>">
   <div class="bvgn-totais-titulo">Proteção</div>
 
   <label class="bvgn-taxa">
@@ -52,7 +64,7 @@ $precoP = $protecao[$cor]['premium'];
            data-preco-dia="0" data-caucao="<?php echo esc_attr($caucao); ?>">
     <span class="lbl">
       <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos01.svg'; ?>" alt="">
-      <span class="texto">Sem proteção, </br> caução de</span>
+      <span class="texto">Sem proteção<br>Caução de</span>
       <span class="preco"><?php echo wc_price($caucao); ?></span>
       <span class="botao-fake">Selecionar</span>
     </span>
@@ -60,11 +72,20 @@ $precoP = $protecao[$cor]['premium'];
 
   <label class="bvgn-taxa">
     <input type="radio" name="bvgn_protecao" value="basica"
-           data-preco-dia="<?php echo esc_attr($precoB); ?>" data-caucao="0" checked>
+           data-preco-dia="<?php echo esc_attr($precoB); ?>"
+           data-caucao="<?php echo esc_attr($isGrupoH ? $caucao : 0); ?>"
+           checked>
     <span class="lbl">
       <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos02.svg'; ?>" alt="">
       <span class="texto">Proteção Básica</span>
-      <span class="preco"><?php echo wc_price($precoB); ?><br><small>(isenta caução)</small></span>
+      <span class="preco">
+        <?php echo wc_price($precoB); ?>
+        <?php if ($isGrupoH): ?>
+          <br><small>Caução obrigatória de <?php echo wc_price($caucao); ?></small>
+        <?php else: ?>
+          <br><small>(isenta caução)</small>
+        <?php endif; ?>
+      </span>
 
       <span class="botao-fake">Selecionar</span>
     </span>
@@ -72,11 +93,19 @@ $precoP = $protecao[$cor]['premium'];
 
   <label class="bvgn-taxa">
     <input type="radio" name="bvgn_protecao" value="premium"
-           data-preco-dia="<?php echo esc_attr($precoP); ?>" data-caucao="0">
+           data-preco-dia="<?php echo esc_attr($precoP); ?>"
+           data-caucao="<?php echo esc_attr($isGrupoH ? $caucao : 0); ?>">
     <span class="lbl">
       <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos03.svg'; ?>" alt="">
       <span class="texto">Proteção Premium</span>
-      <span class="preco"><?php echo wc_price($precoP); ?><br><small>(isenta caução)</small></span>
+      <span class="preco">
+        <?php echo wc_price($precoP); ?>
+        <?php if ($isGrupoH): ?>
+          <br><small>Caução obrigatória de <?php echo wc_price($caucao); ?></small>
+        <?php else: ?>
+          <br><small>(isenta caução)</small>
+        <?php endif; ?>
+      </span>
 
       <span class="botao-fake">Selecionar</span>
     </span>
