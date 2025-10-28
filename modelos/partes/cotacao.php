@@ -51,6 +51,11 @@ $precoExibicao = function($t, $dados) use ($toFloatBR){
   $rot  = (string)($t['rotulo'] ?? '');
   $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
   $qtd  = max(1, (int)($dados['totais']['qtd'] ?? 1));
+  $tipoItem = strtolower($t['tipo'] ?? '');
+
+  if ($tipoItem === 'caucao_obrigatorio') {
+    return $p;
+  }
 
   // A) Se for "Sem proteção" e preço veio 0, tentar achar o valor do caução
   if ($p == 0 && preg_match('/sem\s+prote[cç][aã]o/i', $rot)) {
@@ -104,10 +109,31 @@ if ($tipoMain === 'mensal') {
 
 // Quebra as taxas em grupos para exibir no "Detalhes"
 $taxasAll   = $dados['taxas'] ?? [];
+$caucaoObrigatorioItem = null;
+$taxasFiltradas = [];
+foreach ($taxasAll as $t) {
+  $tipoLinha   = strtolower($t['tipo'] ?? '');
+  $rotuloLinha = strtolower($t['rotulo'] ?? '');
+
+  if ($tipoLinha === 'caucao_obrigatorio') {
+    if ($caucaoObrigatorioItem === null) {
+      $caucaoObrigatorioItem = $t;
+    }
+    continue;
+  }
+
+  $taxasFiltradas[] = $t;
+}
+$taxasAll = $taxasFiltradas;
+$dados['taxas'] = $taxasAll;
 $taxasFixas = array_values(array_filter($taxasAll, fn($t) => preg_match('/taxa|limpeza/i', $t['rotulo'] ?? '')));
 $opcionais  = array_values(array_filter($taxasAll, fn($t) =>
   !preg_match('/prote[cç][aã]o|taxa|limpeza/i', $t['rotulo'] ?? '')
 ));
+
+if ($caucaoObrigatorioItem) {
+  array_unshift($opcionais, $caucaoObrigatorioItem);
+}
 
 $logoUrl = 'https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png'; // topo
 $wmUrl   = $logoUrl; // marca d’água central
@@ -332,11 +358,14 @@ $wmUrl   = $logoUrl; // marca d’água central
               <?php foreach ($opcionais as $t): ?>
                 <?php
                   $rOrig = (string)($t['rotulo'] ?? '');
+                  $tipoItem = strtolower($t['tipo'] ?? '');
                   // pular proteção sempre (já tratamos acima)
                   if (preg_match('/prote[cç][aã]o/i', $rOrig)) continue;
                   // no mensal, pular caução da lista (já mostramos destacado acima)
                   if ($tipo === 'mensal' && preg_match('/cau[cç][aã]o/i', $rOrig)) continue;
-                  $rClean = $limpaRotulo($rOrig);
+                  $rClean = ($tipoItem === 'caucao_obrigatorio')
+                    ? trim($rOrig)
+                    : $limpaRotulo($rOrig);
                   if ($rClean === '') continue;
                 ?>
                 <li>

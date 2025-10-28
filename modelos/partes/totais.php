@@ -44,5 +44,6 @@ $tipo = $a['type'] ?? 'diario';
   <input type="hidden" id="bvgn-taxas-raw" name="bvgn_taxas" value="0" />
   <input type="hidden" id="bvgn-subtotal-raw" name="bvgn_subtotal" value="0" />
   <input type="hidden" id="bvgn-total-raw" name="bvgn_total" value="0" />
+  <input type="hidden" id="bvgn-caucao-raw" name="bvgn_caucao" value="0" />
 
 </div>

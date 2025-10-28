@@ -166,12 +166,22 @@
       var totais = null;
       var infoCliente = '';
       var grupoProduto = '';
+      var planoTipo = '';
       var caucaoObrigatorioGrupo = false;
+      var caucaoObrigatorioValor = 0;
 
       if (cx) {
         grupoProduto = (cx.getAttribute('data-produto-grupo') || '').trim().toUpperCase();
-        const caucaoCard = cx.querySelector('.bvgn-taxa[data-bvgn-caucao-card]');
-        caucaoObrigatorioGrupo = (grupoProduto === 'H' && !!caucaoCard);
+        planoTipo = (cx.getAttribute('data-plano-tipo') || '').trim().toLowerCase();
+        caucaoObrigatorioGrupo = (grupoProduto === 'H' && planoTipo === 'diario');
+
+        var caucaoInput = cx.querySelector('#bvgn-caucao-raw');
+        if (caucaoInput) {
+          var parsedCaucao = parseFloat(caucaoInput.value || '0');
+          if (!isNaN(parsedCaucao)) {
+            caucaoObrigatorioValor = parsedCaucao;
+          }
+        }
 
         var vChecked = cx.querySelector('.bvgn-variacao input[type=radio]:checked');
         if (vChecked) variacaoRotulo = (vChecked.dataset.rotulo || '').trim();
@@ -195,12 +205,7 @@
           var rotuloTxt  = (lblEl?.textContent || 'Proteção').trim();     // tudo que aparece no label
           var rotuloHtml = (lblEl?.innerHTML   || rotuloTxt).trim();      // HTML completo
           var valorProt  = parseFloat(prot.dataset.precoTotal || '0');
-          var caucaoProt = parseFloat(prot.dataset.caucao || '0');
           var precoEnvio = valorProt;
-
-          if (caucaoObrigatorioGrupo && caucaoProt > 0) {
-            precoEnvio = Math.max(0, valorProt - caucaoProt);
-          }
 
           taxasSel.push({
             rotulo:      rotuloTxt,
@@ -212,6 +217,20 @@
         try { totais = jQuery(cx).data('bvgnTotais') || null; } catch(_){}
         var inf = cx.querySelector('.bvgn-informacoes');
         infoCliente = inf ? (inf.value || '') : '';
+      }
+
+      if (totais && typeof totais.caucao === 'number' && !Number.isNaN(totais.caucao)) {
+        if (caucaoObrigatorioValor <= 0) {
+          caucaoObrigatorioValor = totais.caucao;
+        }
+      }
+
+      if (caucaoObrigatorioGrupo && caucaoObrigatorioValor > 0) {
+        taxasSel.push({
+          rotulo: 'Caução obrigatório (Grupo H)',
+          preco: caucaoObrigatorioValor.toString(),
+          tipo:  'caucao_obrigatorio'
+        });
       }
 
       // ===== Se não houver BVGN.ajaxUrl, faz fallback direto para o WhatsApp (sem PDF) =====

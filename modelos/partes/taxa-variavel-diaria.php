@@ -40,7 +40,7 @@ $protecao = [
   'laranja' => ['basica' => 65,  'premium' => 125],
 ];
 
-// Caução por grupo (grupo H diário recebe valor fixo de R$ 4.000,00)
+// Caução por grupo
 $caucao = match ($grupo) {
   'A'     => 2000,
   'B','C','D','E','F','G','I' => 4000,
@@ -55,34 +55,43 @@ $precoP = $protecao[$cor]['premium'];
 
 <div class="bvgn-taxas bvgn-cards-3"
      data-bvgn-protecao-grupo="<?php echo esc_attr($grupo); ?>"
-     data-bvgn-caucao-fixo="<?php echo esc_attr(number_format((float)$caucao, 2, '.', '')); ?>"
-     data-bvgn-caucao-obrigatorio="<?php echo $isGrupoH ? '1' : '0'; ?>">
+     <?php if ($isGrupoH): ?>
+       data-bvgn-caucao-fixo="<?php echo esc_attr(number_format((float)$caucao, 2, '.', '')); ?>"
+       data-bvgn-caucao-obrigatorio="1"
+     <?php endif; ?>>
   <div class="bvgn-totais-titulo">Proteção</div>
 
-  <label class="bvgn-taxa">
-    <input type="radio" name="bvgn_protecao" value="sem"
-           data-preco-dia="0" data-caucao="<?php echo esc_attr($caucao); ?>">
+  <label class="bvgn-taxa<?php echo $isGrupoH ? ' selecionado obrigatorio bvgn-taxa--bloqueada' : ''; ?>">
+    <input type="radio"
+           name="bvgn_protecao"
+           value="sem"
+           data-preco-dia="0"
+           data-caucao="<?php echo esc_attr($isGrupoH ? 0 : $caucao); ?>"
+           <?php echo $isGrupoH ? 'disabled aria-disabled="true"' : ''; ?>>
     <span class="lbl">
       <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos01.svg'; ?>" alt="">
-      <span class="texto">Sem proteção<br>Caução de</span>
-      <span class="preco"><?php echo wc_price($caucao); ?></span>
-      <span class="botao-fake">Selecionar</span>
+      <?php if ($isGrupoH): ?>
+        <span class="texto">Sem proteção</span>
+        <span class="preco">Caução obrigatório — R$ <?php echo number_format((float)$caucao, 2, ',', '.'); ?></span>
+      <?php else: ?>
+        <span class="texto">Sem proteção<br>caução de</span>
+        <span class="preco"><?php echo wc_price($caucao); ?></span>
+      <?php endif; ?>
+      <span class="botao-fake"><?php echo $isGrupoH ? 'Selecionado' : 'Selecionar'; ?></span>
     </span>
   </label>
 
   <label class="bvgn-taxa">
     <input type="radio" name="bvgn_protecao" value="basica"
            data-preco-dia="<?php echo esc_attr($precoB); ?>"
-           data-caucao="<?php echo esc_attr($isGrupoH ? $caucao : 0); ?>"
+           data-caucao="0"
            checked>
     <span class="lbl">
       <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos02.svg'; ?>" alt="">
       <span class="texto">Proteção Básica</span>
       <span class="preco">
         <?php echo wc_price($precoB); ?>
-        <?php if ($isGrupoH): ?>
-          <br><small>Caução obrigatória de <?php echo wc_price($caucao); ?></small>
-        <?php else: ?>
+        <?php if (!$isGrupoH): ?>
           <br><small>(isenta caução)</small>
         <?php endif; ?>
       </span>
@@ -94,15 +103,13 @@ $precoP = $protecao[$cor]['premium'];
   <label class="bvgn-taxa">
     <input type="radio" name="bvgn_protecao" value="premium"
            data-preco-dia="<?php echo esc_attr($precoP); ?>"
-           data-caucao="<?php echo esc_attr($isGrupoH ? $caucao : 0); ?>">
+           data-caucao="0">
     <span class="lbl">
       <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos03.svg'; ?>" alt="">
       <span class="texto">Proteção Premium</span>
       <span class="preco">
         <?php echo wc_price($precoP); ?>
-        <?php if ($isGrupoH): ?>
-          <br><small>Caução obrigatória de <?php echo wc_price($caucao); ?></small>
-        <?php else: ?>
+        <?php if (!$isGrupoH): ?>
           <br><small>(isenta caução)</small>
         <?php endif; ?>
       </span>
