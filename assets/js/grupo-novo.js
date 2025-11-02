@@ -106,20 +106,6 @@ function normalizeDatesToRule($cx){
   // ====== cálculo (seu original, inalterado) ======
 function calcular($cx){
     const tipo = getTipo($cx);
-    $cx.attr('data-plano-tipo', tipo);
-
-    const grupoAttr = String($cx.attr('data-produto-grupo') || '').toUpperCase();
-    const isGrupoHDiario = (tipo === 'diario' && grupoAttr === 'H');
-
-    const $protecaoWrap = $cx.find('.bvgn-taxas[data-bvgn-caucao-fixo]');
-    let caucaoValor = 0;
-    if (isGrupoHDiario && $protecaoWrap.length) {
-      const attrVal = $protecaoWrap.data('bvgnCaucaoFixo');
-      if (typeof attrVal !== 'undefined') {
-        caucaoValor = numero(attrVal);
-      }
-    }
-
     const base = numero($cx.find('.bvgn-variacao input[type=radio]:checked').data('preco'));
 
     // quantidade de dias (apenas para diário)
@@ -144,12 +130,12 @@ function calcular($cx){
 
       const diasReferencia = (tipo === 'diario') ? qtd : 1;
       const valorProtDias = preco * diasReferencia;
-      const valorTotalProt = valorProtDias + ((tipo === 'diario' && !isGrupoHDiario && caucao > 0) ? caucao : 0);
+      const valorTotalProt = valorProtDias + ((tipo === 'diario' && caucao > 0) ? caucao : 0);
 
       $prot.attr('data-preco-total', valorTotalProt); // usado ao enviar dados
 
       taxas += valorProtDias;
-      if (tipo === 'diario' && !isGrupoHDiario && caucao > 0) {
+      if (tipo === 'diario' && caucao > 0) {
         taxas += caucao;
       }
 
@@ -189,7 +175,7 @@ function calcular($cx){
       const isCaucao = /cau[cç][aã]o/.test(rotulo) || $el.data('tipo') === 'caucao';
 
       if (isCaucao) {
-        if (tipo === 'diario' && !isGrupoHDiario) {
+        if (tipo === 'diario') {
           taxas += preco;
         }
       } else {
@@ -200,9 +186,8 @@ function calcular($cx){
     // 4) SUBTOTAL / TOTAL
     // No mensal: mostrar "30 dias" apenas para exibi??o, mas N?O multiplicar o pre?o.
     const dias = (tipo === 'mensal') ? 30 : qtd;                      // usado s? para exibir
-    const subtotal = (tipo === 'mensal') ? base : (base * dias);      // mensal = 1x; di?rio = * dias
-    const totalTaxas = taxas + caucaoValor;
-    const total    = subtotal + totalTaxas;      // ? somar taxas tamb?m no mensal
+    const subtotal = (tipo === 'mensal') ? base : (base * dias);      // mensal = 1x; diário = * dias
+    const total    = subtotal + taxas;      // ← somar taxas também no mensal
 
     $cx.find('.bvgn-subtotal .valor').text(subtotal.toFixed(2).replace('.', ','));
     $cx.find('.bvgn-total .valor').text(total.toFixed(2).replace('.', ','));
@@ -223,14 +208,13 @@ function calcular($cx){
 
     // Exibir valor total das taxas (0 no mensal automaticamente)
     $cx.find('.bvgn-taxas').show();
-    $cx.find('#bvgn-taxas').text(totalTaxas.toFixed(2).replace('.', ','));
-    $cx.find('#bvgn-taxas-raw').val(totalTaxas);
+    $cx.find('#bvgn-taxas').text(taxas.toFixed(2).replace('.', ','));
+    $cx.find('#bvgn-taxas-raw').val(taxas);
 
     // Subtotal e total (valores crus já estão ali, mas reforçamos)
     $cx.find('#bvgn-subtotal-raw').val(subtotal);
     $cx.find('#bvgn-subtotal-view').text(subtotal.toFixed(2).replace('.', ','));
     $cx.find('#bvgn-total-raw').val(total);
-    $cx.find('#bvgn-caucao-raw').val(caucaoValor);
 
     $cx.find('#bvgn-total-view').text(total.toFixed(2).replace('.', ','));
 
@@ -328,7 +312,7 @@ function calcular($cx){
       $cx.find('#bvgn-opcionais-view').text('');
     }
 
-    $cx.data('bvgnTotais', { base, taxas: totalTaxas, qtd, subtotal, total, tipo, caucao: caucaoValor });
+    $cx.data('bvgnTotais', { base, taxas, qtd, subtotal, total, tipo });
 
     // Ajustar nome do rótulo lateral de "Serviços opcionais" no resumo
     // Ajustar títulos conforme o tipo de plano
@@ -381,21 +365,6 @@ function calcular($cx){
 
   // ====== eventos ======
   function ligarEventos($cx){
-  let tipo = getTipo($cx);
-  $cx.attr('data-plano-tipo', tipo);
-  const grupoAttr = String($cx.attr('data-produto-grupo') || '').toUpperCase();
-  const isGrupoHDiario = (tipo === 'diario' && grupoAttr === 'H');
-
-  if (isGrupoHDiario) {
-    const $semProt = $cx.find('input[name="bvgn_protecao"][value="sem"]');
-    if ($semProt.length) {
-      $semProt.prop('disabled', true);
-      $semProt.closest('.bvgn-taxa').addClass('selecionado obrigatorio bvgn-taxa--bloqueada');
-      $semProt.closest('.bvgn-taxa').find('.botao-fake').text('Selecionado');
-      $semProt.closest('.bvgn-taxa').addClass('selected');
-    }
-  }
-
   $cx.find('.bvgn-taxa input:checked').each(function(){
     $(this).closest('.bvgn-taxa').addClass('selected');
   });
@@ -449,7 +418,7 @@ function calcular($cx){
   });
 
   // Lógica personalizada para produtos do tipo diário
-  tipo = getTipo($cx);
+  const tipo = getTipo($cx);
   if (tipo === 'diario') {
     const $variacoes = $cx.find('.bvgn-variacao');
     $variacoes.hide(); // Oculta o bloco visualmente

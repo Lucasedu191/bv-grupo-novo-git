@@ -54,32 +54,33 @@ $precoP = $protecao[$cor]['premium'];
 ?>
 
 <div class="bvgn-taxas bvgn-cards-3"
-     data-bvgn-protecao-grupo="<?php echo esc_attr($grupo); ?>"
-     <?php if ($isGrupoH): ?>
-       data-bvgn-caucao-fixo="<?php echo esc_attr(number_format((float)$caucao, 2, '.', '')); ?>"
-       data-bvgn-caucao-obrigatorio="1"
-     <?php endif; ?>>
+     data-bvgn-protecao-grupo="<?php echo esc_attr($grupo); ?>">
   <div class="bvgn-totais-titulo">Proteção</div>
 
-  <label class="bvgn-taxa<?php echo $isGrupoH ? ' selecionado obrigatorio bvgn-taxa--bloqueada' : ''; ?>">
-    <input type="radio"
-           name="bvgn_protecao"
-           value="sem"
-           data-preco-dia="0"
-           data-caucao="<?php echo esc_attr($isGrupoH ? 0 : $caucao); ?>"
-           <?php echo $isGrupoH ? 'disabled aria-disabled="true"' : ''; ?>>
-    <span class="lbl">
-      <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos01.svg'; ?>" alt="">
-      <?php if ($isGrupoH): ?>
-        <span class="texto">Sem proteção</span>
-        <span class="preco">Caução obrigatório — R$ <?php echo number_format((float)$caucao, 2, ',', '.'); ?></span>
-      <?php else: ?>
+  <?php if (!$isGrupoH): ?>
+    <label class="bvgn-taxa">
+      <input type="radio"
+             name="bvgn_protecao"
+             value="sem"
+             data-preco-dia="0"
+             data-caucao="<?php echo esc_attr($caucao); ?>">
+      <span class="lbl">
+        <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos01.svg'; ?>" alt="">
         <span class="texto">Sem proteção<br>caução de</span>
         <span class="preco"><?php echo wc_price($caucao); ?></span>
-      <?php endif; ?>
-      <span class="botao-fake"><?php echo $isGrupoH ? 'Selecionado' : 'Selecionar'; ?></span>
-    </span>
-  </label>
+        <span class="botao-fake">Selecionar</span>
+      </span>
+    </label>
+  <?php else: ?>
+    <div class="bvgn-caucao-informativo">
+      <span class="bvgn-caucao-informativo__icone">
+        <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos01.svg'; ?>" alt="">
+      </span>
+      <span class="bvgn-caucao-informativo__texto">
+        Caução obrigatório de R$ <?php echo number_format((float)$caucao, 2, ',', '.'); ?> — tratado diretamente com a equipe no atendimento.
+      </span>
+    </div>
+  <?php endif; ?>
 
   <label class="bvgn-taxa">
     <input type="radio" name="bvgn_protecao" value="basica"
