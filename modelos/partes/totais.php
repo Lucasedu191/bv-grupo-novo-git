@@ -27,7 +27,12 @@ $tipo = $a['type'] ?? 'diario';
 
     <div class="resumo-linha bvgn-opcionais" style="display:none;">
       <span class="resumo-label"><?php esc_html_e('Serviços opcionais:', 'bvgn'); ?></span>
-      <span class="resumo-valor" id="bvgn-opcionais-view">–</span>
+      <span class="resumo-valor" id="bvgn-opcionais-view">—</span>
+    </div>
+
+    <div class="resumo-linha bvgn-dyn" style="display:none;">
+      <span class="resumo-label"><?php esc_html_e('Tarifa dinâmica:', 'bvgn'); ?></span>
+      <span class="resumo-valor" id="bvgn-dyn-view">R$ 0,00</span>
     </div>
 
     <!-- Linha de Taxas removida conforme requisito -->
@@ -45,5 +50,6 @@ $tipo = $a['type'] ?? 'diario';
   <input type="hidden" id="bvgn-subtotal-raw" name="bvgn_subtotal" value="0" />
   <input type="hidden" id="bvgn-total-raw" name="bvgn_total" value="0" />
   <input type="hidden" id="bvgn-caucao-raw" name="bvgn_caucao" value="0" />
+  <input type="hidden" id="bvgn-dynamic-extra-raw" name="bvgn_dynamic_extra" value="0" />
 
 </div>
