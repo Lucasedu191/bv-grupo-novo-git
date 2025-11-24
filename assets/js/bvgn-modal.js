@@ -233,8 +233,17 @@
         });
       }
 
-      // ===== Se não houver BVGN.ajaxUrl, faz fallback direto para o WhatsApp (sem PDF) =====
-      if (!window.BVGN || !BVGN.ajaxUrl) {
+      // Descobre a URL do admin-ajax mesmo se BVGN não estiver definido (ex.: minificador removeu a variável)
+      var ajaxUrl = '';
+      if (window.BVGN) {
+        ajaxUrl = BVGN.ajaxUrl || BVGN.ajax_url || '';
+      }
+      if (!ajaxUrl && window.ajaxurl) {
+        ajaxUrl = window.ajaxurl;
+      }
+
+      // ===== Se ainda não houver URL, faz fallback direto para o WhatsApp (sem PDF) =====
+      if (!ajaxUrl) {
       var linhasFallback = [];
       linhasFallback.push('Olá! Quero uma cotação.');
       if (payload.nome) linhasFallback.push('Nome: ' + payload.nome);
@@ -296,7 +305,7 @@
       var btnSubmit = form.querySelector('button[type="submit"]');
       if (btnSubmit) { btnSubmit.disabled = true; btnSubmit.textContent = 'Gerando...'; }
 
-      $.post(BVGN.ajaxUrl, carga, function(r){
+      $.post(ajaxUrl, carga, function(r){
       var linhas = [];
       linhas.push('Olá vim do site e gostaria de fazer uma cotação');
       // No futuro você pode querer incluir dados aqui:
