@@ -82,6 +82,14 @@
       }
 
       var data = new FormData(form);
+      var ajaxNonce = '';
+      try {
+        ajaxNonce = (window.BVGN && BVGN.nonce) ? String(BVGN.nonce) : '';
+      } catch(_){}
+      if (!ajaxNonce) {
+        ajaxNonce = String(data.get('_wpnonce') || data.get('nonce') || '').trim();
+      }
+
       var payload = {
         produto_id:       data.get('produto_id') || null,
         nome:             (data.get('nome')||'').trim(),
@@ -285,7 +293,7 @@
       // ===== Monta carga p/ gerar PDF (mesmo formato do botão antigo) =====
       var carga = {
         action:       'bvgn_gerar_arquivo',
-        _wpnonce:     (BVGN.nonce || ''),
+        _wpnonce:     ajaxNonce,
         produtoId:    payload.produto_id,
         informacoes:  infoCliente,
         variacaoRotulo: variacaoRotulo,
@@ -320,6 +328,10 @@
 
       // Anexa link do PDF se o backend retornou
       var pdfUrl = (r && r.success && r.data && r.data.url) ? r.data.url : '';
+      if (!pdfUrl) {
+        var msg = (r && r.data && r.data.msg) ? r.data.msg : 'Não foi possível gerar o PDF agora.';
+        alert(msg);
+      }
       if (pdfUrl) linhas.push('PDF da cotação: ' + pdfUrl);
 
       var texto = linhas.join('\n');
