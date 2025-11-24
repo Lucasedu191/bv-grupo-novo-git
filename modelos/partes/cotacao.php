@@ -420,6 +420,13 @@ $wmUrl   = $logoUrl; // marca d’água central
           $tipo = strtolower($dados['totais']['tipo'] ?? 'diario');
           $qtd  = max(1, intval($dados['totais']['qtd'] ?? 1));
           $base = (float)($dados['totais']['base'] ?? 0);
+          $dynamicExtra    = (float)($dados['totais']['dynamic_extra'] ?? 0);
+          $dynamicDetalhes = is_array($dados['totais']['dynamic_detalhes'] ?? null) ? $dados['totais']['dynamic_detalhes'] : [];
+          $dynamicDetalhesPdf = array_values(array_filter($dynamicDetalhes, fn($d) => !empty($d['show_pdf'])));
+          $dynamicExtraVis = 0.0;
+          foreach ($dynamicDetalhesPdf as $d) {
+            $dynamicExtraVis += (float)($d['valor'] ?? 0);
+          }
           if ($tipo === 'diario') {
             $labelPlano = sprintf('Diárias (%d × R$ %s)', $qtd, number_format($base, 2, ',', '.'));
             $valorPlano = $base * $qtd;
@@ -433,6 +440,28 @@ $wmUrl   = $logoUrl; // marca d’água central
           <td><?= esc_html($labelPlano) ?></td>
           <td>R$ <?= number_format($valorPlano, 2, ',', '.') ?></td>
         </tr>
+
+        <?php if ($dynamicExtraVis > 0.0): ?>
+          <?php
+            $detResumo = '';
+            if (!empty($dynamicDetalhesPdf)) {
+              $rotulos = array_map(function($d){
+                $dia = isset($d['data']) ? $d['data'] : '';
+                $perc = isset($d['percent']) ? floatval($d['percent']) : 0;
+                $desc = isset($d['desc']) ? $d['desc'] : '';
+                $txt = trim($dia . ' +' . $perc . '%');
+                if ($desc !== '') $txt .= ' — ' . $desc;
+                return trim($txt);
+              }, $dynamicDetalhesPdf);
+              $detResumo = implode(' | ', array_slice($rotulos, 0, 3));
+              if (count($rotulos) > 3) $detResumo .= ' ...';
+            }
+          ?>
+          <tr>
+            <td>Tarifa dinâmica<?= $detResumo ? ' (' . esc_html($detResumo) . ')' : '' ?></td>
+            <td>R$ <?= number_format($dynamicExtraVis, 2, ',', '.') ?></td>
+          </tr>
+        <?php endif; ?>
 
         <?php foreach (($dados['taxas'] ?? []) as $t): ?>
           <?php

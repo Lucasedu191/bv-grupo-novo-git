@@ -15,6 +15,12 @@ class BVGN_GerarArquivoEndpoint {
 
     try {
       // === DADOS DA COTAÇÃO ===
+      // Garantimos que arrays venham no formato esperado para evitar TypeError ao mapear
+      $postTaxas  = $_POST['taxas'] ?? [];
+      $postTotais = $_POST['totais'] ?? [];
+      if (!is_array($postTaxas))  $postTaxas  = [];
+      if (!is_array($postTotais)) $postTotais = [];
+
       $dados = [
         'produtoId' => intval($_POST['produtoId'] ?? 0),
         'nome'      => sanitize_text_field($_POST['bvgn_nome'] ?? ''),
@@ -29,14 +35,26 @@ class BVGN_GerarArquivoEndpoint {
             'rotulo' => sanitize_text_field($t['rotulo'] ?? ''),
             'preco'  => floatval($t['preco'] ?? 0)
           ];
-        }, $_POST['taxas'] ?? []),
+        }, $postTaxas),
         'totais' => [
-          'base'    => floatval($_POST['totais']['base'] ?? 0),
-          'taxas'   => floatval($_POST['totais']['taxas'] ?? 0),
-          'qtd'     => intval($_POST['totais']['qtd'] ?? 1),
-          'subtotal'=> floatval($_POST['totais']['subtotal'] ?? 0),
-          'total'   => floatval($_POST['totais']['total'] ?? 0),
-          'tipo'    => sanitize_text_field($_POST['totais']['tipo'] ?? 'diario'),
+          'base'    => floatval($postTotais['base'] ?? 0),
+          'taxas'   => floatval($postTotais['taxas'] ?? 0),
+          'dynamic_extra' => floatval($postTotais['dynamicExtra'] ?? 0),
+          'dynamic_detalhes' => array_map(function ($d) {
+            return [
+              'data'    => sanitize_text_field($d['data'] ?? ''),
+              'rotulo'  => sanitize_text_field($d['rotulo'] ?? ''),
+              'desc'    => sanitize_text_field($d['desc'] ?? ''),
+              'percent' => floatval($d['percent'] ?? 0),
+              'valor'   => floatval($d['valor'] ?? 0),
+              'show_resumo' => !empty($d['showResumo']) || !empty($d['show_resumo']),
+              'show_pdf'    => !empty($d['showPdf'])    || !empty($d['show_pdf']),
+            ];
+          }, is_array($postTotais['dynamicDetalhes'] ?? []) ? $postTotais['dynamicDetalhes'] : []),
+          'qtd'     => intval($postTotais['qtd'] ?? 1),
+          'subtotal'=> floatval($postTotais['subtotal'] ?? 0),
+          'total'   => floatval($postTotais['total'] ?? 0),
+          'tipo'    => sanitize_text_field($postTotais['tipo'] ?? 'diario'),
         ],
         'local'       => sanitize_text_field($_POST['bvgn_local'] ?? ''),       // Local de retirada
         'mensagem'    => sanitize_textarea_field($_POST['bvgn_mensagem'] ?? ''),// Mensagem do modal
@@ -68,6 +86,7 @@ class BVGN_GerarArquivoEndpoint {
       update_post_meta($post_id, 'datas_fim', $dados['datas']['fim']);
       update_post_meta($post_id, 'totais_base', $dados['totais']['base']);
       update_post_meta($post_id, 'totais_taxas', $dados['totais']['taxas']);
+      update_post_meta($post_id, 'totais_dynamic_extra', $dados['totais']['dynamic_extra'] ?? 0);
       update_post_meta($post_id, 'totais_qtd', $dados['totais']['qtd']);
       update_post_meta($post_id, 'totais_subtotal', $dados['totais']['subtotal']);
       update_post_meta($post_id, 'totais_total', $dados['totais']['total']);

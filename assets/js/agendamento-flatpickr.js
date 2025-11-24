@@ -29,7 +29,8 @@
 
     var hoje = new Date();
     var maxG = new Date();
-    maxG.setMonth(maxG.getMonth() + 6);
+    // limitar para 60 dias a partir de hoje
+    maxG.setDate(maxG.getDate() + 60);
     var hojeIso = toLocalISO(hoje);
 
     try {
