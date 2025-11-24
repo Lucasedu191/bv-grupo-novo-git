@@ -33,6 +33,18 @@ class BVGN_GerarArquivoEndpoint {
         'totais' => [
           'base'    => floatval($_POST['totais']['base'] ?? 0),
           'taxas'   => floatval($_POST['totais']['taxas'] ?? 0),
+          'dynamic_extra' => floatval($_POST['totais']['dynamicExtra'] ?? 0),
+          'dynamic_detalhes' => array_map(function ($d) {
+            return [
+              'data'    => sanitize_text_field($d['data'] ?? ''),
+              'rotulo'  => sanitize_text_field($d['rotulo'] ?? ''),
+              'desc'    => sanitize_text_field($d['desc'] ?? ''),
+              'percent' => floatval($d['percent'] ?? 0),
+              'valor'   => floatval($d['valor'] ?? 0),
+              'show_resumo' => !empty($d['showResumo']) || !empty($d['show_resumo']),
+              'show_pdf'    => !empty($d['showPdf'])    || !empty($d['show_pdf']),
+            ];
+          }, is_array($_POST['totais']['dynamicDetalhes'] ?? []) ? $_POST['totais']['dynamicDetalhes'] : []),
           'qtd'     => intval($_POST['totais']['qtd'] ?? 1),
           'subtotal'=> floatval($_POST['totais']['subtotal'] ?? 0),
           'total'   => floatval($_POST['totais']['total'] ?? 0),
@@ -68,6 +80,7 @@ class BVGN_GerarArquivoEndpoint {
       update_post_meta($post_id, 'datas_fim', $dados['datas']['fim']);
       update_post_meta($post_id, 'totais_base', $dados['totais']['base']);
       update_post_meta($post_id, 'totais_taxas', $dados['totais']['taxas']);
+      update_post_meta($post_id, 'totais_dynamic_extra', $dados['totais']['dynamic_extra'] ?? 0);
       update_post_meta($post_id, 'totais_qtd', $dados['totais']['qtd']);
       update_post_meta($post_id, 'totais_subtotal', $dados['totais']['subtotal']);
       update_post_meta($post_id, 'totais_total', $dados['totais']['total']);
