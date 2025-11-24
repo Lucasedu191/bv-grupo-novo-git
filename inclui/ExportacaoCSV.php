@@ -102,7 +102,7 @@ function bvgn_exportacao_csv_headers(){
   return [
     'ID', 'Data', 'Titulo', 'Codigo', 'Tipo', 'Produto', 'Produto ID',
     'Cliente Nome', 'Cliente WhatsApp', 'Inicio', 'Fim',
-    'Totais Base', 'Totais Taxas', 'Totais Tarifa Dinamica', 'Totais Qtd', 'Totais Subtotal', 'Totais Total',
+    'Totais Base', 'Totais Taxas', 'Totais Qtd', 'Totais Subtotal', 'Totais Total',
     'Local Retirada', 'Mensagem', 'PDF URL'
   ];
 }
@@ -124,7 +124,6 @@ function bvgn_exportacao_csv_row($post_id){
     get_post_meta($post_id, 'datas_fim', true),
     get_post_meta($post_id, 'totais_base', true),
     get_post_meta($post_id, 'totais_taxas', true),
-    get_post_meta($post_id, 'totais_dynamic_extra', true),
     get_post_meta($post_id, 'totais_qtd', true),
     get_post_meta($post_id, 'totais_subtotal', true),
     get_post_meta($post_id, 'totais_total', true),

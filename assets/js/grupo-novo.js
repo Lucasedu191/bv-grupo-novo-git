@@ -118,7 +118,6 @@ function calcular($cx){
 
     // soma taxas
     let taxas = 0;
-    let tarifaExtra = { extra: 0, detalhes: [] };
 
     // 1. Proteção (radio) — baseado no atributo data-preco-dia (apenas no diário)
     const $prot = $cx.find('input[name="bvgn_protecao"]:checked');
@@ -185,24 +184,10 @@ function calcular($cx){
     });
 
     // 4) SUBTOTAL / TOTAL
-    // No mensal: mostrar "30 dias" apenas para exibicao, mas NAO multiplicar o preco.
-    const dias = (tipo === 'mensal') ? 30 : qtd;                      // usado so para exibir
-    const subtotal = (tipo === 'mensal') ? base : (base * dias);      // mensal = 1x; diario = * dias
-
-    // Tarifa dinamica percorre dia a dia (apenas diario) usando a regra de maior prioridade
-    if (tipo === 'diario' && base > 0) {
-      const s = $cx.find('.bvgn-data-inicio').val();
-      const e = $cx.find('.bvgn-data-fim').val();
-      if (s && e && window.BVGN_Dynamic && typeof BVGN_Dynamic.calcularTarifaDinamica === 'function') {
-        tarifaExtra = BVGN_Dynamic.calcularTarifaDinamica(base, s, e);
-      }
-    }
-    const totalDynamic = Number(tarifaExtra.extra || 0);
-    const detalhesDyn  = Array.isArray(tarifaExtra.detalhes) ? tarifaExtra.detalhes : [];
-    const totalResumoDyn = detalhesDyn.reduce((acc,d) => d.showResumo ? acc + Number(d.valor || 0) : acc, 0);
-    const total    = subtotal + taxas + totalDynamic;      // somar taxas tambem no mensal
-
-
+    // No mensal: mostrar "30 dias" apenas para exibi??o, mas N?O multiplicar o pre?o.
+    const dias = (tipo === 'mensal') ? 30 : qtd;                      // usado s? para exibir
+    const subtotal = (tipo === 'mensal') ? base : (base * dias);      // mensal = 1x; diário = * dias
+    const total    = subtotal + taxas;      // ← somar taxas também no mensal
 
     $cx.find('.bvgn-subtotal .valor').text(subtotal.toFixed(2).replace('.', ','));
     $cx.find('.bvgn-total .valor').text(total.toFixed(2).replace('.', ','));
@@ -225,19 +210,6 @@ function calcular($cx){
     $cx.find('.bvgn-taxas').show();
     $cx.find('#bvgn-taxas').text(taxas.toFixed(2).replace('.', ','));
     $cx.find('#bvgn-taxas-raw').val(taxas);
-
-    // Tarifa dinamica
-    if (typeof totalDynamic !== 'undefined') {
-      if (totalResumoDyn > 0.0001) {
-        $cx.find('.bvgn-dyn').show();
-        $cx.find('#bvgn-dyn-view').text(`R$ ${totalResumoDyn.toFixed(2).replace('.', ',')}`);
-      } else {
-        $cx.find('.bvgn-dyn').hide();
-        $cx.find('#bvgn-dyn-view').text('R$ 0,00');
-      }
-      $cx.find('#bvgn-dynamic-extra-raw').val(totalDynamic.toFixed(2));
-    }
-
 
     // Subtotal e total (valores crus já estão ali, mas reforçamos)
     $cx.find('#bvgn-subtotal-raw').val(subtotal);
@@ -340,7 +312,7 @@ function calcular($cx){
       $cx.find('#bvgn-opcionais-view').text('');
     }
 
-    $cx.data('bvgnTotais', { base, taxas, dynamicExtra: Number(totalDynamic || 0), dynamicDetalhes: tarifaExtra.detalhes || [], qtd, subtotal, total, tipo });
+    $cx.data('bvgnTotais', { base, taxas, qtd, subtotal, total, tipo });
 
     // Ajustar nome do rótulo lateral de "Serviços opcionais" no resumo
     // Ajustar títulos conforme o tipo de plano

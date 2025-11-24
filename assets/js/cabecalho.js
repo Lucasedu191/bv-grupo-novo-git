@@ -13,8 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       const hoje = new Date();
       const maxGlobal = new Date();
-      // limitar 60 dias a partir de hoje
-      maxGlobal.setDate(maxGlobal.getDate() + 60);
+      maxGlobal.setMonth(maxGlobal.getMonth() + 6);
       // ISO local (YYYY-MM-DD) para evitar fuso/UTC no minDate
       function toLocalISO(d){
         const y = d.getFullYear();
