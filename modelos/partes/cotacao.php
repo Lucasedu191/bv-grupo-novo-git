@@ -459,7 +459,10 @@ $wmUrl   = $logoUrl; // marca d’água central
                   $partes = [];
                   if ($rot !== '') $partes[] = $rot;
                   if ($desc !== '') $partes[] = $desc;
-                  if ($perc !== 0.0) $partes[] = '+' . $perc . '%';
+                  $temPercentTxt = (stripos($rot, '%') !== false) || (stripos($desc, '%') !== false);
+                  if ($perc !== 0.0 && !$temPercentTxt) {
+                    $partes[] = '+' . $perc . '%';
+                  }
                   $txt = implode(' — ', $partes);
                   $txt = trim($txt);
                   if ($txt !== '') $rotulos[] = $txt;
