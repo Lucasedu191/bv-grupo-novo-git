@@ -100,7 +100,8 @@ class BVGN_DynamicTariffs {
                 <td><input type="date" name="rules[<?php echo esc_attr($i); ?>][start_date]" value="<?php echo esc_attr($r['start_date']); ?>"></td>
                 <td><input type="date" name="rules[<?php echo esc_attr($i); ?>][end_date]" value="<?php echo esc_attr($r['end_date']); ?>"></td>
                 <td style="text-align:center;">
-                  <label><input type="checkbox" name="rules[<?php echo esc_attr($i); ?>][active]" value="1" <?php checked(!isset($r['active']) || !empty($r['active'])); ?>> Sim</label>
+                  <input type="hidden" name="rules[<?php echo esc_attr($i); ?>][active]" value="0">
+                  <label><input type="checkbox" name="rules[<?php echo esc_attr($i); ?>][active]" value="1" <?php checked(!empty($r['active'])); ?>> Sim</label>
                 </td>
                 <td style="text-align:center;">
                   <label><input type="checkbox" name="rules[<?php echo esc_attr($i); ?>][show_resumo]" value="1" <?php checked(!empty($r['show_resumo'])); ?>> Sim</label>
@@ -153,6 +154,7 @@ class BVGN_DynamicTariffs {
               <td><input type="date" name="rules[${idx}][start_date]" value=""></td>
               <td><input type="date" name="rules[${idx}][end_date]" value=""></td>
               <td style="text-align:center;">
+                <input type="hidden" name="rules[${idx}][active]" value="0">
                 <label><input type="checkbox" name="rules[${idx}][active]" value="1" checked> Sim</label>
               </td>
               <td style="text-align:center;">
@@ -212,9 +214,9 @@ class BVGN_DynamicTariffs {
     $weekday  = isset($r['weekday']) ? intval($r['weekday']) : 0;
     $start    = sanitize_text_field($r['start_date'] ?? '');
     $end      = sanitize_text_field($r['end_date'] ?? '');
-    $showResumo = isset($r['show_resumo']) ? !empty($r['show_resumo']) : true;
-    $showPdf    = isset($r['show_pdf']) ? !empty($r['show_pdf']) : true;
-    $active     = isset($r['active']) ? !empty($r['active']) : true;
+    $showResumo = !empty($r['show_resumo']);
+    $showPdf    = !empty($r['show_pdf']);
+    $active     = !empty($r['active']);
 
     return [
       'type'       => $type,
