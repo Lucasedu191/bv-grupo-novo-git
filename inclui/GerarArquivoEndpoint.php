@@ -21,6 +21,31 @@ class BVGN_GerarArquivoEndpoint {
       if (!is_array($postTaxas))  $postTaxas  = [];
       if (!is_array($postTotais)) $postTotais = [];
 
+      // Sanitiza listas evitando array_map em valores nulos
+      $taxasSanit = [];
+      foreach ($postTaxas as $t) {
+        if (!is_array($t)) continue;
+        $taxasSanit[] = [
+          'rotulo' => sanitize_text_field($t['rotulo'] ?? ''),
+          'preco'  => floatval($t['preco'] ?? 0)
+        ];
+      }
+
+      $dynDetRaw = is_array($postTotais['dynamicDetalhes'] ?? null) ? $postTotais['dynamicDetalhes'] : [];
+      $dynDetSanit = [];
+      foreach ($dynDetRaw as $d) {
+        if (!is_array($d)) continue;
+        $dynDetSanit[] = [
+          'data'    => sanitize_text_field($d['data'] ?? ''),
+          'rotulo'  => sanitize_text_field($d['rotulo'] ?? ''),
+          'desc'    => sanitize_text_field($d['desc'] ?? ''),
+          'percent' => floatval($d['percent'] ?? 0),
+          'valor'   => floatval($d['valor'] ?? 0),
+          'show_resumo' => !empty($d['showResumo']) || !empty($d['show_resumo']),
+          'show_pdf'    => !empty($d['showPdf'])    || !empty($d['show_pdf']),
+        ];
+      }
+
       $dados = [
         'produtoId' => intval($_POST['produtoId'] ?? 0),
         'nome'      => sanitize_text_field($_POST['bvgn_nome'] ?? ''),
@@ -30,27 +55,12 @@ class BVGN_GerarArquivoEndpoint {
           'inicio' => sanitize_text_field($_POST['datas']['inicio'] ?? ''),
           'fim'    => sanitize_text_field($_POST['datas']['fim'] ?? '')
         ],
-        'taxas' => array_map(function ($t) {
-          return [
-            'rotulo' => sanitize_text_field($t['rotulo'] ?? ''),
-            'preco'  => floatval($t['preco'] ?? 0)
-          ];
-        }, $postTaxas),
+        'taxas' => $taxasSanit,
         'totais' => [
           'base'    => floatval($postTotais['base'] ?? 0),
           'taxas'   => floatval($postTotais['taxas'] ?? 0),
           'dynamic_extra' => floatval($postTotais['dynamicExtra'] ?? 0),
-          'dynamic_detalhes' => array_map(function ($d) {
-            return [
-              'data'    => sanitize_text_field($d['data'] ?? ''),
-              'rotulo'  => sanitize_text_field($d['rotulo'] ?? ''),
-              'desc'    => sanitize_text_field($d['desc'] ?? ''),
-              'percent' => floatval($d['percent'] ?? 0),
-              'valor'   => floatval($d['valor'] ?? 0),
-              'show_resumo' => !empty($d['showResumo']) || !empty($d['show_resumo']),
-              'show_pdf'    => !empty($d['showPdf'])    || !empty($d['show_pdf']),
-            ];
-          }, is_array($postTotais['dynamicDetalhes'] ?? []) ? $postTotais['dynamicDetalhes'] : []),
+          'dynamic_detalhes' => $dynDetSanit,
           'qtd'     => intval($postTotais['qtd'] ?? 1),
           'subtotal'=> floatval($postTotais['subtotal'] ?? 0),
           'total'   => floatval($postTotais['total'] ?? 0),
