@@ -233,13 +233,18 @@ function calcular($cx){
         const visiveis = detalhesDyn.filter(d => d && d.showResumo);
         const labelDyn = (function(){
           if (!visiveis.length) return '';
+          const seen = new Set();
           const partes = visiveis.map(d => {
             const rot = (d.rotulo || '').trim();
             const desc = (d.desc || '').trim();
+            const perc = d.percent ? `+${Number(d.percent)}%` : '';
+            const key = `${rot}||${desc}||${perc}`;
+            if (seen.has(key)) return '';
+            seen.add(key);
             if (rot && desc) return `${rot} — ${desc}`;
             if (rot) return rot;
             if (desc) return desc;
-            if (d.percent) return `+${Number(d.percent)}%`;
+            if (perc) return perc;
             return '';
           }).filter(Boolean);
           let txt = partes.slice(0, 2).join(' | ');
