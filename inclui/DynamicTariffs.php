@@ -54,6 +54,7 @@ class BVGN_DynamicTariffs {
               <th style="width:120px;">Dia da semana</th>
               <th style="width:140px;">Data inicial</th>
               <th style="width:140px;">Data final</th>
+              <th style="width:80px;">Ativa</th>
               <th style="width:100px;">Exibir resumo</th>
               <th style="width:80px;">Exibir PDF</th>
               <th style="width:70px;">Ação</th>
@@ -98,6 +99,9 @@ class BVGN_DynamicTariffs {
                 </td>
                 <td><input type="date" name="rules[<?php echo esc_attr($i); ?>][start_date]" value="<?php echo esc_attr($r['start_date']); ?>"></td>
                 <td><input type="date" name="rules[<?php echo esc_attr($i); ?>][end_date]" value="<?php echo esc_attr($r['end_date']); ?>"></td>
+                <td style="text-align:center;">
+                  <label><input type="checkbox" name="rules[<?php echo esc_attr($i); ?>][active]" value="1" <?php checked(!isset($r['active']) || !empty($r['active'])); ?>> Sim</label>
+                </td>
                 <td style="text-align:center;">
                   <label><input type="checkbox" name="rules[<?php echo esc_attr($i); ?>][show_resumo]" value="1" <?php checked(!empty($r['show_resumo'])); ?>> Sim</label>
                 </td>
@@ -148,6 +152,9 @@ class BVGN_DynamicTariffs {
               </td>
               <td><input type="date" name="rules[${idx}][start_date]" value=""></td>
               <td><input type="date" name="rules[${idx}][end_date]" value=""></td>
+              <td style="text-align:center;">
+                <label><input type="checkbox" name="rules[${idx}][active]" value="1" checked> Sim</label>
+              </td>
               <td style="text-align:center;">
                 <label><input type="checkbox" name="rules[${idx}][show_resumo]" value="1" checked> Sim</label>
               </td>
@@ -207,6 +214,7 @@ class BVGN_DynamicTariffs {
     $end      = sanitize_text_field($r['end_date'] ?? '');
     $showResumo = isset($r['show_resumo']) ? !empty($r['show_resumo']) : true;
     $showPdf    = isset($r['show_pdf']) ? !empty($r['show_pdf']) : true;
+    $active     = isset($r['active']) ? !empty($r['active']) : true;
 
     return [
       'type'       => $type,
@@ -217,6 +225,7 @@ class BVGN_DynamicTariffs {
       'weekday'    => $weekday,
       'start_date' => $start,
       'end_date'   => $end,
+      'active'     => $active,
       'show_resumo' => $showResumo,
       'show_pdf'    => $showPdf,
     ];
@@ -251,6 +260,7 @@ class BVGN_DynamicTariffs {
         'startDate' => $r['start_date'],
         'endDate'   => $r['end_date'],
         'desc'      => $r['desc'],
+        'active'    => !empty($r['active']),
         'showResumo'=> !empty($r['show_resumo']),
         'showPdf'   => !empty($r['show_pdf']),
       ];

@@ -446,11 +446,14 @@ $wmUrl   = $logoUrl; // marca d’água central
             $detResumo = '';
             if (!empty($dynamicDetalhesPdf)) {
               $rotulos = array_map(function($d){
-                $dia = isset($d['data']) ? $d['data'] : '';
                 $perc = isset($d['percent']) ? floatval($d['percent']) : 0;
-                $desc = isset($d['desc']) ? $d['desc'] : '';
-                $txt = trim($dia . ' +' . $perc . '%');
-                if ($desc !== '') $txt .= ' — ' . $desc;
+                $desc = isset($d['desc']) ? trim((string)$d['desc']) : '';
+                $rot  = isset($d['rotulo']) ? trim((string)$d['rotulo']) : '';
+                $partes = [];
+                if ($rot !== '') $partes[] = $rot;
+                if ($desc !== '') $partes[] = $desc;
+                if ($perc !== 0.0) $partes[] = '+' . $perc . '%';
+                $txt = implode(' — ', $partes);
                 return trim($txt);
               }, $dynamicDetalhesPdf);
               $detResumo = implode(' | ', array_slice($rotulos, 0, 3));

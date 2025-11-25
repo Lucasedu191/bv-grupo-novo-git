@@ -23,6 +23,7 @@
 
   function matchRuleForDate(rule, dateObj){
     if (!rule || !(dateObj instanceof Date)) return false;
+    if (rule.active === false) return false;
     const type = rule.type || 'week_day';
     const d = new Date(dateObj.getTime());
     d.setHours(0,0,0,0);

@@ -230,7 +230,24 @@ function calcular($cx){
     if (typeof totalDynamic !== 'undefined') {
       if (totalResumoDyn > 0.0001) {
         $cx.find('.bvgn-dyn').show();
-        $cx.find('#bvgn-dyn-view').text(`R$ ${totalResumoDyn.toFixed(2).replace('.', ',')}`);
+        const visiveis = detalhesDyn.filter(d => d && d.showResumo);
+        const labelDyn = (function(){
+          if (!visiveis.length) return '';
+          const partes = visiveis.map(d => {
+            const rot = (d.rotulo || '').trim();
+            const desc = (d.desc || '').trim();
+            if (rot && desc) return `${rot} — ${desc}`;
+            if (rot) return rot;
+            if (desc) return desc;
+            if (d.percent) return `+${Number(d.percent)}%`;
+            return '';
+          }).filter(Boolean);
+          let txt = partes.slice(0, 2).join(' | ');
+          if (partes.length > 2) txt += ' ...';
+          return txt;
+        })();
+        const valorDyn = `R$ ${totalResumoDyn.toFixed(2).replace('.', ',')}`;
+        $cx.find('#bvgn-dyn-view').text(labelDyn ? `${valorDyn} — ${labelDyn}` : valorDyn);
       } else {
         $cx.find('.bvgn-dyn').hide();
         $cx.find('#bvgn-dyn-view').text('R$ 0,00');
