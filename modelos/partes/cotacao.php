@@ -451,7 +451,9 @@ $wmUrl   = $logoUrl; // marca d’água central
                   $perc = isset($d['percent']) ? floatval($d['percent']) : 0;
                   $desc = isset($d['desc']) ? trim((string)$d['desc']) : '';
                   $rot  = isset($d['rotulo']) ? trim((string)$d['rotulo']) : '';
-                  $key = $rot . '|' . $desc . '|' . $perc;
+                  $key = strtolower(preg_replace('/\s+/', ' ', $rot)) . '|' .
+                         strtolower(preg_replace('/\s+/', ' ', $desc)) . '|' .
+                         number_format($perc, 4, '.', '');
                   if (isset($uniq[$key])) continue;
                   $uniq[$key] = true;
                   $partes = [];

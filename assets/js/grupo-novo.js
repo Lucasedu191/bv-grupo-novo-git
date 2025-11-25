@@ -234,19 +234,20 @@ function calcular($cx){
         const labelDyn = (function(){
           if (!visiveis.length) return '';
           const seen = new Set();
-          const partes = visiveis.map(d => {
-            const rot = (d.rotulo || '').trim();
-            const desc = (d.desc || '').trim();
-            const perc = d.percent ? `+${Number(d.percent)}%` : '';
-            const key = `${rot}||${desc}||${perc}`;
-            if (seen.has(key)) return '';
+          const normalize = (txt) => String(txt || '').replace(/\s+/g, ' ').trim().toLowerCase();
+          const partes = [];
+          visiveis.forEach(d => {
+            const rotRaw  = (d.rotulo || '').trim();
+            const descRaw = (d.desc || '').trim();
+            const percNum = Number(d.percent || 0);
+            const key = `${normalize(rotRaw)}|${normalize(descRaw)}|${percNum.toFixed(4)}`;
+            if (seen.has(key)) return;
             seen.add(key);
-            if (rot && desc) return `${rot} — ${desc}`;
-            if (rot) return rot;
-            if (desc) return desc;
-            if (perc) return perc;
-            return '';
-          }).filter(Boolean);
+            if (rotRaw && descRaw) partes.push(`${rotRaw} — ${descRaw}`);
+            else if (rotRaw) partes.push(rotRaw);
+            else if (descRaw) partes.push(descRaw);
+            else if (percNum) partes.push(`+${percNum}%`);
+          });
           let txt = partes.slice(0, 2).join(' | ');
           if (partes.length > 2) txt += ' ...';
           return txt;
