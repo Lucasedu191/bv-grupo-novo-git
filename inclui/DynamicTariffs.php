@@ -223,11 +223,17 @@ class BVGN_DynamicTariffs {
     $weekday  = isset($r['weekday']) ? intval($r['weekday']) : 0;
     $start    = sanitize_text_field($r['start_date'] ?? '');
     $end      = sanitize_text_field($r['end_date'] ?? '');
-    $groupsRaw  = isset($r['groups']) ? (string)$r['groups'] : '';
-    $groups     = array_values(array_filter(array_unique(array_map(function($g){
+    // grupos pode vir como string "A,B" ou array ['A','B']; tratamos ambos
+    $groupsInput = $r['groups'] ?? '';
+    if (is_array($groupsInput)) {
+      $groupsRawList = $groupsInput;
+    } else {
+      $groupsRawList = explode(',', (string)$groupsInput);
+    }
+    $groups = array_values(array_filter(array_unique(array_map(function($g){
       $g = strtoupper(trim($g));
       return preg_match('/^[A-Z]$/', $g) ? $g : '';
-    }, explode(',', $groupsRaw)))));
+    }, $groupsRawList))));
 
     $showResumo = !empty($r['show_resumo']);
     $showPdf    = !empty($r['show_pdf']);
