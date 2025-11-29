@@ -54,6 +54,7 @@ class BVGN_DynamicTariffs {
               <th style="width:120px;">Dia da semana</th>
               <th style="width:140px;">Data inicial</th>
               <th style="width:140px;">Data final</th>
+              <th style="width:140px;">Grupos diários</th>
               <th style="width:80px;">Ativa</th>
               <th style="width:100px;">Exibir resumo</th>
               <th style="width:80px;">Exibir PDF</th>
@@ -99,6 +100,10 @@ class BVGN_DynamicTariffs {
                 </td>
                 <td><input type="date" name="rules[<?php echo esc_attr($i); ?>][start_date]" value="<?php echo esc_attr($r['start_date']); ?>"></td>
                 <td><input type="date" name="rules[<?php echo esc_attr($i); ?>][end_date]" value="<?php echo esc_attr($r['end_date']); ?>"></td>
+                <td>
+                  <input type="text" name="rules[<?php echo esc_attr($i); ?>][groups]" value="<?php echo esc_attr(!empty($r['groups']) && is_array($r['groups']) ? implode(',', $r['groups']) : ''); ?>" placeholder="Ex.: A,B,C" style="width:100%;">
+                  <small style="color:#666;">Deixe vazio para todos</small>
+                </td>
                 <td style="text-align:center;">
                   <input type="hidden" name="rules[<?php echo esc_attr($i); ?>][active]" value="0">
                   <label><input type="checkbox" name="rules[<?php echo esc_attr($i); ?>][active]" value="1" <?php checked(!empty($r['active'])); ?>> Sim</label>
@@ -153,6 +158,10 @@ class BVGN_DynamicTariffs {
               </td>
               <td><input type="date" name="rules[${idx}][start_date]" value=""></td>
               <td><input type="date" name="rules[${idx}][end_date]" value=""></td>
+              <td>
+                <input type="text" name="rules[${idx}][groups]" value="" placeholder="Ex.: A,B,C" style="width:100%;">
+                <small style="color:#666;">Deixe vazio para todos</small>
+              </td>
               <td style="text-align:center;">
                 <input type="hidden" name="rules[${idx}][active]" value="0">
                 <label><input type="checkbox" name="rules[${idx}][active]" value="1" checked> Sim</label>
@@ -214,6 +223,12 @@ class BVGN_DynamicTariffs {
     $weekday  = isset($r['weekday']) ? intval($r['weekday']) : 0;
     $start    = sanitize_text_field($r['start_date'] ?? '');
     $end      = sanitize_text_field($r['end_date'] ?? '');
+    $groupsRaw  = isset($r['groups']) ? (string)$r['groups'] : '';
+    $groups     = array_values(array_filter(array_unique(array_map(function($g){
+      $g = strtoupper(trim($g));
+      return preg_match('/^[A-Z]$/', $g) ? $g : '';
+    }, explode(',', $groupsRaw)))));
+
     $showResumo = !empty($r['show_resumo']);
     $showPdf    = !empty($r['show_pdf']);
     $active     = !empty($r['active']);
@@ -227,6 +242,7 @@ class BVGN_DynamicTariffs {
       'weekday'    => $weekday,
       'start_date' => $start,
       'end_date'   => $end,
+      'groups'     => $groups,
       'active'     => $active,
       'show_resumo' => $showResumo,
       'show_pdf'    => $showPdf,
@@ -262,6 +278,7 @@ class BVGN_DynamicTariffs {
         'startDate' => $r['start_date'],
         'endDate'   => $r['end_date'],
         'desc'      => $r['desc'],
+        'groups'    => isset($r['groups']) && is_array($r['groups']) ? array_values($r['groups']) : [],
         'active'    => !empty($r['active']),
         'showResumo'=> !empty($r['show_resumo']),
         'showPdf'   => !empty($r['show_pdf']),

@@ -107,6 +107,7 @@ function normalizeDatesToRule($cx){
 function calcular($cx){
     const tipo = getTipo($cx);
     const base = numero($cx.find('.bvgn-variacao input[type=radio]:checked').data('preco'));
+    const grupoProduto = String(($cx.attr('data-produto-grupo') || '')).trim().toUpperCase();
 
     // quantidade de dias (apenas para diário)
     let qtd = 1;
@@ -194,18 +195,19 @@ function calcular($cx){
       const s = $cx.find('.bvgn-data-inicio').val();
       const e = $cx.find('.bvgn-data-fim').val();
       if (s && e && window.BVGN_Dynamic && typeof BVGN_Dynamic.calcularTarifaDinamica === 'function') {
-        tarifaExtra = BVGN_Dynamic.calcularTarifaDinamica(base, s, e);
+        tarifaExtra = BVGN_Dynamic.calcularTarifaDinamica(base, s, e, qtd, grupoProduto);
       }
     }
     const totalDynamic = Number(tarifaExtra.extra || 0);
     const detalhesDyn  = Array.isArray(tarifaExtra.detalhes) ? tarifaExtra.detalhes : [];
     const totalResumoDyn = detalhesDyn.reduce((acc,d) => d.showResumo ? acc + Number(d.valor || 0) : acc, 0);
     const total    = subtotal + taxas + totalDynamic;      // somar taxas tambem no mensal
+    const totalRounded = Math.ceil(total); // arredonda pra cima para remover centavos
 
 
 
     $cx.find('.bvgn-subtotal .valor').text(subtotal.toFixed(2).replace('.', ','));
-    $cx.find('.bvgn-total .valor').text(total.toFixed(2).replace('.', ','));
+    $cx.find('.bvgn-total .valor').text(totalRounded.toFixed(2).replace('.', ','));
     // ? Preenchimento do novo template visual ?
 
     // Exibir o local de retirada
@@ -265,9 +267,9 @@ function calcular($cx){
     // Subtotal e total (valores crus já estão ali, mas reforçamos)
     $cx.find('#bvgn-subtotal-raw').val(subtotal);
     $cx.find('#bvgn-subtotal-view').text(subtotal.toFixed(2).replace('.', ','));
-    $cx.find('#bvgn-total-raw').val(total);
+    $cx.find('#bvgn-total-raw').val(totalRounded);
 
-    $cx.find('#bvgn-total-view').text(total.toFixed(2).replace('.', ','));
+    $cx.find('#bvgn-total-view').text(totalRounded.toFixed(2).replace('.', ','));
 
     // Listar taxas detalhadas (opcional)
     const taxasDetalhadas = [];
@@ -363,7 +365,7 @@ function calcular($cx){
       $cx.find('#bvgn-opcionais-view').text('');
     }
 
-    $cx.data('bvgnTotais', { base, taxas, dynamicExtra: Number(totalDynamic || 0), dynamicDetalhes: tarifaExtra.detalhes || [], qtd, subtotal, total, tipo });
+    $cx.data('bvgnTotais', { base, taxas, dynamicExtra: Number(totalDynamic || 0), dynamicDetalhes: tarifaExtra.detalhes || [], qtd, subtotal, total: totalRounded, tipo });
 
     // Ajustar nome do rótulo lateral de "Serviços opcionais" no resumo
     // Ajustar títulos conforme o tipo de plano

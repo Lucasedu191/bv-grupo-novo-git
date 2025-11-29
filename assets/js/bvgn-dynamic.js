@@ -21,9 +21,13 @@
     return [];
   }
 
-  function matchRuleForDate(rule, dateObj){
+  function matchRuleForDate(rule, dateObj, grupo){
     if (!rule || !(dateObj instanceof Date)) return false;
     if (rule.active === false) return false;
+    if (Array.isArray(rule.groups) && rule.groups.length) {
+      const g = String(grupo || '').toUpperCase();
+      if (!g || !rule.groups.includes(g)) return false;
+    }
     const type = rule.type || 'week_day';
     const d = new Date(dateObj.getTime());
     d.setHours(0,0,0,0);
@@ -48,12 +52,12 @@
     return false;
   }
 
-  function pickRuleForDate(dateObj){
+  function pickRuleForDate(dateObj, grupo){
     const rules = getDynamicRules();
     if (!rules.length) return null;
     let chosen = null;
     rules.forEach(r => {
-      if (matchRuleForDate(r, dateObj)) {
+      if (matchRuleForDate(r, dateObj, grupo)) {
         if (!chosen || (Number(r.priority||0) > Number(chosen.priority||0))) {
           chosen = r;
         }
@@ -62,42 +66,33 @@
     return chosen;
   }
 
-  function calcularTarifaDinamica(baseDia, inicioStr, fimStr){
+  function calcularTarifaDinamica(baseDia, inicioStr, fimStr, qtdDias, grupo){
     const rules = getDynamicRules();
     if (!rules.length) return { extra: 0, detalhes: [] };
     const s = parseISODateLocal(inicioStr);
     const e = parseISODateLocal(fimStr);
     if (!s || !e) return { extra: 0, detalhes: [] };
 
-    let cursor = new Date(s.getTime());
-    const detalhes = [];
-    let acc = 0;
+    const r = pickRuleForDate(s, grupo);
+    if (!r || baseDia <= 0) return { extra: 0, detalhes: [] };
 
-    while (cursor.getTime() <= e.getTime()) {
-      const r = pickRuleForDate(cursor);
-      const isInicio = cursor.getTime() === s.getTime();
-      if (r && baseDia > 0) {
-        if (r.type === 'week_day' && !isInicio) {
-          cursor.setDate(cursor.getDate() + 1);
-          continue;
-        }
+    const dias = (typeof qtdDias === 'number' && qtdDias > 0)
+      ? Math.max(1, Math.floor(qtdDias))
+      : Math.max(1, Math.round((e - s) / 86400000) + 1);
 
-        const perc = Number(r.percent || 0);
-        const add  = baseDia * (perc / 100);
-        acc += add;
-        detalhes.push({
-          data: dateToISO(cursor),
-          rotulo: r.label || '',
-          desc: r.desc || '',
-          percent: perc,
-          valor: add,
-          showResumo: !!r.showResumo,
-          showPdf: !!r.showPdf
-        });
-      }
-      cursor.setDate(cursor.getDate() + 1);
-    }
-    return { extra: acc, detalhes };
+    const perc = Number(r.percent || 0);
+    const addPorDia  = baseDia * (perc / 100);
+    const acc        = addPorDia * dias;
+    const detalhe = {
+      data: dateToISO(s),
+      rotulo: r.label || '',
+      desc: r.desc || '',
+      percent: perc,
+      valor: acc,
+      showResumo: !!r.showResumo,
+      showPdf: !!r.showPdf
+    };
+    return { extra: acc, detalhes: [detalhe] };
   }
 
   window.BVGN_Dynamic = {
