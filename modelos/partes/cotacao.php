@@ -422,7 +422,8 @@ $wmUrl   = $logoUrl; // marca d’água central
           $base = (float)($dados['totais']['base'] ?? 0);
           $dynamicExtra    = (float)($dados['totais']['dynamic_extra'] ?? 0);
           $dynamicDetalhes = is_array($dados['totais']['dynamic_detalhes'] ?? null) ? $dados['totais']['dynamic_detalhes'] : [];
-          $dynamicDetalhesPdf = array_values(array_filter($dynamicDetalhes, fn($d) => !empty($d['show_pdf'])));
+          $isTrue = fn($v) => filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === true;
+          $dynamicDetalhesPdf = array_values(array_filter($dynamicDetalhes, fn($d) => $isTrue($d['show_pdf'] ?? ($d['showPdf'] ?? false))));
           $hasDynPdf = count($dynamicDetalhesPdf) > 0;
           $dynamicExtraVis = 0.0;
           foreach ($dynamicDetalhesPdf as $d) {

@@ -33,6 +33,9 @@ class BVGN_GerarArquivoEndpoint {
 
       $dynDetRaw = is_array($postTotais['dynamicDetalhes'] ?? null) ? $postTotais['dynamicDetalhes'] : [];
       $dynDetSanit = [];
+      $asBool = function($v){
+        return filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === true;
+      };
       foreach ($dynDetRaw as $d) {
         if (!is_array($d)) continue;
         $dynDetSanit[] = [
@@ -41,8 +44,8 @@ class BVGN_GerarArquivoEndpoint {
           'desc'    => sanitize_text_field($d['desc'] ?? ''),
           'percent' => floatval($d['percent'] ?? 0),
           'valor'   => floatval($d['valor'] ?? 0),
-          'show_resumo' => !empty($d['showResumo']) || !empty($d['show_resumo']),
-          'show_pdf'    => !empty($d['showPdf'])    || !empty($d['show_pdf']),
+          'show_resumo' => $asBool($d['showResumo'] ?? ($d['show_resumo'] ?? false)),
+          'show_pdf'    => $asBool($d['showPdf'] ?? ($d['show_pdf'] ?? false)),
         ];
       }
 
