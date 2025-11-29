@@ -109,9 +109,11 @@ class BVGN_DynamicTariffs {
                   <label><input type="checkbox" name="rules[<?php echo esc_attr($i); ?>][active]" value="1" <?php checked(!empty($r['active'])); ?>> Sim</label>
                 </td>
                 <td style="text-align:center;">
+                  <input type="hidden" name="rules[<?php echo esc_attr($i); ?>][show_resumo]" value="0">
                   <label><input type="checkbox" name="rules[<?php echo esc_attr($i); ?>][show_resumo]" value="1" <?php checked(!empty($r['show_resumo'])); ?>> Sim</label>
                 </td>
                 <td style="text-align:center;">
+                  <input type="hidden" name="rules[<?php echo esc_attr($i); ?>][show_pdf]" value="0">
                   <label><input type="checkbox" name="rules[<?php echo esc_attr($i); ?>][show_pdf]" value="1" <?php checked(!empty($r['show_pdf'])); ?>> Sim</label>
                 </td>
                 <td><button type="button" class="button link-delete">Remover</button></td>
@@ -167,9 +169,11 @@ class BVGN_DynamicTariffs {
                 <label><input type="checkbox" name="rules[${idx}][active]" value="1" checked> Sim</label>
               </td>
               <td style="text-align:center;">
+                <input type="hidden" name="rules[${idx}][show_resumo]" value="0">
                 <label><input type="checkbox" name="rules[${idx}][show_resumo]" value="1" checked> Sim</label>
               </td>
               <td style="text-align:center;">
+                <input type="hidden" name="rules[${idx}][show_pdf]" value="0">
                 <label><input type="checkbox" name="rules[${idx}][show_pdf]" value="1" checked> Sim</label>
               </td>
               <td><button type="button" class="button link-delete">Remover</button></td>
