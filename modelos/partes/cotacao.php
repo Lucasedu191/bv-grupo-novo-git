@@ -423,23 +423,40 @@ $wmUrl   = $logoUrl; // marca d’água central
           $dynamicExtra    = (float)($dados['totais']['dynamic_extra'] ?? 0);
           $dynamicDetalhes = is_array($dados['totais']['dynamic_detalhes'] ?? null) ? $dados['totais']['dynamic_detalhes'] : [];
           $dynamicDetalhesPdf = array_values(array_filter($dynamicDetalhes, fn($d) => !empty($d['show_pdf'])));
+          $hasDynPdf = count($dynamicDetalhesPdf) > 0;
           $dynamicExtraVis = 0.0;
           foreach ($dynamicDetalhesPdf as $d) {
             $dynamicExtraVis += (float)($d['valor'] ?? 0);
           }
           if ($tipo === 'diario') {
             $dynamicExtraTotal = (float)($dados['totais']['dynamic_extra'] ?? 0);
-            $dynamicUse = ($dynamicExtraVis > 0) ? $dynamicExtraVis : $dynamicExtraTotal;
+            $dynamicUse = $hasDynPdf ? $dynamicExtraVis : $dynamicExtraTotal;
             $unitComDyn = $base;
             if ($dynamicUse > 0 && $qtd > 0) {
               $unitComDyn += ($dynamicUse / $qtd);
             }
-            $labelPlano = sprintf(
-              'Diárias (%d × R$ %s%s)',
-              $qtd,
-              number_format($base, 2, ',', '.'),
-              $dynamicUse > 0 ? ' → R$ ' . number_format($unitComDyn, 2, ',', '.') : ''
-            );
+            if ($dynamicUse > 0) {
+              if ($hasDynPdf) {
+                $labelPlano = sprintf(
+                  'Diárias (%d × R$ %s -> R$ %s)',
+                  $qtd,
+                  number_format($base, 2, ',', '.'),
+                  number_format($unitComDyn, 2, ',', '.')
+                );
+              } else {
+                $labelPlano = sprintf(
+                  'Diárias (%d × R$ %s)',
+                  $qtd,
+                  number_format($unitComDyn, 2, ',', '.')
+                );
+              }
+            } else {
+              $labelPlano = sprintf(
+                'Diárias (%d × R$ %s)',
+                $qtd,
+                number_format($base, 2, ',', '.')
+              );
+            }
             $valorPlano = ($base * $qtd) + $dynamicUse;
           } else {
             // mantemos apresentação atual para mensal
@@ -452,7 +469,7 @@ $wmUrl   = $logoUrl; // marca d’água central
           <td>R$ <?= number_format($valorPlano, 2, ',', '.') ?></td>
         </tr>
 
-        <?php if ($dynamicExtraVis > 0.0): ?>
+        <?php if ($hasDynPdf && $dynamicExtraVis > 0.0): ?>
           <?php
             $detResumo = '';
             if (!empty($dynamicDetalhesPdf)) {
