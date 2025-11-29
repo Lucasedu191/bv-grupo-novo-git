@@ -299,15 +299,23 @@ if ($var.length) {
   $cx.find('.bvgn-var').show();
   if (tipo === 'diario') {
     const diasLabel = `${qtd} dia${qtd > 1 ? 's' : ''}`;
-    const totalDiarias = (precoUnit * qtd);
+    const totalDiariasBase = (precoUnit * qtd);
+    const totalDiariasDyn  = totalDiariasBase + totalDynamic;
     const unitBR = precoUnit.toFixed(2).replace('.', ',');
-    const totalBR = totalDiarias.toFixed(2).replace('.', ',');
-    let unitDynTxt = '';
-    if (totalDynamic > 0 && qtd > 0) {
-      const unitDyn = precoUnit + (totalDynamic / qtd);
-      unitDynTxt = ` -> R$ ${unitDyn.toFixed(2).replace('.', ',')} c/ tarifa`;
+    const unitDyn = (qtd > 0) ? (totalDiariasDyn / qtd) : precoUnit;
+    const totalBR = totalDiariasDyn.toFixed(2).replace('.', ',');
+    const unitDynBR = unitDyn.toFixed(2).replace('.', ',');
+
+    const visiveisDyn = Array.isArray(detalhesDyn) ? detalhesDyn.filter(d => d && d.showResumo) : [];
+    if (totalDynamic > 0 && visiveisDyn.length === 0) {
+      // regra n?o exposta: mostra apenas valor final j? com taxa
+      $cx.find('#bvgn-var-view').text(`Por dia: ${diasLabel} - R$ ${unitDynBR} - total R$ ${totalBR}`);
+    } else if (totalDynamic > 0) {
+      // mostra base e valor ajustado
+      $cx.find('#bvgn-var-view').text(`Por dia: ${diasLabel} - R$ ${unitBR} -> R$ ${unitDynBR} c/ tarifa - total R$ ${totalBR}`);
+    } else {
+      $cx.find('#bvgn-var-view').text(`Por dia: ${diasLabel} - R$ ${unitBR} - total R$ ${totalDiariasBase.toFixed(2).replace('.', ',')}`);
     }
-    $cx.find('#bvgn-var-view').text(`Por dia: ${diasLabel} - R$ ${unitBR}${unitDynTxt} - total R$ ${totalBR}`);
   } else {
     $cx.find('#bvgn-var-view').text(`${rotuloVar} - R$ ${precoUnit.toFixed(2).replace('.', ',')}`);
   }

@@ -428,17 +428,19 @@ $wmUrl   = $logoUrl; // marca d’água central
             $dynamicExtraVis += (float)($d['valor'] ?? 0);
           }
           if ($tipo === 'diario') {
+            $dynamicExtraTotal = (float)($dados['totais']['dynamic_extra'] ?? 0);
+            $dynamicUse = ($dynamicExtraVis > 0) ? $dynamicExtraVis : $dynamicExtraTotal;
             $unitComDyn = $base;
-            if ($dynamicExtraVis > 0 && $qtd > 0) {
-              $unitComDyn += ($dynamicExtraVis / $qtd);
+            if ($dynamicUse > 0 && $qtd > 0) {
+              $unitComDyn += ($dynamicUse / $qtd);
             }
             $labelPlano = sprintf(
               'Diárias (%d × R$ %s%s)',
               $qtd,
               number_format($base, 2, ',', '.'),
-              $dynamicExtraVis > 0 ? ' → R$ ' . number_format($unitComDyn, 2, ',', '.') : ''
+              $dynamicUse > 0 ? ' → R$ ' . number_format($unitComDyn, 2, ',', '.') : ''
             );
-            $valorPlano = $base * $qtd;
+            $valorPlano = ($base * $qtd) + $dynamicUse;
           } else {
             // mantemos apresentação atual para mensal
             $labelPlano = 'Mensal (30 dias)';
