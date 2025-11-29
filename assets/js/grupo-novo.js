@@ -228,10 +228,9 @@ function calcular($cx){
     $cx.find('#bvgn-taxas').text(taxas.toFixed(2).replace('.', ','));
     $cx.find('#bvgn-taxas-raw').val(taxas);
 
-    // Tarifa dinamica
+    // Tarifa dinamica: exibe só se configurada para resumo
     if (typeof totalDynamic !== 'undefined') {
       if (totalResumoDyn > 0.0001) {
-        $cx.find('.bvgn-dyn').show();
         const visiveis = detalhesDyn.filter(d => d && d.showResumo);
         const labelDyn = (function(){
           if (!visiveis.length) return '';
@@ -255,6 +254,7 @@ function calcular($cx){
           return txt;
         })();
         const valorDyn = `R$ ${totalResumoDyn.toFixed(2).replace('.', ',')}`;
+        $cx.find('.bvgn-dyn').show();
         $cx.find('#bvgn-dyn-view').text(labelDyn ? `${valorDyn} — ${labelDyn}` : valorDyn);
       } else {
         $cx.find('.bvgn-dyn').hide();
@@ -290,24 +290,29 @@ function calcular($cx){
       $cx.find('.bvgn-taxas-lista').hide();
     }
 
-    // Exibir plano selecionado (variação) / Por dia (diário)
-    const $var = $cx.find('.bvgn-variacao input[type=radio]:checked');
-    if ($var.length) {
-      const rotuloVar = String($var.data('rotulo') || 'Plano selecionado');
-      const precoUnit = numero($var.data('preco') || base);
-      $cx.find('.bvgn-var').show();
-      if (tipo === 'diario') {
-        const diasLabel = `${qtd} dia${qtd > 1 ? 's' : ''}`;
-        const totalDiarias = (precoUnit * qtd);
-        const unitBR = precoUnit.toFixed(2).replace('.', ',');
-        const totalBR = totalDiarias.toFixed(2).replace('.', ',');
-        $cx.find('#bvgn-var-view').text(`Por dia: ${diasLabel} × R$ ${unitBR} — total R$ ${totalBR}`);
-      } else {
-        $cx.find('#bvgn-var-view').text(`${rotuloVar} — R$ ${precoUnit.toFixed(2).replace('.', ',')}`);
-      }
-    }
 
-    // Preencher proteção no resumo (bloco lateral)
+// Exibir plano selecionado (variacao) / Por dia (diario)
+const $var = $cx.find('.bvgn-variacao input[type=radio]:checked');
+if ($var.length) {
+  const rotuloVar = String($var.data('rotulo') || 'Plano selecionado');
+  const precoUnit = numero($var.data('preco') || base);
+  $cx.find('.bvgn-var').show();
+  if (tipo === 'diario') {
+    const diasLabel = `${qtd} dia${qtd > 1 ? 's' : ''}`;
+    const totalDiarias = (precoUnit * qtd);
+    const unitBR = precoUnit.toFixed(2).replace('.', ',');
+    const totalBR = totalDiarias.toFixed(2).replace('.', ',');
+    let unitDynTxt = '';
+    if (totalDynamic > 0 && qtd > 0) {
+      const unitDyn = precoUnit + (totalDynamic / qtd);
+      unitDynTxt = ` -> R$ ${unitDyn.toFixed(2).replace('.', ',')} c/ tarifa`;
+    }
+    $cx.find('#bvgn-var-view').text(`Por dia: ${diasLabel} - R$ ${unitBR}${unitDynTxt} - total R$ ${totalBR}`);
+  } else {
+    $cx.find('#bvgn-var-view').text(`${rotuloVar} - R$ ${precoUnit.toFixed(2).replace('.', ',')}`);
+  }
+}
+// Preencher proteção no resumo (bloco lateral)
     if (tipo === 'mensal') {
       // Para plano mensal, exibe fixo
       $cx.find('.bvgn-protecao').show();

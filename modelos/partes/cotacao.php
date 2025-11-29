@@ -428,7 +428,16 @@ $wmUrl   = $logoUrl; // marca d’água central
             $dynamicExtraVis += (float)($d['valor'] ?? 0);
           }
           if ($tipo === 'diario') {
-            $labelPlano = sprintf('Diárias (%d × R$ %s)', $qtd, number_format($base, 2, ',', '.'));
+            $unitComDyn = $base;
+            if ($dynamicExtraVis > 0 && $qtd > 0) {
+              $unitComDyn += ($dynamicExtraVis / $qtd);
+            }
+            $labelPlano = sprintf(
+              'Diárias (%d × R$ %s%s)',
+              $qtd,
+              number_format($base, 2, ',', '.'),
+              $dynamicExtraVis > 0 ? ' → R$ ' . number_format($unitComDyn, 2, ',', '.') : ''
+            );
             $valorPlano = $base * $qtd;
           } else {
             // mantemos apresentação atual para mensal
@@ -442,35 +451,35 @@ $wmUrl   = $logoUrl; // marca d’água central
         </tr>
 
         <?php if ($dynamicExtraVis > 0.0): ?>
-            <?php
-              $detResumo = '';
-              if (!empty($dynamicDetalhesPdf)) {
-                $uniq = [];
-                $rotulos = [];
-                foreach ($dynamicDetalhesPdf as $d) {
-                  $perc = isset($d['percent']) ? floatval($d['percent']) : 0;
-                  $desc = isset($d['desc']) ? trim((string)$d['desc']) : '';
-                  $rot  = isset($d['rotulo']) ? trim((string)$d['rotulo']) : '';
-                  $key = strtolower(preg_replace('/\s+/', ' ', $rot)) . '|' .
-                         strtolower(preg_replace('/\s+/', ' ', $desc)) . '|' .
-                         number_format($perc, 4, '.', '');
-                  if (isset($uniq[$key])) continue;
-                  $uniq[$key] = true;
-                  $partes = [];
-                  if ($rot !== '') $partes[] = $rot;
-                  if ($desc !== '') $partes[] = $desc;
-                  $temPercentTxt = (stripos($rot, '%') !== false) || (stripos($desc, '%') !== false);
-                  if ($perc !== 0.0 && !$temPercentTxt) {
-                    $partes[] = '+' . $perc . '%';
-                  }
-                  $txt = implode(' — ', $partes);
-                  $txt = trim($txt);
-                  if ($txt !== '') $rotulos[] = $txt;
+          <?php
+            $detResumo = '';
+            if (!empty($dynamicDetalhesPdf)) {
+              $uniq = [];
+              $rotulos = [];
+              foreach ($dynamicDetalhesPdf as $d) {
+                $perc = isset($d['percent']) ? floatval($d['percent']) : 0;
+                $desc = isset($d['desc']) ? trim((string)$d['desc']) : '';
+                $rot  = isset($d['rotulo']) ? trim((string)$d['rotulo']) : '';
+                $key = strtolower(preg_replace('/\s+/', ' ', $rot)) . '|' .
+                       strtolower(preg_replace('/\s+/', ' ', $desc)) . '|' .
+                       number_format($perc, 4, '.', '');
+                if (isset($uniq[$key])) continue;
+                $uniq[$key] = true;
+                $partes = [];
+                if ($rot !== '') $partes[] = $rot;
+                if ($desc !== '') $partes[] = $desc;
+                $temPercentTxt = (stripos($rot, '%') !== false) || (stripos($desc, '%') !== false);
+                if ($perc !== 0.0 && !$temPercentTxt) {
+                  $partes[] = '+' . $perc . '%';
                 }
-                $detResumo = implode(' | ', array_slice($rotulos, 0, 3));
-                if (count($rotulos) > 3) $detResumo .= ' ...';
+                $txt = implode(' — ', $partes);
+                $txt = trim($txt);
+                if ($txt !== '') $rotulos[] = $txt;
               }
-            ?>
+              $detResumo = implode(' | ', array_slice($rotulos, 0, 3));
+              if (count($rotulos) > 3) $detResumo .= ' ...';
+            }
+          ?>
           <tr>
             <td>Tarifa dinâmica<?= $detResumo ? ' (' . esc_html($detResumo) . ')' : '' ?></td>
             <td>R$ <?= number_format($dynamicExtraVis, 2, ',', '.') ?></td>
