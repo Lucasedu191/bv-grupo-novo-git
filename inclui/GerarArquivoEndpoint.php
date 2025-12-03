@@ -27,8 +27,7 @@ class BVGN_GerarArquivoEndpoint {
         if (!is_array($t)) continue;
         $taxasSanit[] = [
           'rotulo' => sanitize_text_field($t['rotulo'] ?? ''),
-          'preco'  => floatval($t['preco'] ?? 0),
-          'tipo'   => sanitize_key($t['tipo'] ?? '')
+          'preco'  => floatval($t['preco'] ?? 0)
         ];
       }
 
@@ -50,9 +49,6 @@ class BVGN_GerarArquivoEndpoint {
         ];
       }
 
-      $caucaoAvisoValor  = floatval($postTotais['caucao'] ?? 0);
-      $caucaoAvisoRotulo = sanitize_text_field($postTotais['caucaoRotulo'] ?? '');
-
       $dados = [
         'produtoId' => intval($_POST['produtoId'] ?? 0),
         'nome'      => sanitize_text_field($_POST['bvgn_nome'] ?? ''),
@@ -72,8 +68,6 @@ class BVGN_GerarArquivoEndpoint {
           'subtotal'=> floatval($postTotais['subtotal'] ?? 0),
           'total'   => floatval($postTotais['total'] ?? 0),
           'tipo'    => sanitize_text_field($postTotais['tipo'] ?? 'diario'),
-          'caucao'  => $caucaoAvisoValor,
-          'caucao_rotulo' => $caucaoAvisoRotulo,
         ],
         'local'       => sanitize_text_field($_POST['bvgn_local'] ?? ''),       // Local de retirada
         'mensagem'    => sanitize_textarea_field($_POST['bvgn_mensagem'] ?? ''),// Mensagem do modal
@@ -110,8 +104,6 @@ class BVGN_GerarArquivoEndpoint {
       update_post_meta($post_id, 'totais_subtotal', $dados['totais']['subtotal']);
       update_post_meta($post_id, 'totais_total', $dados['totais']['total']);
       update_post_meta($post_id, 'totais_tipo', $dados['totais']['tipo']);
-      update_post_meta($post_id, 'totais_caucao', $dados['totais']['caucao']);
-      update_post_meta($post_id, 'totais_caucao_rotulo', $dados['totais']['caucao_rotulo']);
       update_post_meta($post_id, 'local_retirada', $dados['local']);
       update_post_meta($post_id, 'mensagem', $dados['mensagem']);
 

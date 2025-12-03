@@ -1,8 +1,7 @@
-
 <?php
 /**
- * Bloco de Protecao com valores variaveis por grupo.
- * So deve ser chamado em produtos do tipo "diario".
+ * Bloco de Proteção com valores variáveis por grupo.
+ * Só deve ser chamado em produtos do tipo "diario".
  * Usa: $a['produto_id']
  */
 if (!defined('ABSPATH')) exit;
@@ -11,7 +10,7 @@ $produto_id = $a['produto_id'] ?? 0;
 $p = $produto_id ? wc_get_product($produto_id) : null;
 if (!$p) return;
 
-// Detecta grupo (meta, titulo ou valor repassado pelo shortcode)
+// Detecta grupo (meta, título ou valor repassado pelo shortcode)
 $grupo = '';
 if (!empty($a['grupo'])) {
   $grupo = strtoupper($a['grupo']);
@@ -34,26 +33,19 @@ $grupo_cor = [
   'I' => 'azul'
 ];
 
-// Tabela de protecao por cor
+// Tabela de proteção por cor
 $protecao = [
   'verde'   => ['basica' => 35,  'premium' => 65],
   'azul'    => ['basica' => 45,  'premium' => 85],
   'laranja' => ['basica' => 65,  'premium' => 125],
 ];
 
-// Caucao padrao (sem protecao) por grupo
-$caucaoPadrao = match ($grupo) {
+// Caução por grupo
+$caucao = match ($grupo) {
   'A'     => 2000,
   'B','C','D','E','F','G','I' => 4000,
   'H'     => 4000,
   default => 0
-};
-
-// Caucao reduzido com protecao (nova tabela)
-$caucaoReduzido = match ($grupo) {
-  'H'     => 2000,
-  'A','B','C','D','E','F','G','I' => 500,
-  default => 500,
 };
 
 $cor    = $grupo_cor[$grupo] ?? 'verde';
@@ -63,7 +55,7 @@ $precoP = $protecao[$cor]['premium'];
 
 <div class="bvgn-taxas bvgn-cards-3"
      data-bvgn-protecao-grupo="<?php echo esc_attr($grupo); ?>">
-  <div class="bvgn-totais-titulo">Protecao</div>
+  <div class="bvgn-totais-titulo">Proteção</div>
 
   <?php if (!$isGrupoH): ?>
     <label class="bvgn-taxa">
@@ -71,11 +63,11 @@ $precoP = $protecao[$cor]['premium'];
              name="bvgn_protecao"
              value="sem"
              data-preco-dia="0"
-             data-caucao="<?php echo esc_attr($caucaoPadrao); ?>">
+             data-caucao="<?php echo esc_attr($caucao); ?>">
       <span class="lbl">
         <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos01.svg'; ?>" alt="">
-        <span class="texto">Sem protecao<br>caucao de</span>
-        <span class="preco"><?php echo wc_price($caucaoPadrao); ?></span>
+        <span class="texto">Sem proteção<br>caução de</span>
+        <span class="preco"><?php echo wc_price($caucao); ?></span>
         <span class="botao-fake">Selecionar</span>
       </span>
     </label>
@@ -85,7 +77,7 @@ $precoP = $protecao[$cor]['premium'];
         <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos01.svg'; ?>" alt="">
       </span>
       <span class="bvgn-caucao-informativo__texto">
-        Caucao obrigatorio de R$ <?php echo number_format((float)$caucaoReduzido, 2, ',', '.'); ?> ? tratado diretamente com a equipe no atendimento.
+        Caução obrigatório de R$ <?php echo number_format((float)$caucao, 2, ',', '.'); ?> — tratado diretamente com a equipe no atendimento.
       </span>
     </div>
   <?php endif; ?>
@@ -93,14 +85,13 @@ $precoP = $protecao[$cor]['premium'];
   <label class="bvgn-taxa">
     <input type="radio" name="bvgn_protecao" value="basica"
            data-preco-dia="<?php echo esc_attr($precoB); ?>"
-           data-caucao="<?php echo esc_attr($caucaoReduzido); ?>"
+           data-caucao="0"
            checked>
     <span class="lbl">
       <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos02.svg'; ?>" alt="">
-      <span class="texto">Protecao Basica</span>
+      <span class="texto">Proteção Básica</span>
       <span class="preco">
         <?php echo wc_price($precoB); ?>
-        <br><small>Caucao: R$ <?php echo number_format((float)$caucaoReduzido, 2, ',', '.'); ?></small>
       </span>
 
       <span class="botao-fake">Selecionar</span>
@@ -110,13 +101,12 @@ $precoP = $protecao[$cor]['premium'];
   <label class="bvgn-taxa">
     <input type="radio" name="bvgn_protecao" value="premium"
            data-preco-dia="<?php echo esc_attr($precoP); ?>"
-           data-caucao="<?php echo esc_attr($caucaoReduzido); ?>">
+           data-caucao="0">
     <span class="lbl">
       <img class="bvgn-icon" src="<?php echo BVGN_URL . 'assets/svg/passos03.svg'; ?>" alt="">
-      <span class="texto">Protecao Premium</span>
+      <span class="texto">Proteção Premium</span>
       <span class="preco">
         <?php echo wc_price($precoP); ?>
-        <br><small>Caucao: R$ <?php echo number_format((float)$caucaoReduzido, 2, ',', '.'); ?></small>
       </span>
 
       <span class="botao-fake">Selecionar</span>

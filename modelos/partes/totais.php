@@ -1,4 +1,3 @@
-
 <?php
 $tipo = $a['type'] ?? 'diario';
 ?>
@@ -8,36 +7,31 @@ $tipo = $a['type'] ?? 'diario';
 
     <div class="resumo-linha bvgn-var" style="display:none;">
       <span class="resumo-label"><?php esc_html_e('Plano selecionado:', 'bvgn'); ?></span>
-      <span class="resumo-valor" id="bvgn-var-view">?</span>
+      <span class="resumo-valor" id="bvgn-var-view">–</span>
     </div>
 
     <div class="resumo-linha bvgn-local" style="display:none;">
       <span class="resumo-label"><?php esc_html_e('Retirada em:', 'bvgn'); ?></span>
-      <span class="resumo-valor" id="bvgn-local-view">?</span>
+      <span class="resumo-valor" id="bvgn-local-view">–</span>
     </div>
 
     <div class="resumo-linha bvgn-dias" style="display:none;">
-      <span class="resumo-label"><?php esc_html_e('Periodo:', 'bvgn'); ?></span>
-      <span class="resumo-valor" id="bvgn-days-view">?</span>
+      <span class="resumo-label"><?php esc_html_e('Período:', 'bvgn'); ?></span>
+      <span class="resumo-valor" id="bvgn-days-view">–</span>
     </div>
 
     <div class="resumo-linha bvgn-protecao" style="display:none;">
-      <span class="resumo-label"><?php esc_html_e('Protecao:', 'bvgn'); ?></span>
-      <span class="resumo-valor" id="bvgn-protecao-view">?</span>
-    </div>
-
-    <div class="resumo-linha bvgn-caucao-aviso" style="display:none;">
-      <span class="resumo-label">Caucao:</span>
-      <span class="resumo-valor" id="bvgn-caucao-view">?</span>
+      <span class="resumo-label"><?php esc_html_e('Proteção:', 'bvgn'); ?></span>
+      <span class="resumo-valor" id="bvgn-protecao-view">–</span>
     </div>
 
     <div class="resumo-linha bvgn-opcionais" style="display:none;">
-      <span class="resumo-label"><?php esc_html_e('Servicos opcionais:', 'bvgn'); ?></span>
-      <span class="resumo-valor" id="bvgn-opcionais-view">?</span>
+      <span class="resumo-label"><?php esc_html_e('Serviços opcionais:', 'bvgn'); ?></span>
+      <span class="resumo-valor" id="bvgn-opcionais-view">—</span>
     </div>
 
     <div class="resumo-linha bvgn-dyn" style="display:none;">
-      <span class="resumo-label"><?php esc_html_e('Tarifa dinamica:', 'bvgn'); ?></span>
+      <span class="resumo-label"><?php esc_html_e('Tarifa dinâmica:', 'bvgn'); ?></span>
       <span class="resumo-valor" id="bvgn-dyn-view">R$ 0,00</span>
     </div>
 
