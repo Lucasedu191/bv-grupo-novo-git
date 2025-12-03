@@ -81,7 +81,10 @@
       : Math.max(1, Math.round((e - s) / 86400000) + 1);
 
     const perc = Number(r.percent || 0);
-    const addPorDia  = baseDia * (perc / 100);
+    // Arredonda o valor da diária com a regra antes de multiplicar pelos dias
+    const valorDiaComRegra = baseDia * (1 + (perc / 100));
+    const valorDiaAjustado = Math.ceil(valorDiaComRegra);
+    const addPorDia  = valorDiaAjustado - baseDia;
     const acc        = addPorDia * dias;
     const detalhe = {
       data: dateToISO(s),
