@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 9.9.82
+ * Version: 9.9.83
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -68,10 +68,11 @@ if ($factory) {
 //fim do PUC
 if (!defined('ABSPATH')) exit;
 
-define('BVGN_CAMINHO', plugin_dir_path(__FILE__));
-define('BVGN_URL', plugin_dir_url(__FILE__));
-define('BVGN_DIR_ARQUIVOS', WP_CONTENT_DIR.'/uploads/grupo-novo');
-define('BVGN_URL_ARQUIVOS', content_url('uploads/grupo-novo'));
+// Constantes de caminho/URL (evita redefinir caso outro arquivo tenha setado)
+if (!defined('BVGN_CAMINHO'))      define('BVGN_CAMINHO', plugin_dir_path(__FILE__));
+if (!defined('BVGN_URL'))          define('BVGN_URL', plugin_dir_url(__FILE__));
+if (!defined('BVGN_DIR_ARQUIVOS')) define('BVGN_DIR_ARQUIVOS', WP_CONTENT_DIR.'/uploads/grupo-novo');
+if (!defined('BVGN_URL_ARQUIVOS')) define('BVGN_URL_ARQUIVOS', content_url('uploads/grupo-novo'));
 
 // Toggle opcional (template do plugin). Mantenha 'false' para usar Elementor.
 if (!defined('BVGN_USAR_TEMPLATE')) define('BVGN_USAR_TEMPLATE', false);
@@ -284,7 +285,9 @@ add_action('wp_enqueue_scripts', function () {
       'bvgn-botao-fake',
       BVGN_URL . 'assets/js/ajuste-botao-selecao.js',
       [],
-      filemtime(BVGN_CAMINHO . 'assets/js/botao-fake.js'),
+      file_exists(BVGN_CAMINHO . 'assets/js/ajuste-botao-selecao.js')
+        ? filemtime(BVGN_CAMINHO . 'assets/js/ajuste-botao-selecao.js')
+        : '1.0.0',
       true
     );
   // CSS do Flatpickr calendário cabecalho
