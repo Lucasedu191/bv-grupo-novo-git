@@ -31,7 +31,7 @@ $limpaRotulo = function($txt){
 
   // se esvaziou mas era um rótulo de caução / sem proteção, cria nome padrão
   if ($txt === '' && preg_match('/cau[cç][aã]o/i', $orig)) $txt = 'Caução';
-  if ($txt === '' && preg_match('/sem\s+prote[cç][aã]o/i', $orig)) $txt = 'Sem proteção';
+  if ($p == 0 && preg_match('/sem\s+prote[cç][aã]o/i', $rot)) {
 
   return $txt;
 };
@@ -53,17 +53,17 @@ $precoExibicao = function($t, $dados) use ($toFloatBR){
   $qtd  = max(1, (int)($dados['totais']['qtd'] ?? 1));
   $tipoItem = strtolower($t['tipo'] ?? '');
 
-  if ($tipoItem === 'caucao_obrigatorio') {
+  if ($tipoItem === 'caucao_obrigatorio' || $tipoItem === 'caucao_aviso') {
     return $p;
   }
 
-  // A) Se for "Sem proteção" e preço veio 0, tentar achar o valor do caução
+  // A) Se for "Sem protecao" e preco veio 0, tentar achar o valor do caucao
   if ($p == 0 && preg_match('/sem\s+prote[cç][aã]o/i', $rot)) {
-    // 1) no próprio rótulo
+    // 1) no proprio rotulo
     if (preg_match('/cau[cç][aã]o[^0-9]*([\d\.,]+)/iu', $rot, $m)) {
       $p = $toFloatBR($m[1]);
     }
-    // 2) em algum outro item com "caução"
+    // 2) em algum outro item com "caucao"
     if ($p == 0) {
       foreach (($dados['taxas'] ?? []) as $tt) {
         $r = (string)($tt['rotulo'] ?? '');
@@ -75,13 +75,15 @@ $precoExibicao = function($t, $dados) use ($toFloatBR){
     }
   }
 
+  // B) Se for um item "Caucao ..." e preco 0, extrai do texto
+
   // B) Se for um item "Caução ..." e preço 0, extrai do texto
   if ($p == 0 && preg_match('/cau[cç][aã]o/i', $rot)) {
     if (preg_match('/([\d\.,]+)/', $rot, $m)) $p = $toFloatBR($m[1]);
   }
 
   // C) Itens diários multiplicam; proteção também multiplica mesmo sem "diária" no rótulo
-  if (preg_match('/di[áa]ria/i', $rot) || preg_match('/prote[cç][aã]o/i', $rot)) {
+  if (preg_match('/di[?a]ria/i', $rot) || preg_match('/protecao/i', $rot)) {
     if ($tipo === 'diario')      $p *= $qtd;
     elseif ($tipo === 'mensal')  $p *= 30;
   }
@@ -110,14 +112,24 @@ if ($tipoMain === 'mensal') {
 // Quebra as taxas em grupos para exibir no "Detalhes"
 $taxasAll   = $dados['taxas'] ?? [];
 $caucaoObrigatorioItem = null;
+$caucaoAvisoItem = null;
+$caucaoAvisoValorTotais = isset($dados['totais']['caucao']) ? (float)$dados['totais']['caucao'] : 0.0;
+$caucaoAvisoRotuloTotais = trim($dados['totais']['caucao_rotulo'] ?? '');
 $taxasFiltradas = [];
 foreach ($taxasAll as $t) {
-  $tipoLinha   = strtolower($t['tipo'] ?? '');
-  $rotuloLinha = strtolower($t['rotulo'] ?? '');
+  $tipoLinha   = strtolower($t['tipo'] ?? "");
+  $rotuloLinha = strtolower($t['rotulo'] ?? "");
 
-  if ($tipoLinha === 'caucao_obrigatorio') {
+  if ($tipoLinha === "caucao_obrigatorio") {
     if ($caucaoObrigatorioItem === null) {
       $caucaoObrigatorioItem = $t;
+    }
+    continue;
+  }
+
+  if ($tipoLinha === "caucao_aviso") {
+    if ($caucaoAvisoItem === null) {
+      $caucaoAvisoItem = $t;
     }
     continue;
   }
@@ -126,9 +138,17 @@ foreach ($taxasAll as $t) {
 }
 $taxasAll = $taxasFiltradas;
 $dados['taxas'] = $taxasAll;
-$taxasFixas = array_values(array_filter($taxasAll, fn($t) => preg_match('/taxa|limpeza/i', $t['rotulo'] ?? '')));
+
+if ($caucaoAvisoItem === null && $caucaoAvisoValorTotais > 0) {
+  $caucaoAvisoItem = [
+    "rotulo" => $caucaoAvisoRotuloTotais !== "" ? $caucaoAvisoRotuloTotais : "Caucao (aviso)",
+    "preco"  => $caucaoAvisoValorTotais,
+    "tipo"   => "caucao_aviso",
+  ];
+}
+$taxasFixas = array_values(array_filter($taxasAll, fn($t) => preg_match('/taxa|limpeza/i', $t['rotulo'] ?? "")));
 $opcionais  = array_values(array_filter($taxasAll, fn($t) =>
-  !preg_match('/prote[cç][aã]o|taxa|limpeza/i', $t['rotulo'] ?? '')
+  !preg_match('/prote[cç][aã]o|taxa|limpeza/i', $t['rotulo'] ?? "")
 ));
 
 if ($caucaoObrigatorioItem) {
@@ -284,6 +304,15 @@ $wmUrl   = $logoUrl; // marca d’água central
               </em></div>
             <?php endif; ?>
           </div>
+          <?php if ($caucaoAvisoItem): ?>
+            <div class="alerta">
+              <div><strong>Caucao:</strong>
+                <?= esc_html($limpaRotulo($caucaoAvisoItem['rotulo'] ?? 'Caucao')) ?>
+                - R$ <?= number_format($precoExibicao($caucaoAvisoItem, $dados), 2, ',', '.') ?>
+                (pago na retirada; nao incluso no total estimado).
+              </div>
+            </div>
+          <?php endif; ?>
         </div>
       </td>
     </tr>
@@ -504,6 +533,16 @@ $wmUrl   = $logoUrl; // marca d’água central
             <td>Tarifa dinâmica<?= $detResumo ? ' (' . esc_html($detResumo) . ')' : '' ?></td>
             <td>R$ <?= number_format($dynamicExtraVis, 2, ',', '.') ?></td>
           </tr>
+        <?php endif; ?>
+
+        <?php if ($caucaoAvisoItem): ?>
+          <?php $caucaoAvisoValorTabela = $precoExibicao($caucaoAvisoItem, $dados); ?>
+          <?php if ($caucaoAvisoValorTabela > 0): ?>
+            <tr>
+              <td><?= esc_html($limpaRotulo($caucaoAvisoItem['rotulo'] ?? 'Caucao')) ?> (aviso - pago na retirada)</td>
+              <td>R$ <?= number_format($caucaoAvisoValorTabela, 2, ',', '.') ?></td>
+            </tr>
+          <?php endif; ?>
         <?php endif; ?>
 
         <?php foreach (($dados['taxas'] ?? []) as $t): ?>
