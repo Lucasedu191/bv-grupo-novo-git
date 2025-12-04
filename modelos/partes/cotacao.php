@@ -399,7 +399,7 @@ $wmUrl   = $logoUrl; // marca d’água central
                     $tipoItem = strtolower($t['tipo'] ?? '');
                     $valorItem = $precoExibicao($t, $dados);
                     if ($tipoItem === 'caucao_aviso' || preg_match('/cau[cç][aã]o/i', $rotuloBruto)) {
-                      $rotuloTx = 'Caução de R$ ' . number_format($valorItem, 2, ',', '.');
+                      $rotuloTx = 'Caução de';
                     } else {
                       $rotuloTx = $limpaRotulo($rotuloBruto);
                     }
