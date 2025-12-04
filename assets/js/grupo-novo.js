@@ -153,10 +153,9 @@ function calcular($cx){
         : '30 dias';
       const unitBR    = formatBR(preco);
       const totalBR   = formatBR(valorProtDias);
-      const caucaoTxt = caucao > 0 ? ` | Caução R$ ${formatBR(caucao)}` : '';
       const rotuloProt = tipo === 'diario'
-        ? `${nomeProt} - ${diasLabel} - R$ ${unitBR} - total R$ ${totalBR}${caucaoTxt}`
-        : `${nomeProt} - R$ ${unitBR}${caucaoTxt}`;
+        ? `${nomeProt} - ${diasLabel} - R$ ${unitBR} - total R$ ${totalBR}`
+        : `${nomeProt} - R$ ${unitBR}`;
 
       if ($cx.find('#bvgn-taxas-itens').length) {
         $cx.find('#bvgn-taxas-itens').append(`<li>${rotuloProt}</li>`);
@@ -246,16 +245,10 @@ function calcular($cx){
     $cx.find('#bvgn-taxas').text(taxas.toFixed(2).replace('.', ','));
     $cx.find('#bvgn-taxas-raw').val(taxas);
 
-    // Caução como aviso (não entra no total)
+    // Caução como aviso (não entra no total) — mantém somente no hidden
     $cx.find('#bvgn-caucao-raw').val(caucaoAviso);
-    if (caucaoAviso > 0) {
-      const rot = caucaoRotulo || `Caução: R$ ${formatBR(caucaoAviso)}`;
-      $cx.find('.bvgn-caucao-aviso').show();
-      $cx.find('#bvgn-caucao-view').text(rot);
-    } else {
-      $cx.find('.bvgn-caucao-aviso').hide();
-      $cx.find('#bvgn-caucao-view').text('');
-    }
+    $cx.find('.bvgn-caucao-aviso').hide();
+    $cx.find('#bvgn-caucao-view').text('');
 
     // Tarifa dinamica: exibe só se configurada para resumo
     if (typeof totalDynamic !== 'undefined') {
@@ -363,8 +356,7 @@ if ($var.length) {
       const diasLabel = `${qtd} dia${qtd > 1 ? 's' : ''}`;
       const unitBR  = precoDia.toFixed(2).replace('.', ',');
       const totalBR = valorProtDias.toFixed(2).replace('.', ',');
-      const caucaoTxt = caucaoAviso > 0 ? ` | Caução R$ ${formatBR(caucaoAviso)}` : '';
-      const rotuloProt = `${nomeProt} — ${diasLabel} × R$ ${unitBR} — total R$ ${totalBR}${caucaoTxt}`;
+      const rotuloProt = `${nomeProt} — ${diasLabel} × R$ ${unitBR} — total R$ ${totalBR}`;
       $cx.find('.bvgn-protecao').show();
       $cx.find('#bvgn-protecao-view').text(rotuloProt);
     } else {
@@ -401,11 +393,6 @@ if ($var.length) {
         opcionais.push(`${rotulo} – R$ ${preco.toFixed(2).replace('.', ',')}`);
       }
     });
-
-    if (caucaoAviso > 0) {
-      const rot = caucaoRotulo || 'Caução';
-      opcionais.push(`${rot} (pagamento em garantia)`);
-    }
 
     if (opcionais.length > 0) {
       $cx.find('.bvgn-opcionais').show();

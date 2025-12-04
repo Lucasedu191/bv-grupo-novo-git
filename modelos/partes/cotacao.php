@@ -120,26 +120,13 @@ foreach ($taxasAll as $t) {
   $tipoLinha   = strtolower($t['tipo'] ?? '');
   $rotuloLinha = strtolower($t['rotulo'] ?? '');
 
-  if ($tipoLinha === 'caucao_obrigatorio') {
-    if ($caucaoObrigatorioItem === null) {
-      $caucaoObrigatorioItem = $t;
-    }
-    continue;
-  }
-  if ($tipoLinha === 'caucao_aviso') {
-    if ($caucaoAvisoItem === null) {
-      $caucaoAvisoItem = $t;
-    }
-    continue;
-  }
-
   $taxasFiltradas[] = $t;
 }
 $taxasAll = $taxasFiltradas;
 $dados['taxas'] = $taxasAll;
-$taxasFixas = array_values(array_filter($taxasAll, fn($t) => preg_match('/taxa|limpeza/i', $t['rotulo'] ?? '')));
+$taxasFixas = array_values(array_filter($taxasAll, fn($t) => preg_match('/taxa|limpeza|cau[cç][aã]o/i', $t['rotulo'] ?? '')));
 $opcionais  = array_values(array_filter($taxasAll, fn($t) =>
-  !preg_match('/prote[cç][aã]o|taxa|limpeza/i', $t['rotulo'] ?? '')
+  !preg_match('/prote[cç][aã]o|taxa|limpeza|cau[cç][aã]o/i', $t['rotulo'] ?? '')
 ));
 
 if ($caucaoObrigatorioItem) {
@@ -294,11 +281,6 @@ $wmUrl   = $logoUrl; // marca d’água central
                 Sua pré-reserva tem 30 dias ou mais. Conte com toda a economia, autonomia e flexibilidade do Aluguel Mensal.
               </em></div>
             <?php endif; ?>
-            <?php if ($caucaoValorAviso > 0): ?>
-              <div style="margin-top: 3px;">
-                Caução: R$ <?= number_format($caucaoValorAviso, 2, ',', '.') ?> (aviso; não incluso no total).
-              </div>
-            <?php endif; ?>
           </div>
         </div>
       </td>
@@ -311,22 +293,10 @@ $wmUrl   = $logoUrl; // marca d’água central
 
       // localizar itens especiais nas taxas enviadas
       $protItem   = null;
-      $caucaoItem = null;
       foreach (($taxasAll ?? []) as $t) {
         $r = (string)($t['rotulo'] ?? '');
         if (!$protItem   && preg_match('/prote[cç][aã]o/i', $r)) $protItem   = $t;
-        if (!$caucaoItem && preg_match('/cau[cç][aã]o/i', $r))   $caucaoItem = $t;
-        if ($protItem && $caucaoItem) break;
-      }
-      if (!$caucaoItem && $caucaoAvisoItem) {
-        $caucaoItem = $caucaoAvisoItem;
-      }
-      if (!$caucaoItem && ($dados['totais']['caucao'] ?? 0) > 0) {
-        $caucaoItem = [
-          'rotulo' => $dados['totais']['caucao_rotulo'] ?? 'Caução',
-          'preco'  => $dados['totais']['caucao'] ?? 0,
-          'tipo'   => 'caucao_aviso'
-        ];
+        if ($protItem) break;
       }
 
       // rótulo/valor da proteção
@@ -343,14 +313,6 @@ $wmUrl   = $logoUrl; // marca d’água central
         }
       }
 
-      $caucaoValorAviso = (float)($dados['totais']['caucao'] ?? 0);
-      $caucaoRotuloAviso = trim((string)($dados['totais']['caucao_rotulo'] ?? ''));
-      if ($caucaoValorAviso <= 0 && $caucaoItem) {
-        $caucaoValorAviso = (float)($caucaoItem['preco'] ?? 0);
-      }
-      if ($caucaoRotuloAviso === '' && $caucaoItem) {
-        $caucaoRotuloAviso = (string)($caucaoItem['rotulo'] ?? '');
-      }
     ?>
 
     <!-- Linha 2: SERVIÇOS OPCIONAIS | TAXAS -->
@@ -396,8 +358,7 @@ $wmUrl   = $logoUrl; // marca d’água central
                   $tipoItem = strtolower($t['tipo'] ?? '');
                   // pular proteção sempre (já tratamos acima)
                   if (preg_match('/prote[cç][aã]o/i', $rOrig)) continue;
-                  // no mensal, pular caução da lista (já mostramos destacado acima)
-                  if ($tipo === 'mensal' && preg_match('/cau[cç][aã]o/i', $rOrig)) continue;
+                  if (preg_match('/cau[cç][aã]o/i', $rOrig)) continue;
                   $rClean = ($tipoItem === 'caucao_obrigatorio')
                     ? trim($rOrig)
                     : $limpaRotulo($rOrig);
@@ -548,6 +509,9 @@ $wmUrl   = $logoUrl; // marca d’água central
             if ($tipo === 'mensal' && preg_match('/prote[cç][aã]o/i', $rot)) {
               continue;
             }
+            if (preg_match('/cau[cç][aã]o/i', $rot)) {
+              continue;
+            }
             $rotuloLimpo = $limpaRotulo($rot);
             if ($rotuloLimpo === '') {
               continue;
@@ -573,13 +537,6 @@ $wmUrl   = $logoUrl; // marca d’água central
             <td>R$ <?= number_format($valorItem, 2, ',', '.') ?></td>
           </tr>
         <?php endforeach; ?>
-
-        <?php if ($caucaoValorAviso > 0): ?>
-          <tr>
-            <td>Caução (aviso - não incluso no total)</td>
-            <td>R$ <?= number_format($caucaoValorAviso, 2, ',', '.') ?></td>
-          </tr>
-        <?php endif; ?>
 
         <tr class="total">
           <td>Total Estimado</td>
