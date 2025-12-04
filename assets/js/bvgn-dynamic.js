@@ -83,7 +83,7 @@
     const perc = Number(r.percent || 0);
     // Arredonda o valor da diária com a regra antes de multiplicar pelos dias
     const valorDiaComRegra = baseDia * (1 + (perc / 100));
-    const valorDiaAjustado = Math.ceil(valorDiaComRegra);
+    const valorDiaAjustado = Math.round(valorDiaComRegra);
     const addPorDia  = valorDiaAjustado - baseDia;
     const acc        = addPorDia * dias;
     const detalhe = {

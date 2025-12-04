@@ -202,7 +202,7 @@ function calcular($cx){
     const detalhesDyn  = Array.isArray(tarifaExtra.detalhes) ? tarifaExtra.detalhes : [];
     const totalResumoDyn = detalhesDyn.reduce((acc,d) => d.showResumo ? acc + Number(d.valor || 0) : acc, 0);
     const total    = subtotal + taxas + totalDynamic;      // somar taxas tambem no mensal
-    const totalRounded = Math.ceil(total); // arredonda pra cima para remover centavos
+    const totalRounded = Math.round(total); // arredonda para inteiro pela primeira casa decimal
 
 
 
