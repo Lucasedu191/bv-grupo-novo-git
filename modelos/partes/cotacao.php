@@ -25,6 +25,8 @@ $limpaRotulo = function($txt){
   // remove "Selecionar", "Selecionado", "Selecionada" (com variações de acento/caixa)
   $txt = preg_replace('/\bSelecion(?:ar|ado|ada)\b/iu', '', $txt);
   $txt = preg_replace('/,\s*cau[cç][aã]o[^—]*/iu', '', $txt);
+  // remove qualquer trecho de caução residual
+  $txt = preg_replace('/cau[cç][aã]o[^—]*/iu', '', $txt);
 
   // normaliza espaços
   $txt = preg_replace('/\s{2,}/', ' ', trim($txt));
@@ -124,10 +126,17 @@ foreach ($taxasAll as $t) {
 }
 $taxasAll = $taxasFiltradas;
 $dados['taxas'] = $taxasAll;
-$taxasFixas = array_values(array_filter($taxasAll, fn($t) => preg_match('/taxa|limpeza|cau[cç][aã]o/i', $t['rotulo'] ?? '')));
-$opcionais  = array_values(array_filter($taxasAll, fn($t) =>
-  !preg_match('/prote[cç][aã]o|taxa|limpeza|cau[cç][aã]o/i', $t['rotulo'] ?? '')
-));
+$taxasFixas = array_values(array_filter($taxasAll, function($t){
+  $rot = $t['rotulo'] ?? '';
+  $tipo = strtolower($t['tipo'] ?? '');
+  return ($tipo === 'caucao_aviso') || preg_match('/taxa|limpeza|cau[cç][aã]o/i', $rot);
+}));
+$opcionais  = array_values(array_filter($taxasAll, function($t){
+  $rot = $t['rotulo'] ?? '';
+  $tipo = strtolower($t['tipo'] ?? '');
+  if ($tipo === 'caucao_aviso') return false;
+  return !preg_match('/prote[cç][aã]o|taxa|limpeza|cau[cç][aã]o/i', $rot);
+}));
 
 if ($caucaoObrigatorioItem) {
   array_unshift($opcionais, $caucaoObrigatorioItem);
@@ -358,7 +367,7 @@ $wmUrl   = $logoUrl; // marca d’água central
                   $tipoItem = strtolower($t['tipo'] ?? '');
                   // pular proteção sempre (já tratamos acima)
                   if (preg_match('/prote[cç][aã]o/i', $rOrig)) continue;
-                  if (preg_match('/cau[cç][aã]o/i', $rOrig)) continue;
+                  if ($tipoItem === 'caucao_aviso' || preg_match('/cau[cç][aã]o/i', $rOrig)) continue;
                   $rClean = ($tipoItem === 'caucao_obrigatorio')
                     ? trim($rOrig)
                     : $limpaRotulo($rOrig);
@@ -506,10 +515,11 @@ $wmUrl   = $logoUrl; // marca d’água central
           <?php
             // No plano mensal, não listar linha de proteção na tabela (já mostramos "incluída" no card)
             $rot = (string)($t['rotulo'] ?? '');
+            $tipoItem = strtolower($t['tipo'] ?? '');
             if ($tipo === 'mensal' && preg_match('/prote[cç][aã]o/i', $rot)) {
               continue;
             }
-            if (preg_match('/cau[cç][aã]o/i', $rot)) {
+            if ($tipoItem === 'caucao_aviso' || preg_match('/cau[cç][aã]o/i', $rot)) {
               continue;
             }
             $rotuloLimpo = $limpaRotulo($rot);
