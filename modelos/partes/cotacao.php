@@ -394,8 +394,18 @@ $wmUrl   = $logoUrl; // marca d’água central
             <ul class="lista">
               <?php foreach ($taxasFixas as $t): ?>
                 <li>
-                  <?= esc_html($limpaRotulo(($t['rotulo'] ?? ''))) ?> —
-                  R$ <?= number_format($precoExibicao($t, $dados), 2, ',', '.') ?>
+                  <?php
+                    $rotuloBruto = (string)($t['rotulo'] ?? '');
+                    $tipoItem = strtolower($t['tipo'] ?? '');
+                    $valorItem = $precoExibicao($t, $dados);
+                    if ($tipoItem === 'caucao_aviso' || preg_match('/cau[cç][aã]o/i', $rotuloBruto)) {
+                      $rotuloTx = 'Caução de R$ ' . number_format($valorItem, 2, ',', '.');
+                    } else {
+                      $rotuloTx = $limpaRotulo($rotuloBruto);
+                    }
+                  ?>
+                  <?= esc_html($rotuloTx) ?> —
+                  R$ <?= number_format($valorItem, 2, ',', '.') ?>
                 </li>
               <?php endforeach; ?>
             </ul>
