@@ -27,12 +27,17 @@ $tipo = $a['type'] ?? 'diario';
 
     <div class="resumo-linha bvgn-opcionais" style="display:none;">
       <span class="resumo-label"><?php esc_html_e('Serviços opcionais:', 'bvgn'); ?></span>
-      <span class="resumo-valor" id="bvgn-opcionais-view">—</span>
+      <span class="resumo-valor" id="bvgn-opcionais-view">–</span>
     </div>
 
     <div class="resumo-linha bvgn-dyn" style="display:none;">
       <span class="resumo-label"><?php esc_html_e('Tarifa dinâmica:', 'bvgn'); ?></span>
       <span class="resumo-valor" id="bvgn-dyn-view">R$ 0,00</span>
+    </div>
+
+    <div class="resumo-linha bvgn-caucao-aviso" style="display:none;">
+      <span class="resumo-label"><?php esc_html_e('Caução:', 'bvgn'); ?></span>
+      <span class="resumo-valor" id="bvgn-caucao-view">R$ 0,00</span>
     </div>
 
     <!-- Linha de Taxas removida conforme requisito -->

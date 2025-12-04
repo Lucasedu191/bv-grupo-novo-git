@@ -8,8 +8,6 @@
       var caucao   = Number(sel.dataset.caucao || 0);
       var tipo     = sel.value || 'sem';
 
-      if (tipo !== 'sem') caucao = 0;
-
       return {
         protecao: precoDia * Math.max(1, dias || 1),
         caucao: caucao,

@@ -241,6 +241,15 @@
         });
       }
 
+      if (!caucaoObrigatorioGrupo && totais && Number(totais.caucao) > 0) {
+        var rotCaucao = (totais.caucaoRotulo && String(totais.caucaoRotulo).trim()) || 'Caução';
+        taxasSel.push({
+          rotulo: rotCaucao,
+          preco: String(totais.caucao),
+          tipo: 'caucao_aviso'
+        });
+      }
+
       // Descobre a URL do admin-ajax mesmo se BVGN não estiver definido (ex.: minificador removeu a variável)
       var ajaxUrl = '';
       if (window.BVGN) {

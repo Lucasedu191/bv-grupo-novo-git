@@ -53,6 +53,10 @@ $precoExibicao = function($t, $dados) use ($toFloatBR){
   $qtd  = max(1, (int)($dados['totais']['qtd'] ?? 1));
   $tipoItem = strtolower($t['tipo'] ?? '');
 
+  if ($tipoItem === 'caucao_aviso') {
+    return ($p > 0) ? $p : (float)($dados['totais']['caucao'] ?? 0);
+  }
+
   if ($tipoItem === 'caucao_obrigatorio') {
     return $p;
   }
@@ -110,6 +114,7 @@ if ($tipoMain === 'mensal') {
 // Quebra as taxas em grupos para exibir no "Detalhes"
 $taxasAll   = $dados['taxas'] ?? [];
 $caucaoObrigatorioItem = null;
+$caucaoAvisoItem = null;
 $taxasFiltradas = [];
 foreach ($taxasAll as $t) {
   $tipoLinha   = strtolower($t['tipo'] ?? '');
@@ -118,6 +123,12 @@ foreach ($taxasAll as $t) {
   if ($tipoLinha === 'caucao_obrigatorio') {
     if ($caucaoObrigatorioItem === null) {
       $caucaoObrigatorioItem = $t;
+    }
+    continue;
+  }
+  if ($tipoLinha === 'caucao_aviso') {
+    if ($caucaoAvisoItem === null) {
+      $caucaoAvisoItem = $t;
     }
     continue;
   }
@@ -283,6 +294,11 @@ $wmUrl   = $logoUrl; // marca d’água central
                 Sua pré-reserva tem 30 dias ou mais. Conte com toda a economia, autonomia e flexibilidade do Aluguel Mensal.
               </em></div>
             <?php endif; ?>
+            <?php if ($caucaoValorAviso > 0): ?>
+              <div style="margin-top: 3px;">
+                Caução: R$ <?= number_format($caucaoValorAviso, 2, ',', '.') ?> (aviso; não incluso no total).
+              </div>
+            <?php endif; ?>
           </div>
         </div>
       </td>
@@ -302,6 +318,16 @@ $wmUrl   = $logoUrl; // marca d’água central
         if (!$caucaoItem && preg_match('/cau[cç][aã]o/i', $r))   $caucaoItem = $t;
         if ($protItem && $caucaoItem) break;
       }
+      if (!$caucaoItem && $caucaoAvisoItem) {
+        $caucaoItem = $caucaoAvisoItem;
+      }
+      if (!$caucaoItem && ($dados['totais']['caucao'] ?? 0) > 0) {
+        $caucaoItem = [
+          'rotulo' => $dados['totais']['caucao_rotulo'] ?? 'Caução',
+          'preco'  => $dados['totais']['caucao'] ?? 0,
+          'tipo'   => 'caucao_aviso'
+        ];
+      }
 
       // rótulo/valor da proteção
       if ($tipo === 'mensal') {
@@ -315,6 +341,15 @@ $wmUrl   = $logoUrl; // marca d’água central
           $protLabel = 'Proteção';
           $protValor = null;
         }
+      }
+
+      $caucaoValorAviso = (float)($dados['totais']['caucao'] ?? 0);
+      $caucaoRotuloAviso = trim((string)($dados['totais']['caucao_rotulo'] ?? ''));
+      if ($caucaoValorAviso <= 0 && $caucaoItem) {
+        $caucaoValorAviso = (float)($caucaoItem['preco'] ?? 0);
+      }
+      if ($caucaoRotuloAviso === '' && $caucaoItem) {
+        $caucaoRotuloAviso = (string)($caucaoItem['rotulo'] ?? '');
       }
     ?>
 
@@ -538,6 +573,13 @@ $wmUrl   = $logoUrl; // marca d’água central
             <td>R$ <?= number_format($valorItem, 2, ',', '.') ?></td>
           </tr>
         <?php endforeach; ?>
+
+        <?php if ($caucaoValorAviso > 0): ?>
+          <tr>
+            <td>Caução (aviso - não incluso no total)</td>
+            <td>R$ <?= number_format($caucaoValorAviso, 2, ',', '.') ?></td>
+          </tr>
+        <?php endif; ?>
 
         <tr class="total">
           <td>Total Estimado</td>

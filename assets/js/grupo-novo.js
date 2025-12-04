@@ -33,6 +33,10 @@ function dateToISO(d){
   return `${y}-${m}-${dd}`;
 }
   function numero(v){ return Number(String(v).replace(',', '.')) || 0; }
+  function formatBR(v){
+    const n = Number(v) || 0;
+    return n.toFixed(2).replace('.', ',');
+  }
 
   // ====== NOVO: helpers de regras/datas ======
   function getTipo($cx){
@@ -120,6 +124,8 @@ function calcular($cx){
     // soma taxas
     let taxas = 0;
     let tarifaExtra = { extra: 0, detalhes: [] };
+    let caucaoAviso = 0;
+    let caucaoRotulo = '';
 
     // 1. Proteção (radio) — baseado no atributo data-preco-dia (apenas no diário)
     const $prot = $cx.find('input[name="bvgn_protecao"]:checked');
@@ -132,23 +138,25 @@ function calcular($cx){
 
       const diasReferencia = (tipo === 'diario') ? qtd : 1;
       const valorProtDias = preco * diasReferencia;
-      const valorTotalProt = valorProtDias + ((tipo === 'diario' && caucao > 0) ? caucao : 0);
 
-      $prot.attr('data-preco-total', valorTotalProt); // usado ao enviar dados
+      if (caucao > 0) {
+        caucaoAviso = caucao;
+        caucaoRotulo = `Caução com proteção: R$ ${formatBR(caucao)}`;
+      }
+
+      $prot.attr('data-preco-total', valorProtDias); // usado ao enviar dados
 
       taxas += valorProtDias;
-      if (tipo === 'diario' && caucao > 0) {
-        taxas += caucao;
-      }
 
       const diasLabel = tipo === 'diario'
         ? `${qtd} dia${qtd > 1 ? 's' : ''}`
         : '30 dias';
-      const unitBR    = preco.toFixed(2).replace('.', ',');
-      const totalBR   = valorProtDias.toFixed(2).replace('.', ',');
+      const unitBR    = formatBR(preco);
+      const totalBR   = formatBR(valorProtDias);
+      const caucaoTxt = caucao > 0 ? ` | Caução R$ ${formatBR(caucao)}` : '';
       const rotuloProt = tipo === 'diario'
-        ? `${nomeProt} - ${diasLabel} - R$ ${unitBR} - total R$ ${totalBR}`
-        : `${nomeProt} - R$ ${unitBR}`;
+        ? `${nomeProt} - ${diasLabel} - R$ ${unitBR} - total R$ ${totalBR}${caucaoTxt}`
+        : `${nomeProt} - R$ ${unitBR}${caucaoTxt}`;
 
       if ($cx.find('#bvgn-taxas-itens').length) {
         $cx.find('#bvgn-taxas-itens').append(`<li>${rotuloProt}</li>`);
@@ -157,15 +165,24 @@ function calcular($cx){
 
     // taxas selecionadas (checkbox)
     $cx.find('.bvgn-taxa input[type=checkbox]:checked').each(function(){
-      const rotulo = String($(this).data('rotulo') || '').toLowerCase();
+      const rotuloOriginal = String($(this).data('rotulo') || '');
+      const rotulo = rotuloOriginal.toLowerCase();
       const preco  = numero($(this).data('preco'));
       const isDiaria = rotulo.includes('(diaria)');
       const isCaucao = /cau[cç][aã]o/.test(rotulo);
 
+      if (isCaucao) {
+        if (caucaoAviso <= 0 && preco > 0) {
+          caucaoAviso = preco;
+          caucaoRotulo = rotuloOriginal || 'Caução';
+        }
+        return;
+      }
+
       if (tipo === 'diario') {
         taxas += isDiaria ? (preco * qtd) : preco;
       } else {
-        if (!isCaucao) taxas += isDiaria ? (preco * 30) : preco;
+        taxas += isDiaria ? (preco * 30) : preco;
       }
     });
 
@@ -177,8 +194,9 @@ function calcular($cx){
       const isCaucao = /cau[cç][aã]o/.test(rotulo) || $el.data('tipo') === 'caucao';
 
       if (isCaucao) {
-        if (tipo === 'diario') {
-          taxas += preco;
+        if (caucaoAviso <= 0 && preco > 0) {
+          caucaoAviso = preco;
+          caucaoRotulo = rotulo || 'Caução';
         }
       } else {
         taxas += preco;
@@ -227,6 +245,17 @@ function calcular($cx){
     $cx.find('.bvgn-taxas').show();
     $cx.find('#bvgn-taxas').text(taxas.toFixed(2).replace('.', ','));
     $cx.find('#bvgn-taxas-raw').val(taxas);
+
+    // Caução como aviso (não entra no total)
+    $cx.find('#bvgn-caucao-raw').val(caucaoAviso);
+    if (caucaoAviso > 0) {
+      const rot = caucaoRotulo || `Caução: R$ ${formatBR(caucaoAviso)}`;
+      $cx.find('.bvgn-caucao-aviso').show();
+      $cx.find('#bvgn-caucao-view').text(rot);
+    } else {
+      $cx.find('.bvgn-caucao-aviso').hide();
+      $cx.find('#bvgn-caucao-view').text('');
+    }
 
     // Tarifa dinamica: exibe só se configurada para resumo
     if (typeof totalDynamic !== 'undefined') {
@@ -334,7 +363,8 @@ if ($var.length) {
       const diasLabel = `${qtd} dia${qtd > 1 ? 's' : ''}`;
       const unitBR  = precoDia.toFixed(2).replace('.', ',');
       const totalBR = valorProtDias.toFixed(2).replace('.', ',');
-      const rotuloProt = `${nomeProt} — ${diasLabel} × R$ ${unitBR} — total R$ ${totalBR}`;
+      const caucaoTxt = caucaoAviso > 0 ? ` | Caução R$ ${formatBR(caucaoAviso)}` : '';
+      const rotuloProt = `${nomeProt} — ${diasLabel} × R$ ${unitBR} — total R$ ${totalBR}${caucaoTxt}`;
       $cx.find('.bvgn-protecao').show();
       $cx.find('#bvgn-protecao-view').text(rotuloProt);
     } else {
@@ -350,6 +380,7 @@ if ($var.length) {
     $cx.find('.bvgn-taxa input[type=checkbox]:checked').each(function(){
       const rotulo = String($(this).data('rotulo') || '').trim();
       const preco = numero($(this).data('preco'));
+      if (/cau[cç][aã]o/i.test(rotulo)) return;
       if (rotulo) {
         // Para plano diário, padronizar exibindo "valor x dias" nos opcionais por dia
         if (tipo === 'diario' && (/(condutor|cadeirinh)/i.test(rotulo) || /\(diaria\)/i.test(rotulo))) {
@@ -365,10 +396,16 @@ if ($var.length) {
     $cx.find('.bvgn-taxa-fixa-input').each(function(){
       const rotulo = String($(this).data('rotulo') || '').trim();
       const preco = numero($(this).data('preco'));
+      if (/cau[cç][aã]o/i.test(rotulo)) return;
       if (rotulo) {
-        opcionais.push(`${rotulo} — R$ ${preco.toFixed(2).replace('.', ',')}`);
+        opcionais.push(`${rotulo} – R$ ${preco.toFixed(2).replace('.', ',')}`);
       }
     });
+
+    if (caucaoAviso > 0) {
+      const rot = caucaoRotulo || 'Caução';
+      opcionais.push(`${rot} (pagamento em garantia)`);
+    }
 
     if (opcionais.length > 0) {
       $cx.find('.bvgn-opcionais').show();
@@ -378,7 +415,7 @@ if ($var.length) {
       $cx.find('#bvgn-opcionais-view').text('');
     }
 
-    $cx.data('bvgnTotais', { base, taxas, dynamicExtra: Number(totalDynamic || 0), dynamicDetalhes: tarifaExtra.detalhes || [], qtd, subtotal, total: totalRounded, tipo });
+    $cx.data('bvgnTotais', { base, taxas, dynamicExtra: Number(totalDynamic || 0), dynamicDetalhes: tarifaExtra.detalhes || [], qtd, subtotal, total: totalRounded, tipo, caucao: caucaoAviso, caucaoRotulo });
 
     // Ajustar nome do rótulo lateral de "Serviços opcionais" no resumo
     // Ajustar títulos conforme o tipo de plano
