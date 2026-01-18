@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const fimISO = getISOValue(fimEl);
         const inicio = new Date(inicioISO);
         const fim = new Date(fimISO);
-        const local = document.getElementById('bvgn-cabecalho-local').textContent || 'BV Locadora, Rua Coronel Mota, 629';
+        const local = document.getElementById('bvgn-cabecalho-local').textContent || 'BV Locadora, Avenida Brigadeiro Eduardo Gomes, 3571';
 
         if (!inicioISO || !fimISO) {
           alert('Preencha as duas datas.');
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const fimISO = getISOValue(fimEl);
         const inicio = new Date(inicioISO);
         const fim = new Date(fimISO);
-        const local = (localEl && localEl.textContent) ? localEl.textContent : 'BV Locadora, Rua Coronel Mota, 629';
+        const local = (localEl && localEl.textContent) ? localEl.textContent : 'BV Locadora, Avenida Brigadeiro Eduardo Gomes, 3571';
 
         if (!inicioISO || !fimISO) { alert('Preencha as duas datas.'); return; }
         const dias = (fim - inicio) / 86400000;

@@ -3,7 +3,7 @@
     <label>Local de Retirada</label>
     <div class="bvgn-campo-disabled" id="bvgn-cabecalho-local">
       Boa Vista - RR
-      <!-- <div style="font-size: 0.85em; color: #555;">Rua Coronel Mota, 629</div> -->
+      <!-- <div style="font-size: 0.85em; color: #555;">Avenida Brigadeiro Eduardo Gomes, 3571</div> -->
     </div>
   </div>
 
