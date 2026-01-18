@@ -176,7 +176,7 @@ $wmUrl   = $logoUrl; // marca d’água central
       <td style="padding:0; font-size:10.5px; line-height:1.28; color:#222; text-align:left;">
         <strong>A. F. COMERCIO E SERVICOS LTDA</strong><br>
         CNPJ: 31.315.055/0001-14<br>
-        R. Cel. Mota, Centro, 629 — Boa Vista/RR — CEP: 69301-120<br>
+        Avenida Brigadeiro Eduardo Gomes, 3571, Mecejana — CEP: 69304-015<br>
         TEL: (95) 98102-2395 — E-mail: bvlocadora@outlook.com
       </td>
     </tr>
