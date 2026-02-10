@@ -136,3 +136,14 @@
 
 
 /* fim ajuste da mensagem de alerta nas datas incorretas */
+
+.bvgn-date-feedback {
+  display: none;
+  margin-top: 6px;
+  font-size: 0.875rem;
+  color: #b45309;
+}
+
+.bvgn-date-feedback.on {
+  display: block;
+}

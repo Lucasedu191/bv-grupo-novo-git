@@ -276,3 +276,14 @@ body.single-product .bvgn-agendamento-form--mobile { display: none !important; }
 .elementor-2731 .elementor-element.elementor-element-8bb71d9 {
     padding: 0px 70px 0px 70px !important;
 }
+
+.bvgn-date-feedback {
+  display: none;
+  margin-top: 6px;
+  font-size: 0.875rem;
+  color: #b45309;
+}
+
+.bvgn-date-feedback.on {
+  display: block;
+}
