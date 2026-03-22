@@ -142,7 +142,7 @@ if ($caucaoObrigatorioItem) {
   array_unshift($opcionais, $caucaoObrigatorioItem);
 }
 
-$logoUrl = 'https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png'; // topo
+$logoUrl = 'https://bvlocadora.com.br/wp-content/uploads/2019/01/WhatsApp-Image-2026-03-20-at-18.50.26.png'; // topo
 $wmUrl   = $logoUrl; // marca d’água central
 ?>
 <!DOCTYPE html>
@@ -155,7 +155,7 @@ $wmUrl   = $logoUrl; // marca d’água central
 
 <!-- Marca d’água full-page centralizada -->
 <div class="marca-dagua">
-  <img src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png" alt="">
+  <img src="<?= esc_url($wmUrl) ?>" alt="">
 </div>
 
 
@@ -165,7 +165,7 @@ $wmUrl   = $logoUrl; // marca d’água central
     <tr valign="middle">
       <!-- LOGO -->
       <td width="88" style="padding:0 8px 0 0;">
-        <img src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png"
+        <img src="<?= esc_url($logoUrl) ?>"
              alt="BV Locadora" style="display:block;height:58px;width:auto;">
       </td>
 

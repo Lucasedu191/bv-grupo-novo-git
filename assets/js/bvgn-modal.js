@@ -67,7 +67,7 @@
               '@media (prefers-color-scheme: dark){body{color:#e5e7eb;background:#0b1120}.spin{border-color:#1f2937;border-top-color:#25d366}}' +
             '</style></head><body>' +
               '<div class="wrap">' +
-                '<img class="logo" src="https://bvlocadora.com.br/wp-content/uploads/2025/07/transp.png" alt="BV Locadora">' +
+                '<img class="logo" src="https://bvlocadora.com.br/wp-content/uploads/2019/01/WhatsApp-Image-2026-03-20-at-18.50.26.png" alt="BV Locadora">' +
                 '<div class="spin" aria-hidden="true"></div>' +
                 '<p>Redirecionando para o WhatsApp…</p>' +
               '</div>' +
