@@ -10,7 +10,7 @@ class BVGN_ApiRest {
     register_rest_route('bv/v1', '/veiculos', [
       'methods'  => WP_REST_Server::READABLE,
       'callback' => [__CLASS__, 'get_veiculos'],
-      'permission_callback' => '__return_true',
+      'permission_callback' => [__CLASS__, 'authorize_request'],
       'args' => [
         'page' => [
           'type' => 'integer',
@@ -28,7 +28,7 @@ class BVGN_ApiRest {
     register_rest_route('bv/v1', '/veiculos/(?P<id>\d+)/regras', [
       'methods'  => WP_REST_Server::READABLE,
       'callback' => [__CLASS__, 'get_regras_veiculo'],
-      'permission_callback' => '__return_true',
+      'permission_callback' => [__CLASS__, 'authorize_request'],
       'args' => [
         'id' => [
           'required' => true,
@@ -50,6 +50,57 @@ class BVGN_ApiRest {
       );
     }
     return true;
+  }
+
+  // Valida Bearer token para acesso aos endpoints REST.
+  public static function authorize_request(WP_REST_Request $request) {
+    $expected = self::get_expected_token();
+    if ($expected === '') {
+      return new WP_Error(
+        'bvgn_token_nao_configurado',
+        'Token da API não configurado.',
+        ['status' => 401]
+      );
+    }
+
+    $auth = $request->get_header('authorization');
+    if (!$auth && isset($_SERVER['HTTP_AUTHORIZATION'])) {
+      $auth = wp_unslash($_SERVER['HTTP_AUTHORIZATION']);
+    }
+
+    $auth = is_string($auth) ? trim($auth) : '';
+    if ($auth === '' || stripos($auth, 'Bearer ') !== 0) {
+      return new WP_Error(
+        'bvgn_token_ausente',
+        'Authorization Bearer token é obrigatório.',
+        ['status' => 401]
+      );
+    }
+
+    $provided = trim(substr($auth, 7));
+    if ($provided === '' || !hash_equals($expected, $provided)) {
+      return new WP_Error(
+        'bvgn_token_invalido',
+        'Bearer token inválido.',
+        ['status' => 401]
+      );
+    }
+
+    return true;
+  }
+
+  // Fonte simples do token: constante BVGN_API_TOKEN ou option bvgn_api_token.
+  private static function get_expected_token() {
+    if (defined('BVGN_API_TOKEN') && is_string(BVGN_API_TOKEN) && trim(BVGN_API_TOKEN) !== '') {
+      return trim(BVGN_API_TOKEN);
+    }
+
+    $opt = get_option('bvgn_api_token', '');
+    if (is_string($opt) && trim($opt) !== '') {
+      return trim($opt);
+    }
+
+    return '';
   }
 
   public static function get_veiculos(WP_REST_Request $request) {
