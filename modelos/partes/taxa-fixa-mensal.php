@@ -43,8 +43,8 @@ if (class_exists('BVGN_IntegracoesPT') && is_callable(['BVGN_IntegracoesPT','obt
 
 if ($caucao === null || $km === null) {
   $map = [
-    'A' => ['caucao'=>1000.00, 'km'=>0.60],
-    'B' => ['caucao'=>1000.00, 'km'=>0.60],
+    'A' => ['caucao'=>1000.00, 'km'=>0.75],
+    'B' => ['caucao'=>1000.00, 'km'=>0.75],
     'C' => ['caucao'=>1500.00, 'km'=>0.60],
     'D' => ['caucao'=>1500.00, 'km'=>0.60],
     'E' => ['caucao'=>2500.00, 'km'=>1.00],
