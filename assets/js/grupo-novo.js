@@ -103,7 +103,7 @@ function dateToISO(d){
   }
 
   function toggleBotaoCotacao($cx, habilitado){
-    const $btn = $cx.find('.bvgn-botao-cotacao');
+    const $btn = $cx.find('.bvgn-botao-cotacao, .js-bvgn-open-modal');
     $btn.prop('disabled', !habilitado)
       .attr('disabled', habilitado ? null : 'disabled')
       .attr('aria-disabled', habilitado ? 'false' : 'true')
