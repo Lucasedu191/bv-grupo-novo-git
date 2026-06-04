@@ -105,7 +105,10 @@ function dateToISO(d){
   function toggleBotaoCotacao($cx, habilitado){
     const $btn = $cx.find('.bvgn-botao-cotacao');
     $btn.prop('disabled', !habilitado)
+      .attr('disabled', habilitado ? null : 'disabled')
       .attr('aria-disabled', habilitado ? 'false' : 'true')
+      .attr('tabindex', habilitado ? '0' : '-1')
+      .css('pointer-events', habilitado ? '' : 'none')
       .toggleClass('is-disabled', !habilitado);
   }
 

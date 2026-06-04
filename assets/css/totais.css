@@ -72,6 +72,13 @@
   max-width: 480px;
 }
 
+.bvgn-botao-cotacao[disabled],
+.bvgn-botao-cotacao.is-disabled {
+  opacity: .6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 /* caixa “Taxas: R$ …” destacada mas discreta */
 .bvgn-totais .bvgn-taxas{
   order: 20; /* aparece antes do subtotal */
