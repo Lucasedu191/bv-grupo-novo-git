@@ -74,6 +74,52 @@ function dateToISO(d){
     else { $m.text('').removeClass('on'); }
   }
 
+  function getDiasSelecionados($cx){
+    const inicio = $cx.find('.bvgn-data-inicio').val();
+    const fim = $cx.find('.bvgn-data-fim').val();
+    if (!inicio || !fim) return 0;
+    return diferencaDiasSeguro(inicio, fim);
+  }
+
+  function isPeriodoDiarioMaiorQueLimite($cx){
+    return getTipo($cx) === 'diario' && getDiasSelecionados($cx) > BVGN_MAX_DIAS_ABSOLUTO;
+  }
+
+  function limparResumoFinanceiro($cx){
+    $cx.find('.bvgn-resumo').hide();
+    $cx.find('.bvgn-var, .bvgn-local, .bvgn-dias, .bvgn-protecao, .bvgn-opcionais, .bvgn-dyn, .bvgn-caucao-aviso').hide();
+    $cx.find('#bvgn-var-view, #bvgn-local-view, #bvgn-days-view, #bvgn-protecao-view, #bvgn-opcionais-view, #bvgn-caucao-view').text('');
+    $cx.find('#bvgn-dyn-view').text('R$ 0,00');
+    $cx.find('#bvgn-total-view').text('0,00');
+    $cx.find('#bvgn-days-raw, #bvgn-taxas-raw, #bvgn-subtotal-raw, #bvgn-total-raw, #bvgn-caucao-raw, #bvgn-dynamic-extra-raw').val('0');
+    $cx.find('#bvgn-taxas-itens').empty();
+    $cx.find('.bvgn-taxas-lista').hide();
+    $cx.removeData('bvgnTotais');
+
+    const $prot = $cx.find('input[name="bvgn_protecao"]:checked');
+    if ($prot.length) {
+      $prot.attr('data-preco-total', 0);
+    }
+  }
+
+  function toggleBotaoCotacao($cx, habilitado){
+    const $btn = $cx.find('.bvgn-botao-cotacao');
+    $btn.prop('disabled', !habilitado)
+      .attr('aria-disabled', habilitado ? 'false' : 'true')
+      .toggleClass('is-disabled', !habilitado);
+  }
+
+  function aplicarBloqueioLimiteDiario($cx){
+    limparResumoFinanceiro($cx);
+    toggleBotaoCotacao($cx, false);
+    setMsg($cx, 'O período máximo para agendamentos diários é de 30 dias. Para prazos maiores, <a href="/planos-mensais">acesse os grupos mensais</a>.');
+  }
+
+  function liberarFluxoCotacao($cx){
+    $cx.find('.bvgn-resumo').show();
+    toggleBotaoCotacao($cx, true);
+  }
+
   // Normaliza datas conforme min/max; retorna true se ajustou algo
 function normalizeDatesToRule($cx){
     const tipo = getTipo($cx);
@@ -424,6 +470,7 @@ if ($var.length) {
     const $wrapAg = $cx.find('.bvgn-agendamento');
     if(tipo === 'mensal'){
       if($wrapAg.length){ $wrapAg.show(); setMsg($cx, ''); }
+      liberarFluxoCotacao($cx);
       calcular($cx);
       return;
     } else {
@@ -431,6 +478,12 @@ if ($var.length) {
       normalizeDatesToRule($cx);
     }
 
+    if (isPeriodoDiarioMaiorQueLimite($cx)) {
+      aplicarBloqueioLimiteDiario($cx);
+      return;
+    }
+
+    liberarFluxoCotacao($cx);
     calcular($cx);
 
    
@@ -489,20 +542,23 @@ if ($var.length) {
 
     // se mudou data → normaliza e recalcula
     if($t.is('.bvgn-data-inicio, .bvgn-data-fim')){
-      normalizeDatesToRule($cx);
-      calcular($cx);
+      aplicarRegrasECalcular($cx);
       return;
     }
     
 
     // se mudou data → normaliza e recalcula
     if($t.is('.bvgn-data-inicio, .bvgn-data-fim')){
-      normalizeDatesToRule($cx);
-      calcular($cx);
+      aplicarRegrasECalcular($cx);
       return;
     }
 
     // demais (taxas etc.)
+    if (isPeriodoDiarioMaiorQueLimite($cx)) {
+      aplicarBloqueioLimiteDiario($cx);
+      return;
+    }
+
     calcular($cx);
     updateVarDesc($cx);
   });
@@ -658,6 +714,11 @@ if ($var.length) {
 
     const tipo = getTipo($cx);
     console.log('[BVGN] Tipo selecionado:', tipo);
+
+    if (isPeriodoDiarioMaiorQueLimite($cx)) {
+      aplicarBloqueioLimiteDiario($cx);
+      return;
+    }
 
     
     if (tipo === 'diario') {
