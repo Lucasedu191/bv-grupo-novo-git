@@ -85,23 +85,6 @@ function dateToISO(d){
     return getTipo($cx) === 'diario' && getDiasSelecionados($cx) > BVGN_MAX_DIAS_ABSOLUTO;
   }
 
-  function limparResumoFinanceiro($cx){
-    $cx.find('.bvgn-resumo').hide();
-    $cx.find('.bvgn-var, .bvgn-local, .bvgn-dias, .bvgn-protecao, .bvgn-opcionais, .bvgn-dyn, .bvgn-caucao-aviso').hide();
-    $cx.find('#bvgn-var-view, #bvgn-local-view, #bvgn-days-view, #bvgn-protecao-view, #bvgn-opcionais-view, #bvgn-caucao-view').text('');
-    $cx.find('#bvgn-dyn-view').text('R$ 0,00');
-    $cx.find('#bvgn-total-view').text('0,00');
-    $cx.find('#bvgn-days-raw, #bvgn-taxas-raw, #bvgn-subtotal-raw, #bvgn-total-raw, #bvgn-caucao-raw, #bvgn-dynamic-extra-raw').val('0');
-    $cx.find('#bvgn-taxas-itens').empty();
-    $cx.find('.bvgn-taxas-lista').hide();
-    $cx.removeData('bvgnTotais');
-
-    const $prot = $cx.find('input[name="bvgn_protecao"]:checked');
-    if ($prot.length) {
-      $prot.attr('data-preco-total', 0);
-    }
-  }
-
   function toggleBotaoCotacao($cx, habilitado){
     const $btn = $cx.find('.bvgn-botao-cotacao, .js-bvgn-open-modal');
     $btn.prop('disabled', !habilitado)
@@ -112,15 +95,43 @@ function dateToISO(d){
       .toggleClass('is-disabled', !habilitado);
   }
 
-  function aplicarBloqueioLimiteDiario($cx){
-    limparResumoFinanceiro($cx);
-    toggleBotaoCotacao($cx, false);
+  function exibirAvisoLimiteDiario($cx){
     setMsg($cx, 'O período máximo para agendamentos diários é de 30 dias. Para prazos maiores, <a href="/planos-mensais">acesse os grupos mensais</a>.');
   }
 
   function liberarFluxoCotacao($cx){
     $cx.find('.bvgn-resumo').show();
     toggleBotaoCotacao($cx, true);
+  }
+
+  function selecionarVariacaoPorDias($cx, dias){
+    const $inputs = $cx.find('.bvgn-variacao input[type=radio]');
+    let $exata = null;
+    let $fallback = null;
+
+    $inputs.each(function(){
+      const $input = $(this);
+      const min = parseInt($input.data('min-days') || 1, 10);
+      const max = parseInt($input.data('max-days') || min, 10);
+
+      if (dias >= min && dias <= max) {
+        $exata = $input;
+        return false;
+      }
+
+      if (!$fallback || max > parseInt($fallback.data('max-days') || 0, 10)) {
+        $fallback = $input;
+      }
+    });
+
+    const $selecionada = $exata && $exata.length ? $exata : $fallback;
+    if ($selecionada && $selecionada.length) {
+      $inputs.prop('checked', false);
+      $selecionada.prop('checked', true);
+      return { selecionada: $selecionada, fallback: !($exata && $exata.length) };
+    }
+
+    return { selecionada: null, fallback: false };
   }
 
   // Normaliza datas conforme min/max; retorna true se ajustou algo
@@ -481,13 +492,12 @@ if ($var.length) {
       normalizeDatesToRule($cx);
     }
 
-    if (isPeriodoDiarioMaiorQueLimite($cx)) {
-      aplicarBloqueioLimiteDiario($cx);
-      return;
-    }
-
     liberarFluxoCotacao($cx);
     calcular($cx);
+
+    if (isPeriodoDiarioMaiorQueLimite($cx)) {
+      exibirAvisoLimiteDiario($cx);
+    }
 
    
   }
@@ -557,12 +567,11 @@ if ($var.length) {
     }
 
     // demais (taxas etc.)
-    if (isPeriodoDiarioMaiorQueLimite($cx)) {
-      aplicarBloqueioLimiteDiario($cx);
-      return;
-    }
-
+    liberarFluxoCotacao($cx);
     calcular($cx);
+    if (isPeriodoDiarioMaiorQueLimite($cx)) {
+      exibirAvisoLimiteDiario($cx);
+    }
     updateVarDesc($cx);
   });
 
@@ -577,8 +586,6 @@ if ($var.length) {
       const s = $cx.find('.bvgn-data-inicio').val();
       const e = $cx.find('.bvgn-data-fim').val();
       if (!s || !e) return;
-
-      $cx.find('.bvgn-variacao input[type=radio]').prop('checked', false);
 
       const dias = diferencaDiasSeguro(s, e);
 
@@ -595,8 +602,21 @@ if ($var.length) {
         });
 
       // Tenta encontrar variação compatível com os dias
-      const $inputs = $cx.find('.bvgn-variacao input[type=radio]');
-      let selecionado = false;
+      const resultadoSelecao = selecionarVariacaoPorDias($cx, dias);
+      if (resultadoSelecao.selecionada && resultadoSelecao.selecionada.length) {
+        resultadoSelecao.selecionada.trigger('change');
+      }
+
+      if (!resultadoSelecao.selecionada) {
+        setMsg($cx, `Nenhum plano cobre ${dias} dias. Tente ajustar o perÃ­odo ou acesse os grupos mensais.`);
+      } else if (dias > 30) {
+        exibirAvisoLimiteDiario($cx);
+      } else if (resultadoSelecao.fallback) {
+        setMsg($cx, `Plano base reaproveitado para ${dias} dias.`);
+      } else {
+        setMsg($cx, `Plano selecionado automaticamente para ${dias} dias.`);
+      }
+      return;
 
       $inputs.each(function(){
         const min = parseInt($(this).data('min-days') || 1, 10);
@@ -719,8 +739,7 @@ if ($var.length) {
     console.log('[BVGN] Tipo selecionado:', tipo);
 
     if (isPeriodoDiarioMaiorQueLimite($cx)) {
-      aplicarBloqueioLimiteDiario($cx);
-      return;
+      exibirAvisoLimiteDiario($cx);
     }
 
     
