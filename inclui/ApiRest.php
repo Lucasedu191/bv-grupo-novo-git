@@ -39,6 +39,12 @@ class BVGN_ApiRest {
         ],
       ],
     ]);
+
+    register_rest_route('bv/v1', '/tarifas-dinamicas', [
+      'methods'  => WP_REST_Server::READABLE,
+      'callback' => [__CLASS__, 'get_tarifas_dinamicas'],
+      'permission_callback' => [__CLASS__, 'authorize_request'],
+    ]);
   }
 
   private static function assert_woocommerce() {
@@ -171,6 +177,23 @@ class BVGN_ApiRest {
       'caucao_diaria' => $protecao_diaria['caucao_diaria'],
       'caucao_mensal' => $caucao_mensal,
       'tarifa_dinamica' => $tarifas_dinamicas,
+    ]);
+  }
+
+  public static function get_tarifas_dinamicas(WP_REST_Request $request) {
+    if (!class_exists('BVGN_DynamicTariffs') || !is_callable(['BVGN_DynamicTariffs', 'get_rules'])) {
+      return new WP_Error(
+        'bvgn_tarifas_dinamicas_indisponiveis',
+        'Cadastro de tarifas dinâmicas indisponível.',
+        ['status' => 503]
+      );
+    }
+
+    $rules = BVGN_DynamicTariffs::get_rules();
+
+    return rest_ensure_response([
+      'total' => count($rules),
+      'rules' => array_map([__CLASS__, 'format_dynamic_tariff_rule'], $rules),
     ]);
   }
 
@@ -441,6 +464,25 @@ class BVGN_ApiRest {
     }
 
     return $out;
+  }
+
+  private static function format_dynamic_tariff_rule($rule) {
+    if (!is_array($rule)) return null;
+
+    return [
+      'tipo' => sanitize_text_field($rule['type'] ?? ''),
+      'percentual' => floatval($rule['percent'] ?? 0),
+      'rotulo' => sanitize_text_field($rule['label'] ?? ''),
+      'descricao' => sanitize_text_field($rule['desc'] ?? ''),
+      'prioridade' => intval($rule['priority'] ?? 0),
+      'dia_semana' => intval($rule['weekday'] ?? 0),
+      'data_inicio' => sanitize_text_field($rule['start_date'] ?? ''),
+      'data_fim' => sanitize_text_field($rule['end_date'] ?? ''),
+      'grupos' => isset($rule['groups']) && is_array($rule['groups']) ? array_values(array_map('sanitize_text_field', $rule['groups'])) : [],
+      'ativa' => !empty($rule['active']),
+      'exibir_resumo' => !empty($rule['show_resumo']),
+      'exibir_pdf' => !empty($rule['show_pdf']),
+    ];
   }
 
   private static function resolve_tipo_por_categoria($produto_id) {

@@ -2,7 +2,7 @@
 if (!defined('ABSPATH')) exit;
 
 /**
- * Gerencia as regras de Tarifa Dinâmica (admin + exposição para o front).
+ * Gerencia as regras de Tarifa DinÃ¢mica (admin + exposiÃ§Ã£o para o front).
  */
 class BVGN_DynamicTariffs {
   const OPTION_KEY = 'bvgn_dynamic_tariffs';
@@ -17,8 +17,8 @@ class BVGN_DynamicTariffs {
   public static function register_menu() {
     add_submenu_page(
       'edit.php?post_type=bvgn_cotacao',
-      'Tarifa Dinâmica BV',
-      'Tarifa Dinâmica',
+      'Tarifa DinÃ¢mica BV',
+      'Tarifa DinÃ¢mica',
       'manage_options',
       'bvgn-tarifa-dinamica',
       [__CLASS__, 'render_page']
@@ -27,14 +27,14 @@ class BVGN_DynamicTariffs {
 
   public static function render_page() {
     if (!current_user_can('manage_options')) {
-      wp_die('Sem permissão.');
+      wp_die('Sem permissÃ£o.');
     }
 
     $rules = self::get_rules();
     ?>
     <div class="wrap">
-      <h1>Tarifa Dinâmica</h1>
-      <p>Cadastre regras de acréscimo percentual por dia da semana, datas específicas ou intervalos. A regra com maior prioridade vence no dia.</p>
+      <h1>Tarifa DinÃ¢mica</h1>
+      <p>Cadastre regras de acrÃ©scimo percentual por dia da semana, datas especÃ­ficas ou intervalos. A regra com maior prioridade vence no dia.</p>
       <?php if (!empty($_GET['atualizado'])): ?>
         <div class="notice notice-success is-dismissible"><p>Regras salvas com sucesso.</p></div>
       <?php endif; ?>
@@ -48,17 +48,17 @@ class BVGN_DynamicTariffs {
             <tr>
               <th style="width:120px;">Tipo</th>
               <th style="width:70px;">% Extra</th>
-              <th>Nome/Descrição</th>
-              <th style="width:200px;">Observação curta</th>
+              <th>Nome/DescriÃ§Ã£o</th>
+              <th style="width:200px;">ObservaÃ§Ã£o curta</th>
               <th style="width:90px;">Prioridade</th>
               <th style="width:120px;">Dia da semana</th>
               <th style="width:140px;">Data inicial</th>
               <th style="width:140px;">Data final</th>
-              <th style="width:140px;">Grupos diários</th>
+              <th style="width:140px;">Grupos diÃ¡rios</th>
               <th style="width:80px;">Ativa</th>
               <th style="width:100px;">Exibir resumo</th>
               <th style="width:80px;">Exibir PDF</th>
-              <th style="width:70px;">Ação</th>
+              <th style="width:70px;">AÃ§Ã£o</th>
             </tr>
           </thead>
           <tbody id="bvgn-rows">
@@ -72,7 +72,7 @@ class BVGN_DynamicTariffs {
                 <td>
                   <select name="rules[<?php echo esc_attr($i); ?>][type]">
                     <option value="week_day" <?php selected($r['type'],'week_day'); ?>>Dia da semana</option>
-                    <option value="single_date" <?php selected($r['type'],'single_date'); ?>>Data específica</option>
+                    <option value="single_date" <?php selected($r['type'],'single_date'); ?>>Data especÃ­fica</option>
                     <option value="date_range" <?php selected($r['type'],'date_range'); ?>>Intervalo de datas</option>
                   </select>
                 </td>
@@ -84,7 +84,7 @@ class BVGN_DynamicTariffs {
                 </td>
                 <td>
                   <input type="text" name="rules[<?php echo esc_attr($i); ?>][desc]" value="<?php echo esc_attr($r['desc'] ?? ''); ?>" style="width:100%;" maxlength="120" placeholder="Ex.: Alta demanda de fds">
-                  <small style="color:#666;">até 120 caracteres</small>
+                  <small style="color:#666;">atÃ© 120 caracteres</small>
                 </td>
                 <td>
                   <input type="number" name="rules[<?php echo esc_attr($i); ?>][priority]" value="<?php echo esc_attr($r['priority']); ?>" style="width:100%;">
@@ -92,7 +92,7 @@ class BVGN_DynamicTariffs {
                 <td>
                   <select name="rules[<?php echo esc_attr($i); ?>][weekday]">
                     <?php
-                      $dias = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+                      $dias = ['Dom','Seg','Ter','Qua','Qui','Sex','SÃ¡b'];
                       foreach ($dias as $idx=>$dia): ?>
                         <option value="<?php echo esc_attr($idx); ?>" <?php selected((int)$r['weekday'],$idx); ?>><?php echo esc_html($dia); ?></option>
                     <?php endforeach; ?>
@@ -141,7 +141,7 @@ class BVGN_DynamicTariffs {
               <td>
                 <select name="rules[${idx}][type]">
                   <option value="week_day">Dia da semana</option>
-                  <option value="single_date">Data específica</option>
+                  <option value="single_date">Data especÃ­fica</option>
                   <option value="date_range">Intervalo de datas</option>
                 </select>
               </td>
@@ -149,13 +149,13 @@ class BVGN_DynamicTariffs {
               <td><input type="text" name="rules[${idx}][label]" value="" style="width:100%;"></td>
               <td>
                 <input type="text" name="rules[${idx}][desc]" value="" style="width:100%;" maxlength="120" placeholder="Frase curta">
-                <small style="color:#666;">até 120 caracteres</small>
+                <small style="color:#666;">atÃ© 120 caracteres</small>
               </td>
               <td><input type="number" name="rules[${idx}][priority]" value="0" style="width:100%;"></td>
               <td>
                 <select name="rules[${idx}][weekday]">
                   <option value="0">Dom</option><option value="1">Seg</option><option value="2">Ter</option>
-                  <option value="3">Qua</option><option value="4">Qui</option><option value="5">Sex</option><option value="6">Sáb</option>
+                  <option value="3">Qua</option><option value="4">Qui</option><option value="5">Sex</option><option value="6">SÃ¡b</option>
                 </select>
               </td>
               <td><input type="date" name="rules[${idx}][start_date]" value=""></td>
@@ -194,24 +194,32 @@ class BVGN_DynamicTariffs {
   }
 
   public static function save() {
-    if (!current_user_can('manage_options')) wp_die('Sem permissão.');
+    if (!current_user_can('manage_options')) wp_die('Sem permissÃ£o.');
     check_admin_referer('bvgn_save_tariffs');
 
     $raw = $_POST['rules'] ?? [];
-    $sanitized = [];
-    if (is_array($raw)) {
-      foreach ($raw as $r) {
-        $s = self::sanitize_rule($r);
-        if ($s) $sanitized[] = $s;
-      }
-    }
-    update_option(self::OPTION_KEY, $sanitized);
+    self::replace_rules($raw);
 
     wp_redirect(add_query_arg('atualizado', '1', admin_url('edit.php?post_type=bvgn_cotacao&page=bvgn-tarifa-dinamica')));
     exit;
   }
 
-  private static function sanitize_rule($r) {
+  public static function replace_rules($raw_rules) {
+    $sanitized = [];
+    if (is_array($raw_rules)) {
+      foreach ($raw_rules as $r) {
+        $s = self::sanitize_rule($r);
+        if ($s) $sanitized[] = $s;
+      }
+    }
+
+    $sanitized = self::sort_rules($sanitized);
+    update_option(self::OPTION_KEY, $sanitized);
+
+    return $sanitized;
+  }
+
+  public static function sanitize_rule($r) {
     $type = isset($r['type']) ? $r['type'] : 'week_day';
     if (!in_array($type, ['week_day','single_date','date_range'], true)) $type = 'week_day';
 
@@ -227,7 +235,6 @@ class BVGN_DynamicTariffs {
     $weekday  = isset($r['weekday']) ? intval($r['weekday']) : 0;
     $start    = sanitize_text_field($r['start_date'] ?? '');
     $end      = sanitize_text_field($r['end_date'] ?? '');
-    // grupos pode vir como string "A,B" ou array ['A','B']; tratamos ambos
     $groupsInput = $r['groups'] ?? '';
     if (is_array($groupsInput)) {
       $groupsRawList = $groupsInput;
@@ -244,16 +251,16 @@ class BVGN_DynamicTariffs {
     $active     = !empty($r['active']);
 
     return [
-      'type'       => $type,
-      'percent'    => $percent,
-      'label'      => $label ?: ucfirst($type),
-      'desc'       => $descRaw,
-      'priority'   => $priority,
-      'weekday'    => $weekday,
-      'start_date' => $start,
-      'end_date'   => $end,
-      'groups'     => $groups,
-      'active'     => $active,
+      'type'        => $type,
+      'percent'     => $percent,
+      'label'       => $label ?: ucfirst($type),
+      'desc'        => $descRaw,
+      'priority'    => $priority,
+      'weekday'     => $weekday,
+      'start_date'  => $start,
+      'end_date'    => $end,
+      'groups'      => $groups,
+      'active'      => $active,
       'show_resumo' => $showResumo,
       'show_pdf'    => $showPdf,
     ];
@@ -269,11 +276,17 @@ class BVGN_DynamicTariffs {
       if ($s) $clean[] = $s;
     }
 
-    usort($clean, function($a, $b){
+    return self::sort_rules($clean);
+  }
+
+  public static function sort_rules($rules) {
+    if (!is_array($rules)) return [];
+
+    usort($rules, function($a, $b){
       return intval($b['priority']) <=> intval($a['priority']);
     });
 
-    return $clean;
+    return array_values($rules);
   }
 
   public static function for_js() {
