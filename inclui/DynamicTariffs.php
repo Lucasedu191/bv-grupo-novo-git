@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) exit;
  */
 class BVGN_DynamicTariffs {
   const OPTION_KEY = 'bvgn_dynamic_tariffs';
+  const NEXT_ID_OPTION_KEY = 'bvgn_dynamic_tariffs_next_id';
 
   public static function init() {
     if (is_admin()) {
@@ -70,6 +71,7 @@ class BVGN_DynamicTariffs {
             ?>
               <tr>
                 <td>
+                  <input type="hidden" name="rules[<?php echo esc_attr($i); ?>][id]" value="<?php echo esc_attr($r['id'] ?? ''); ?>">
                   <select name="rules[<?php echo esc_attr($i); ?>][type]">
                     <option value="week_day" <?php selected($r['type'],'week_day'); ?>>Dia da semana</option>
                     <option value="single_date" <?php selected($r['type'],'single_date'); ?>>Data especÃ­fica</option>
@@ -139,6 +141,7 @@ class BVGN_DynamicTariffs {
           const tpl = `
             <tr>
               <td>
+                <input type="hidden" name="rules[${idx}][id]" value="">
                 <select name="rules[${idx}][type]">
                   <option value="week_day">Dia da semana</option>
                   <option value="single_date">Data especÃ­fica</option>
@@ -206,9 +209,10 @@ class BVGN_DynamicTariffs {
 
   public static function replace_rules($raw_rules) {
     $sanitized = [];
+    $seen_ids = [];
     if (is_array($raw_rules)) {
       foreach ($raw_rules as $r) {
-        $s = self::sanitize_rule($r);
+        $s = self::sanitize_rule($r, $seen_ids);
         if ($s) $sanitized[] = $s;
       }
     }
@@ -219,9 +223,17 @@ class BVGN_DynamicTariffs {
     return $sanitized;
   }
 
-  public static function sanitize_rule($r) {
+  public static function sanitize_rule($r, &$seen_ids = null) {
     $type = isset($r['type']) ? $r['type'] : 'week_day';
     if (!in_array($type, ['week_day','single_date','date_range'], true)) $type = 'week_day';
+
+    $id = isset($r['id']) ? absint($r['id']) : 0;
+    if ($id <= 0 || (is_array($seen_ids) && in_array($id, $seen_ids, true))) {
+      $id = self::generate_rule_id();
+    }
+    if (is_array($seen_ids)) {
+      $seen_ids[] = $id;
+    }
 
     $percent  = isset($r['percent']) ? floatval($r['percent']) : 0;
     $priority = isset($r['priority']) ? intval($r['priority']) : 0;
@@ -251,6 +263,7 @@ class BVGN_DynamicTariffs {
     $active     = !empty($r['active']);
 
     return [
+      'id'          => $id,
       'type'        => $type,
       'percent'     => $percent,
       'label'       => $label ?: ucfirst($type),
@@ -271,12 +284,18 @@ class BVGN_DynamicTariffs {
     if (!is_array($rules)) $rules = [];
 
     $clean = [];
+    $seen_ids = [];
     foreach ($rules as $r) {
-      $s = self::sanitize_rule($r);
+      $s = self::sanitize_rule($r, $seen_ids);
       if ($s) $clean[] = $s;
     }
 
-    return self::sort_rules($clean);
+    $clean = self::sort_rules($clean);
+    if ($clean !== array_values($rules)) {
+      update_option(self::OPTION_KEY, $clean);
+    }
+
+    return $clean;
   }
 
   public static function sort_rules($rules) {
@@ -293,6 +312,7 @@ class BVGN_DynamicTariffs {
     $list = [];
     foreach (self::get_rules() as $r) {
       $list[] = [
+        'id'        => intval($r['id'] ?? 0),
         'type'      => $r['type'],
         'percent'   => floatval($r['percent']),
         'label'     => $r['label'],
@@ -308,6 +328,25 @@ class BVGN_DynamicTariffs {
       ];
     }
     return $list;
+  }
+
+  private static function generate_rule_id() {
+    $next_id = absint(get_option(self::NEXT_ID_OPTION_KEY, 0));
+
+    if ($next_id <= 0) {
+      $rules = get_option(self::OPTION_KEY, []);
+      $max_id = 0;
+      if (is_array($rules)) {
+        foreach ($rules as $rule) {
+          $rule_id = isset($rule['id']) ? absint($rule['id']) : 0;
+          if ($rule_id > $max_id) $max_id = $rule_id;
+        }
+      }
+      $next_id = $max_id + 1;
+    }
+
+    update_option(self::NEXT_ID_OPTION_KEY, $next_id + 1, false);
+    return $next_id;
   }
 }
 

@@ -449,6 +449,7 @@ class BVGN_ApiRest {
       if (!empty($groups) && !in_array($grupo, $groups, true)) continue;
 
       $out[] = [
+        'id' => intval($r['id'] ?? 0),
         'tipo' => sanitize_text_field($r['type'] ?? ''),
         'percentual' => floatval($r['percent'] ?? 0),
         'rotulo' => sanitize_text_field($r['label'] ?? ''),
@@ -470,6 +471,7 @@ class BVGN_ApiRest {
     if (!is_array($rule)) return null;
 
     return [
+      'id' => intval($rule['id'] ?? 0),
       'tipo' => sanitize_text_field($rule['type'] ?? ''),
       'percentual' => floatval($rule['percent'] ?? 0),
       'rotulo' => sanitize_text_field($rule['label'] ?? ''),
