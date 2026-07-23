@@ -7,6 +7,7 @@ if (!defined('ABSPATH')) exit;
 class BVGN_DynamicTariffs {
   const OPTION_KEY = 'bvgn_dynamic_tariffs';
   const NEXT_ID_OPTION_KEY = 'bvgn_dynamic_tariffs_next_id';
+  const WEBHOOK_URL = 'https://ipaas.ecomtools.com.br/webhook/bv-tarifa-dinamica';
 
   public static function init() {
     if (is_admin()) {
@@ -208,6 +209,7 @@ class BVGN_DynamicTariffs {
   }
 
   public static function replace_rules($raw_rules) {
+    $previous_rules = self::get_rules();
     $sanitized = [];
     $seen_ids = [];
     if (is_array($raw_rules)) {
@@ -219,6 +221,7 @@ class BVGN_DynamicTariffs {
 
     $sanitized = self::sort_rules($sanitized);
     update_option(self::OPTION_KEY, $sanitized);
+    self::dispatch_webhook_events($previous_rules, $sanitized);
 
     return $sanitized;
   }
@@ -328,6 +331,85 @@ class BVGN_DynamicTariffs {
       ];
     }
     return $list;
+  }
+
+  private static function dispatch_webhook_events($previous_rules, $current_rules) {
+    if (!function_exists('wp_remote_post')) return;
+
+    $webhook_url = self::get_webhook_url();
+    if ($webhook_url === '') return;
+
+    $previous_map = [];
+    if (is_array($previous_rules)) {
+      foreach ($previous_rules as $rule) {
+        $rule_id = isset($rule['id']) ? absint($rule['id']) : 0;
+        if ($rule_id > 0) {
+          $previous_map[$rule_id] = self::normalize_rule_for_compare($rule);
+        }
+      }
+    }
+
+    foreach ((array) $current_rules as $rule) {
+      $rule_id = isset($rule['id']) ? absint($rule['id']) : 0;
+      if ($rule_id <= 0) continue;
+
+      $normalized = self::normalize_rule_for_compare($rule);
+      $event = !isset($previous_map[$rule_id]) ? 'created' : 'updated';
+      if ($event === 'updated' && $previous_map[$rule_id] === $normalized) {
+        continue;
+      }
+
+      $payload = self::format_rule_for_api($rule);
+      $payload['event'] = $event;
+      $payload['sent_at'] = current_time('mysql');
+
+      $response = wp_remote_post($webhook_url, [
+        'method' => 'POST',
+        'timeout' => 15,
+        'headers' => [
+          'Content-Type' => 'application/json; charset=utf-8',
+        ],
+        'body' => wp_json_encode($payload),
+      ]);
+
+      if (is_wp_error($response)) {
+        error_log('[BVGN] Falha ao enviar webhook de tarifa dinâmica: ' . $response->get_error_message());
+      }
+    }
+  }
+
+  private static function get_webhook_url() {
+    $url = self::WEBHOOK_URL;
+    if (defined('BVGN_DYNAMIC_TARIFF_WEBHOOK_URL') && is_string(BVGN_DYNAMIC_TARIFF_WEBHOOK_URL) && trim(BVGN_DYNAMIC_TARIFF_WEBHOOK_URL) !== '') {
+      $url = BVGN_DYNAMIC_TARIFF_WEBHOOK_URL;
+    }
+
+    $url = apply_filters('bvgn_dynamic_tariffs_webhook_url', $url);
+    return is_string($url) ? trim($url) : '';
+  }
+
+  private static function normalize_rule_for_compare($rule) {
+    $normalized = self::format_rule_for_api($rule);
+    unset($normalized['event'], $normalized['sent_at']);
+    return $normalized;
+  }
+
+  private static function format_rule_for_api($rule) {
+    return [
+      'id' => intval($rule['id'] ?? 0),
+      'tipo' => sanitize_text_field($rule['type'] ?? ''),
+      'percentual' => floatval($rule['percent'] ?? 0),
+      'rotulo' => sanitize_text_field($rule['label'] ?? ''),
+      'descricao' => sanitize_text_field($rule['desc'] ?? ''),
+      'prioridade' => intval($rule['priority'] ?? 0),
+      'dia_semana' => intval($rule['weekday'] ?? 0),
+      'data_inicio' => sanitize_text_field($rule['start_date'] ?? ''),
+      'data_fim' => sanitize_text_field($rule['end_date'] ?? ''),
+      'grupos' => isset($rule['groups']) && is_array($rule['groups']) ? array_values(array_map('sanitize_text_field', $rule['groups'])) : [],
+      'ativa' => !empty($rule['active']),
+      'exibir_resumo' => !empty($rule['show_resumo']),
+      'exibir_pdf' => !empty($rule['show_pdf']),
+    ];
   }
 
   private static function generate_rule_id() {
