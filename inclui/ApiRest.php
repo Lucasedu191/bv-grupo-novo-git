@@ -445,7 +445,9 @@ class BVGN_ApiRest {
       if (!is_array($r)) continue;
       if (empty($r['active'])) continue;
 
-      $groups = isset($r['groups']) && is_array($r['groups']) ? array_map('sanitize_text_field', $r['groups']) : [];
+      $groups = class_exists('BVGN_DynamicTariffs') && is_callable(['BVGN_DynamicTariffs', 'expand_groups_for_api'])
+        ? BVGN_DynamicTariffs::expand_groups_for_api($r['groups'] ?? [])
+        : (isset($r['groups']) && is_array($r['groups']) ? array_map('sanitize_text_field', $r['groups']) : []);
       if (!empty($groups) && !in_array($grupo, $groups, true)) continue;
 
       $out[] = [
@@ -480,8 +482,12 @@ class BVGN_ApiRest {
       'dia_semana' => intval($rule['weekday'] ?? 0),
       'data_inicio' => sanitize_text_field($rule['start_date'] ?? ''),
       'data_fim' => sanitize_text_field($rule['end_date'] ?? ''),
-      'grupos' => isset($rule['groups']) && is_array($rule['groups']) ? array_values(array_map('sanitize_text_field', $rule['groups'])) : [],
-      'ativa' => !empty($rule['active']),
+      'grupos' => class_exists('BVGN_DynamicTariffs') && is_callable(['BVGN_DynamicTariffs', 'expand_groups_for_api'])
+        ? BVGN_DynamicTariffs::expand_groups_for_api($rule['groups'] ?? [])
+        : (isset($rule['groups']) && is_array($rule['groups']) ? array_values(array_map('sanitize_text_field', $rule['groups'])) : []),
+      'ativa' => class_exists('BVGN_DynamicTariffs') && is_callable(['BVGN_DynamicTariffs', 'is_rule_effectively_active'])
+        ? BVGN_DynamicTariffs::is_rule_effectively_active($rule)
+        : !empty($rule['active']),
       'exibir_resumo' => !empty($rule['show_resumo']),
       'exibir_pdf' => !empty($rule['show_pdf']),
     ];
