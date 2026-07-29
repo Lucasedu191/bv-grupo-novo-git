@@ -56,9 +56,15 @@ class BVGN_DynamicTariffs {
         <?php wp_nonce_field('bvgn_save_tariffs'); ?>
         <input type="hidden" name="action" value="bvgn_save_tariffs" />
 
+        <p style="margin:12px 0;">
+          <button type="button" class="button" id="bvgn-add-row-top">Adicionar regra</button>
+          <button type="submit" class="button button-primary">Salvar regras</button>
+        </p>
+
         <table class="widefat striped" style="margin-top:12px;">
           <thead>
             <tr>
+              <th style="width:80px;">ID</th>
               <th style="width:120px;">Tipo</th>
               <th style="width:70px;">% Extra</th>
               <th>Nome/Descrição</th>
@@ -82,6 +88,9 @@ class BVGN_DynamicTariffs {
               foreach ($rows as $i => $r):
             ?>
               <tr>
+                <td>
+                  #<?php echo esc_html(intval($r['id'] ?? 0)); ?>
+                </td>
                 <td>
                   <input type="hidden" name="rules[<?php echo esc_attr($i); ?>][id]" value="<?php echo esc_attr($r['id'] ?? ''); ?>">
                   <select name="rules[<?php echo esc_attr($i); ?>][type]">
@@ -136,22 +145,19 @@ class BVGN_DynamicTariffs {
           </tbody>
         </table>
 
-        <p style="margin-top:10px;">
-          <button type="button" class="button" id="bvgn-add-row">Adicionar regra</button>
-          <button type="submit" class="button button-primary">Salvar regras</button>
-        </p>
       </form>
     </div>
     <script>
       (function(){
         const tbody = document.getElementById('bvgn-rows');
-        const btnAdd = document.getElementById('bvgn-add-row');
+        const btnAdd = document.getElementById('bvgn-add-row-top');
         if (!tbody || !btnAdd) return;
 
         btnAdd.addEventListener('click', function(){
           const idx = tbody.querySelectorAll('tr').length;
           const tpl = `
             <tr>
+              <td>#novo</td>
               <td>
                 <input type="hidden" name="rules[${idx}][id]" value="">
                 <select name="rules[${idx}][type]">
@@ -193,7 +199,7 @@ class BVGN_DynamicTariffs {
               </td>
               <td><button type="button" class="button link-delete">Remover</button></td>
             </tr>`;
-          tbody.insertAdjacentHTML('beforeend', tpl);
+          tbody.insertAdjacentHTML('afterbegin', tpl);
         });
 
         tbody.addEventListener('click', function(e){
