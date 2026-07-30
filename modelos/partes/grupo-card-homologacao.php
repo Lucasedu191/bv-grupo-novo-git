@@ -17,7 +17,7 @@ $fallback_title = trim((string) ($card['fallback_title'] ?? ''));
   <div
     class="bvgn-hml-card__carousel<?php echo $has_gallery ? ' is-carousel' : ''; ?>"
     data-bvgn-carousel
-    data-interval="4800"
+    data-interval="5600"
     data-card-index="<?php echo esc_attr(intval($card['index'] ?? 0)); ?>"
   >
     <div class="bvgn-hml-card__slides">

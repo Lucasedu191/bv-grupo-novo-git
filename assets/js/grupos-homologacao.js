@@ -16,7 +16,8 @@
     let paused = false;
     let touchStartX = 0;
     let touchDeltaX = 0;
-    const interval = Math.max(3500, Number(root.getAttribute('data-interval')) || 4800);
+    const baseInterval = Math.max(3500, Number(root.getAttribute('data-interval')) || 4800);
+    const interval = window.matchMedia('(max-width: 767px)').matches ? baseInterval + 1200 : baseInterval;
     const stagger = (Number(root.getAttribute('data-card-index')) || 0) * 220;
 
     function render(index) {
