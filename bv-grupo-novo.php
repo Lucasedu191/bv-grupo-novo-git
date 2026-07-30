@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 9.9.106
+ * Version: 9.9.107
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -79,6 +79,7 @@ if (!defined('BVGN_USAR_TEMPLATE')) define('BVGN_USAR_TEMPLATE', false);
 
 require_once BVGN_CAMINHO.'inclui/ShortcodesPT.php';
 require_once BVGN_CAMINHO.'inclui/RenderPT.php';
+require_once BVGN_CAMINHO.'inclui/HomologacaoGroups.php';
 require_once BVGN_CAMINHO.'inclui/GerarArquivoEndpoint.php';
 require_once BVGN_CAMINHO.'inclui/IntegracoesPT.php';
 require_once BVGN_CAMINHO.'inclui/ExportacaoCSV.php';
@@ -335,6 +336,10 @@ add_action('wp_enqueue_scripts', function () {
 
   $tem_grupo = $has_post && has_shortcode($post->post_content, 'grupo_novo');
   $tem_popup = $has_post && has_shortcode($post->post_content, 'gn_botao_cotacao_popup');
+  $tem_homologacao = $has_post && (
+    has_shortcode($post->post_content, 'bvgn_grupos_homologacao') ||
+    has_shortcode($post->post_content, 'grupo_novo_hml')
+  );
   $e_produto = function_exists('is_product') && is_product();
 
   if ( $tem_grupo || $tem_popup || $e_produto ) {
@@ -459,6 +464,23 @@ add_action('wp_enqueue_scripts', function () {
     ]);
 
    
+  }
+
+  if ($tem_homologacao) {
+    wp_enqueue_style(
+      'bvgn-homologacao-css',
+      BVGN_URL . 'assets/css/grupos-homologacao.css',
+      [],
+      file_exists(BVGN_DIR . 'assets/css/grupos-homologacao.css') ? filemtime(BVGN_DIR . 'assets/css/grupos-homologacao.css') : '1.0.0'
+    );
+
+    wp_enqueue_script(
+      'bvgn-homologacao-js',
+      BVGN_URL . 'assets/js/grupos-homologacao.js',
+      [],
+      file_exists(BVGN_DIR . 'assets/js/grupos-homologacao.js') ? filemtime(BVGN_DIR . 'assets/js/grupos-homologacao.js') : '1.0.0',
+      true
+    );
   }
    
 },99);
