@@ -101,7 +101,7 @@ $precoExibicao = function($t, $dados) use ($toFloatBR){
 $retirada  = $fmt($dados['datas']['inicio'] ?? '');
 $devolucao = $fmt($dados['datas']['fim'] ?? '');
 $localRetirada = $dados['local'] ?? '—';
-$validade = date('d/m/Y', strtotime('+5 days'));
+$validade = date('d/m/Y', strtotime('+1 day'));
 $mensagem = trim($dados['mensagem'] ?? '');
 
 // Tipo principal da cotação
