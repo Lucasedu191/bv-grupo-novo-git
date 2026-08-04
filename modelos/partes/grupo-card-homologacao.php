@@ -20,22 +20,24 @@ $fallback_title = trim((string) ($card['fallback_title'] ?? ''));
     data-interval="5600"
     data-card-index="<?php echo esc_attr(intval($card['index'] ?? 0)); ?>"
   >
-    <div class="bvgn-hml-card__slides">
-      <?php foreach ($images as $image_index => $image): ?>
-        <figure class="bvgn-hml-card__slide<?php echo $image_index === 0 ? ' is-active' : ''; ?>" data-bvgn-slide>
-          <img
-            src="<?php echo esc_url($image['url']); ?>"
-            alt="<?php echo esc_attr($image['alt']); ?>"
-            class="bvgn-hml-card__image"
-            loading="<?php echo esc_attr($image['loading']); ?>"
-            decoding="async"
-          >
-        </figure>
-      <?php endforeach; ?>
-    </div>
+    <a class="bvgn-hml-card__image-link" href="<?php echo esc_url($card['permalink']); ?>" aria-label="<?php echo esc_attr($fallback_title !== '' ? $fallback_title : ($card_title !== '' ? $card_title : 'Abrir produto')); ?>">
+      <div class="bvgn-hml-card__slides">
+        <?php foreach ($images as $image_index => $image): ?>
+          <figure class="bvgn-hml-card__slide<?php echo $image_index === 0 ? ' is-active' : ''; ?>" data-bvgn-slide>
+            <img
+              src="<?php echo esc_url($image['url']); ?>"
+              alt="<?php echo esc_attr($image['alt']); ?>"
+              class="bvgn-hml-card__image"
+              loading="<?php echo esc_attr($image['loading']); ?>"
+              decoding="async"
+            >
+          </figure>
+        <?php endforeach; ?>
+      </div>
+    </a>
 
-    <?php if ($has_gallery): ?>
-      <div class="bvgn-hml-card__dots" aria-label="Galeria do veículo">
+    <div class="bvgn-hml-card__dots<?php echo $has_gallery ? '' : ' is-placeholder'; ?>" aria-label="Galeria do veículo">
+      <?php if ($has_gallery): ?>
         <?php foreach ($images as $image_index => $image): ?>
           <button
             type="button"
@@ -44,18 +46,18 @@ $fallback_title = trim((string) ($card['fallback_title'] ?? ''));
             aria-label="<?php echo esc_attr(sprintf('Exibir imagem %d', $image_index + 1)); ?>"
           ></button>
         <?php endforeach; ?>
-      </div>
-    <?php endif; ?>
+      <?php endif; ?>
+    </div>
   </div>
 
   <div class="bvgn-hml-card__body">
     <?php if ($card_title !== ''): ?>
-      <h3 class="bvgn-hml-card__title"><?php echo esc_html($card_title); ?></h3>
+      <h3 class="bvgn-hml-card__title" title="<?php echo esc_attr($card_title); ?>"><?php echo esc_html($card_title); ?></h3>
       <?php if (!empty($card['complement'])): ?>
         <p class="bvgn-hml-card__subtitle"><?php echo esc_html($card['complement']); ?></p>
       <?php endif; ?>
     <?php else: ?>
-      <h3 class="bvgn-hml-card__title"><?php echo esc_html($fallback_title); ?></h3>
+      <h3 class="bvgn-hml-card__title" title="<?php echo esc_attr($fallback_title); ?>"><?php echo esc_html($fallback_title); ?></h3>
     <?php endif; ?>
 
     <a class="bvgn-hml-card__button" href="<?php echo esc_url($card['permalink']); ?>">
