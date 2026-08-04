@@ -6,6 +6,8 @@ $has_gallery = count($images) > 1;
 $card_title = trim((string) ($card['models'] ?? ''));
 $fallback_title = trim((string) ($card['fallback_title'] ?? ''));
 $price_rules_json = !empty($card['price_rules']) ? wp_json_encode($card['price_rules']) : '[]';
+$plan_type = !empty($card['plan_type']) ? sanitize_key($card['plan_type']) : 'diario';
+$static_price = isset($card['static_price']) ? (float) $card['static_price'] : 0;
 ?>
 <article class="bvgn-hml-card">
   <div class="bvgn-hml-card__top">
@@ -21,6 +23,8 @@ $price_rules_json = !empty($card['price_rules']) ? wp_json_encode($card['price_r
     data-interval="5600"
     data-card-index="<?php echo esc_attr(intval($card['index'] ?? 0)); ?>"
     data-group-letter="<?php echo esc_attr($card['group_letter'] ?? ''); ?>"
+    data-plan-type="<?php echo esc_attr($plan_type); ?>"
+    data-static-price="<?php echo esc_attr($static_price); ?>"
     data-price-rules="<?php echo esc_attr($price_rules_json); ?>"
   >
     <a class="bvgn-hml-card__image-link" href="<?php echo esc_url($card['permalink']); ?>" aria-label="<?php echo esc_attr($fallback_title !== '' ? $fallback_title : ($card_title !== '' ? $card_title : 'Abrir produto')); ?>">

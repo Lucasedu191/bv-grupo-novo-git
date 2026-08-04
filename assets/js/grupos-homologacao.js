@@ -108,6 +108,20 @@
       const priceValue = priceBox ? priceBox.querySelector('[data-bvgn-price-value]') : null;
       if (!priceBox || !priceValue) return;
 
+      const planType = card.getAttribute('data-plan-type') || 'diario';
+      const staticPrice = Number(card.getAttribute('data-static-price') || 0);
+
+      if (planType === 'mensal') {
+        if (staticPrice > 0) {
+          priceValue.textContent = formatPriceBR(staticPrice);
+          priceBox.hidden = false;
+        } else {
+          priceValue.textContent = '';
+          priceBox.hidden = true;
+        }
+        return;
+      }
+
       const rulesRaw = card.getAttribute('data-price-rules') || '[]';
       let rules = [];
       try {

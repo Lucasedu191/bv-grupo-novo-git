@@ -16,18 +16,33 @@ class BVGN_HomologacaoGroups {
     }
 
     $atts = shortcode_atts([
-      'title' => 'Explore os grupos de carros por Diária',
-      'category' => 'aluguel-de-carros-diaria',
+      'title' => '',
+      'category' => '',
+      'type' => '',
       'limit' => -1,
-      'note' => 'Imagens ilustrativas. O modelo disponibilizado poderá variar dentro da categoria.',
-      'empty_message' => 'Nenhum grupo diário disponível no momento.',
+      'note' => 'Imagens ilustrativas. O modelo disponibilizado pode variar dentro da categoria.',
+      'empty_message' => '',
     ], $atts, self::SHORTCODE);
 
-    $products = self::get_daily_products($atts);
+    $context = self::resolve_listing_context($atts);
+    $atts['category'] = $context['category'];
+
+    if (empty($atts['title'])) {
+      $atts['title'] = $context['title'];
+    }
+
+    if (empty($atts['empty_message'])) {
+      $atts['empty_message'] = $context['empty_message'];
+    }
+
+    $products = self::get_products($atts);
     $cards = [];
+
     foreach ($products as $index => $product) {
-      $card = self::build_card_data($product, $index);
-      if ($card) $cards[] = $card;
+      $card = self::build_card_data($product, $index, $context['type']);
+      if ($card) {
+        $cards[] = $card;
+      }
     }
 
     $view_data = [
@@ -42,9 +57,43 @@ class BVGN_HomologacaoGroups {
     return ob_get_clean();
   }
 
-  private static function get_daily_products($atts) {
+  private static function resolve_listing_context($atts) {
+    $type = sanitize_key($atts['type'] ?? '');
+    $category = sanitize_title($atts['category'] ?? '');
+    $title = sanitize_text_field($atts['title'] ?? '');
+    $normalized_title = function_exists('mb_strtolower')
+      ? mb_strtolower(remove_accents($title))
+      : strtolower(remove_accents($title));
+
+    if ($type !== 'mensal' && $type !== 'diario') {
+      if (strpos($category, 'mensal') !== false || strpos($normalized_title, 'mensal') !== false) {
+        $type = 'mensal';
+      } else {
+        $type = 'diario';
+      }
+    }
+
+    if ($category === '') {
+      $category = $type === 'mensal' ? 'aluguel-de-carros-mensal' : 'aluguel-de-carros-diaria';
+    }
+
+    return [
+      'type' => $type,
+      'category' => $category,
+      'title' => $type === 'mensal'
+        ? 'Explore os grupos de carros mensal'
+        : 'Explore os grupos de carros por Diária',
+      'empty_message' => $type === 'mensal'
+        ? 'Nenhum grupo mensal disponível no momento.'
+        : 'Nenhum grupo diário disponível no momento.',
+    ];
+  }
+
+  private static function get_products($atts) {
     $limit = intval($atts['limit']);
-    if ($limit === 0) $limit = -1;
+    if ($limit === 0) {
+      $limit = -1;
+    }
 
     $products = wc_get_products([
       'status' => 'publish',
@@ -55,30 +104,39 @@ class BVGN_HomologacaoGroups {
       'return' => 'objects',
     ]);
 
-    if (!is_array($products)) return [];
+    if (!is_array($products)) {
+      return [];
+    }
 
     usort($products, function($a, $b) {
       $group_a = self::get_group_letter($a);
       $group_b = self::get_group_letter($b);
+
       if ($group_a !== $group_b) {
         return strcmp($group_a, $group_b);
       }
+
       return strcasecmp($a->get_name(), $b->get_name());
     });
 
     return $products;
   }
 
-  private static function build_card_data($product, $index) {
-    if (!$product || !is_object($product)) return null;
+  private static function build_card_data($product, $index, $plan_type = 'diario') {
+    if (!$product || !is_object($product)) {
+      return null;
+    }
 
     $parsed = self::parse_product_content($product);
     $images = self::get_product_images($product);
     $permalink = get_permalink($product->get_id());
+    $price_rules = $plan_type === 'diario' ? self::get_daily_price_rules($product) : [];
+    $static_price = $plan_type === 'mensal' ? self::get_product_base_price($product) : 0;
 
     return [
       'id' => $product->get_id(),
       'index' => intval($index),
+      'plan_type' => $plan_type,
       'group_letter' => self::get_group_letter($product),
       'group_label' => $parsed['group_label'],
       'transmission' => $parsed['transmission'],
@@ -87,7 +145,8 @@ class BVGN_HomologacaoGroups {
       'fallback_title' => $parsed['fallback_title'],
       'images' => $images,
       'permalink' => $permalink ? esc_url($permalink) : '#',
-      'price_rules' => self::get_daily_price_rules($product),
+      'price_rules' => $price_rules,
+      'static_price' => $static_price,
     ];
   }
 
@@ -112,10 +171,7 @@ class BVGN_HomologacaoGroups {
       $models = $working;
     }
 
-    $fallback_title = $title;
-    if ($models === '') {
-      $fallback_title = $title;
-    }
+    $fallback_title = $models === '' ? $title : $title;
 
     return [
       'group_label' => $group_label !== '' ? $group_label : $title,
@@ -141,16 +197,15 @@ class BVGN_HomologacaoGroups {
 
   private static function find_transmission_in_attributes($product) {
     $attributes = $product->get_attributes();
-    if (!is_array($attributes)) return '';
+    if (!is_array($attributes)) {
+      return '';
+    }
 
     foreach ($attributes as $attribute_key => $attribute) {
       $label = wc_attribute_label($attribute_key);
       $label = strtolower(remove_accents(is_string($label) ? $label : ''));
 
-      if (
-        strpos($label, 'cambio') === false &&
-        strpos($label, 'transmiss') === false
-      ) {
+      if (strpos($label, 'cambio') === false && strpos($label, 'transmiss') === false) {
         continue;
       }
 
@@ -164,8 +219,13 @@ class BVGN_HomologacaoGroups {
         $value = $attribute;
       }
 
-      if (preg_match('/manual/iu', $value)) return 'Manual';
-      if (preg_match('/autom[aá]tico/iu', $value)) return 'Automático';
+      if (preg_match('/manual/iu', $value)) {
+        return 'Manual';
+      }
+
+      if (preg_match('/autom[aá]tico/iu', $value)) {
+        return 'Automático';
+      }
     }
 
     return '';
@@ -173,8 +233,14 @@ class BVGN_HomologacaoGroups {
 
   private static function normalize_transmission_label($value) {
     $value = sanitize_text_field($value);
-    if (preg_match('/manual/iu', $value)) return 'Manual';
-    if (preg_match('/autom[aá]tico/iu', $value)) return 'Automático';
+    if (preg_match('/manual/iu', $value)) {
+      return 'Manual';
+    }
+
+    if (preg_match('/autom[aá]tico/iu', $value)) {
+      return 'Automático';
+    }
+
     return $value;
   }
 
@@ -182,6 +248,7 @@ class BVGN_HomologacaoGroups {
     $product_id = $product->get_id();
     $meta_group = get_post_meta($product_id, '_bvgn_grupo', true);
     $meta_group = strtoupper(sanitize_text_field($meta_group));
+
     if (preg_match('/^[A-Z]$/', $meta_group)) {
       return $meta_group;
     }
@@ -206,15 +273,20 @@ class BVGN_HomologacaoGroups {
     if (is_array($gallery_ids)) {
       foreach ($gallery_ids as $gallery_id) {
         $gallery_id = absint($gallery_id);
-        if ($gallery_id > 0) $image_ids[] = $gallery_id;
+        if ($gallery_id > 0) {
+          $image_ids[] = $gallery_id;
+        }
       }
     }
 
     $image_ids = array_values(array_unique($image_ids));
     $images = [];
+
     foreach ($image_ids as $position => $image_id) {
       $url = wp_get_attachment_image_url($image_id, 'large');
-      if (!$url) continue;
+      if (!$url) {
+        continue;
+      }
 
       $images[] = [
         'id' => $image_id,
@@ -234,19 +306,27 @@ class BVGN_HomologacaoGroups {
 
     $rules = [];
     $available = $product->get_available_variations();
+
     foreach ($available as $raw) {
       $variation_id = isset($raw['variation_id']) ? absint($raw['variation_id']) : 0;
-      if (!$variation_id) continue;
+      if (!$variation_id) {
+        continue;
+      }
 
       $variation = wc_get_product($variation_id);
-      if (!$variation) continue;
+      if (!$variation) {
+        continue;
+      }
 
       $attrs = isset($raw['attributes']) && is_array($raw['attributes']) ? $raw['attributes'] : [];
       $label = wc_get_formatted_variation($attrs, true, false, false);
       $label = wp_strip_all_tags($label);
       $min_max = self::min_max_by_label($label);
       $price = (float) $variation->get_price();
-      if ($price <= 0) continue;
+
+      if ($price <= 0) {
+        continue;
+      }
 
       $rules[] = [
         'id' => $variation_id,
@@ -261,10 +341,32 @@ class BVGN_HomologacaoGroups {
       if ((int) $a['min_days'] !== (int) $b['min_days']) {
         return (int) $a['min_days'] <=> (int) $b['min_days'];
       }
+
       return (int) $a['max_days'] <=> (int) $b['max_days'];
     });
 
     return array_values($rules);
+  }
+
+  private static function get_product_base_price($product) {
+    if (!$product || !is_object($product)) {
+      return 0;
+    }
+
+    if ($product->is_type('variable')) {
+      $prices = $product->get_variation_prices(true);
+      $active_prices = isset($prices['price']) && is_array($prices['price']) ? $prices['price'] : [];
+      $active_prices = array_filter(array_map('floatval', $active_prices), function($value) {
+        return $value > 0;
+      });
+
+      if (!empty($active_prices)) {
+        return (float) min($active_prices);
+      }
+    }
+
+    $price = (float) $product->get_price();
+    return $price > 0 ? $price : 0;
   }
 
   private static function min_max_by_label($label) {
@@ -276,7 +378,10 @@ class BVGN_HomologacaoGroups {
 
     if (preg_match('~(\d{1,2})\s*dias?~i', $label, $matches)) {
       $days = max(1, intval($matches[1]));
-      if ($days === 1) return [1, 2];
+      if ($days === 1) {
+        return [1, 2];
+      }
+
       return [$days, $days];
     }
 
