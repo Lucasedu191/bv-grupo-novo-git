@@ -5,6 +5,7 @@ $images = isset($card['images']) && is_array($card['images']) ? $card['images'] 
 $has_gallery = count($images) > 1;
 $card_title = trim((string) ($card['models'] ?? ''));
 $fallback_title = trim((string) ($card['fallback_title'] ?? ''));
+$price_rules_json = !empty($card['price_rules']) ? wp_json_encode($card['price_rules']) : '[]';
 ?>
 <article class="bvgn-hml-card">
   <div class="bvgn-hml-card__top">
@@ -19,6 +20,8 @@ $fallback_title = trim((string) ($card['fallback_title'] ?? ''));
     data-bvgn-carousel
     data-interval="5600"
     data-card-index="<?php echo esc_attr(intval($card['index'] ?? 0)); ?>"
+    data-group-letter="<?php echo esc_attr($card['group_letter'] ?? ''); ?>"
+    data-price-rules="<?php echo esc_attr($price_rules_json); ?>"
   >
     <a class="bvgn-hml-card__image-link" href="<?php echo esc_url($card['permalink']); ?>" aria-label="<?php echo esc_attr($fallback_title !== '' ? $fallback_title : ($card_title !== '' ? $card_title : 'Abrir produto')); ?>">
       <div class="bvgn-hml-card__slides">
@@ -59,6 +62,11 @@ $fallback_title = trim((string) ($card['fallback_title'] ?? ''));
     <?php else: ?>
       <h3 class="bvgn-hml-card__title" title="<?php echo esc_attr($fallback_title); ?>"><?php echo esc_html($fallback_title); ?></h3>
     <?php endif; ?>
+
+    <div class="bvgn-hml-card__price" data-bvgn-price hidden>
+      <span class="bvgn-hml-card__price-value" data-bvgn-price-value></span>
+      <small class="bvgn-hml-card__price-note">+ taxas</small>
+    </div>
 
     <a class="bvgn-hml-card__button" href="<?php echo esc_url($card['permalink']); ?>">
       Selecionar datas

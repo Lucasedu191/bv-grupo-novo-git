@@ -79,6 +79,7 @@ class BVGN_HomologacaoGroups {
     return [
       'id' => $product->get_id(),
       'index' => intval($index),
+      'group_letter' => self::get_group_letter($product),
       'group_label' => $parsed['group_label'],
       'transmission' => $parsed['transmission'],
       'models' => $parsed['models'],
@@ -86,6 +87,7 @@ class BVGN_HomologacaoGroups {
       'fallback_title' => $parsed['fallback_title'],
       'images' => $images,
       'permalink' => $permalink ? esc_url($permalink) : '#',
+      'price_rules' => self::get_daily_price_rules($product),
     ];
   }
 
@@ -223,6 +225,62 @@ class BVGN_HomologacaoGroups {
     }
 
     return $images;
+  }
+
+  private static function get_daily_price_rules($product) {
+    if (!$product || !$product->is_type('variable')) {
+      return [];
+    }
+
+    $rules = [];
+    $available = $product->get_available_variations();
+    foreach ($available as $raw) {
+      $variation_id = isset($raw['variation_id']) ? absint($raw['variation_id']) : 0;
+      if (!$variation_id) continue;
+
+      $variation = wc_get_product($variation_id);
+      if (!$variation) continue;
+
+      $attrs = isset($raw['attributes']) && is_array($raw['attributes']) ? $raw['attributes'] : [];
+      $label = wc_get_formatted_variation($attrs, true, false, false);
+      $label = wp_strip_all_tags($label);
+      $min_max = self::min_max_by_label($label);
+      $price = (float) $variation->get_price();
+      if ($price <= 0) continue;
+
+      $rules[] = [
+        'id' => $variation_id,
+        'label' => sanitize_text_field($label),
+        'price' => $price,
+        'min_days' => (int) $min_max[0],
+        'max_days' => (int) $min_max[1],
+      ];
+    }
+
+    usort($rules, function($a, $b) {
+      if ((int) $a['min_days'] !== (int) $b['min_days']) {
+        return (int) $a['min_days'] <=> (int) $b['min_days'];
+      }
+      return (int) $a['max_days'] <=> (int) $b['max_days'];
+    });
+
+    return array_values($rules);
+  }
+
+  private static function min_max_by_label($label) {
+    $label = (string) $label;
+
+    if (preg_match('~(\d{1,2})[^\d]+(\d{1,2})~', $label, $matches)) {
+      return [intval($matches[1]), intval($matches[2])];
+    }
+
+    if (preg_match('~(\d{1,2})\s*dias?~i', $label, $matches)) {
+      $days = max(1, intval($matches[1]));
+      if ($days === 1) return [1, 2];
+      return [$days, $days];
+    }
+
+    return [1, 30];
   }
 }
 
