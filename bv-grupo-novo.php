@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 9.9.113
+ * Version: 9.9.114
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -467,6 +467,23 @@ add_action('wp_enqueue_scripts', function () {
   }
 
   if ($tem_homologacao) {
+    wp_enqueue_script(
+      'bvgn-dynamic',
+      BVGN_URL . 'assets/js/bvgn-dynamic.js',
+      [],
+      file_exists(BVGN_DIR.'assets/js/bvgn-dynamic.js') ? filemtime(BVGN_DIR.'assets/js/bvgn-dynamic.js') : '1.0.0',
+      true
+    );
+
+    if (!wp_script_is('bvgn-js', 'enqueued')) {
+      wp_localize_script('bvgn-dynamic', 'BVGN', [
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('bvgn_nonce'),
+        'whatsDestino' => BVGN_WHATS_DESTINO,
+        'dynamicTariffs' => class_exists('BVGN_DynamicTariffs') ? BVGN_DynamicTariffs::for_js() : [],
+      ]);
+    }
+
     wp_enqueue_style(
       'bvgn-homologacao-css',
       BVGN_URL . 'assets/css/grupos-homologacao.css',
@@ -477,7 +494,7 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_script(
       'bvgn-homologacao-js',
       BVGN_URL . 'assets/js/grupos-homologacao.js',
-      [],
+      ['bvgn-dynamic'],
       file_exists(BVGN_DIR . 'assets/js/grupos-homologacao.js') ? filemtime(BVGN_DIR . 'assets/js/grupos-homologacao.js') : '1.0.0',
       true
     );
