@@ -66,6 +66,7 @@ $precoP = $protecao[$cor]['premium'];
 ?>
 
 <div class="bvgn-taxas bvgn-cards-3"
+  
      data-bvgn-protecao-grupo="<?php echo esc_attr($grupo); ?>">
   <div class="bvgn-totais-titulo">Proteção</div>
 
