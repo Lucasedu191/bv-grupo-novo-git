@@ -13,24 +13,23 @@ class BVGN_IntegracoesPT {
     // Fallback padrão com caminho completo do SVG relativo ao plugin
     $taxas[] = [
       'rotulo' => 'Cadeirinha 0–25 kg (diaria)',
-      'preco'  => 20.00,
+      'preco'  => 22.90,
       'icone'  => 'assets/svg/passos01.svg'
     ];
 
     $taxas[] = [
       'rotulo' => 'Condutor adicional (diaria)',
-      'preco'  => 20.00,
+      'preco'  => 24.90,
       'icone'  => 'assets/svg/passos02.svg'
     ];
 
     $taxas[] = [
       'rotulo' => 'Taxa de limpeza (obrigatória)',
-      'preco'  => 45.00,
+      'preco'  => 48.90,
       'icone'  => 'assets/svg/passos03.svg' 
     ];
 
     return $taxas;
   }
 }
-
 

@@ -358,9 +358,9 @@ class BVGN_ApiRest {
     ];
 
     $protecao_por_cor = [
-      'verde'   => ['basica' => 35,  'premium' => 65],
-      'azul'    => ['basica' => 45,  'premium' => 85],
-      'laranja' => ['basica' => 65,  'premium' => 125],
+      'verde'   => ['basica' => 36.90, 'premium' => 66.90],
+      'azul'    => ['basica' => 47.90, 'premium' => 86.90],
+      'laranja' => ['basica' => 68.90, 'premium' => 128.90],
     ];
 
     $caucao_por_grupo = [
@@ -368,7 +368,7 @@ class BVGN_ApiRest {
       'F' => 4000, 'G' => 4000, 'I' => 4000, 'H' => 4000,
     ];
 
-    $caucao_protecao_por_grupo = ['H' => 2000];
+    $caucao_protecao_por_grupo = ['H' => 4000];
     $caucao_sem_protecao = isset($caucao_por_grupo[$grupo]) ? floatval($caucao_por_grupo[$grupo]) : 0.0;
     $caucao_com_protecao = isset($caucao_protecao_por_grupo[$grupo]) ? floatval($caucao_protecao_por_grupo[$grupo]) : 500.0;
     $cor = isset($grupo_cor[$grupo]) ? $grupo_cor[$grupo] : 'verde';

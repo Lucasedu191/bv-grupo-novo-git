@@ -35,9 +35,9 @@ $grupo_cor = [
 
 // Tabela de proteção por cor
 $protecao = [
-  'verde'   => ['basica' => 35,  'premium' => 65],
-  'azul'    => ['basica' => 45,  'premium' => 85],
-  'laranja' => ['basica' => 65,  'premium' => 125],
+  'verde'   => ['basica' => 36.90, 'premium' => 66.90],
+  'azul'    => ['basica' => 47.90, 'premium' => 86.90],
+  'laranja' => ['basica' => 68.90, 'premium' => 128.90],
 ];
 
 // Caução padrão
@@ -56,7 +56,7 @@ $caucao = $caucaoPorGrupo[$grupo] ?? 0;
 
 // Caução reduzido com proteção
 $caucaoProtecaoPorGrupo = [
-  'H' => 2000,
+  'H' => 4000,
 ];
 $caucaoProtecao = $caucaoProtecaoPorGrupo[$grupo] ?? 500;
 
