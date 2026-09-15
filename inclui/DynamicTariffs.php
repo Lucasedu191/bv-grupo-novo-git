@@ -356,33 +356,6 @@ class BVGN_DynamicTariffs {
     return self::rules_for_js(self::get_rules());
   }
 
-  /** Seleção de regra para consumidores PHP: data de retirada, grupo e prioridade. */
-  public static function rule_for_date($date, $group) {
-    if (!is_string($date) || !preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $date)) return null;
-    $group = strtoupper(trim((string) $group));
-    // Não chama get_rules(): para uma recuperação de Cron, uma regra que expirou
-    // hoje ainda deve valer na data passada dentro de sua própria vigência.
-    $rules = get_option(self::OPTION_KEY, []);
-    if (!is_array($rules)) $rules = [];
-    usort($rules, function($a, $b) {
-      $priority = (int) ($b['priority'] ?? 0) <=> (int) ($a['priority'] ?? 0);
-      return $priority ?: ((int) ($a['id'] ?? 0) <=> (int) ($b['id'] ?? 0));
-    });
-    foreach ($rules as $rule) {
-      if (empty($rule['active'])) continue;
-      if ($group === '' || !in_array($group, self::expand_groups_for_api($rule['groups'] ?? []), true)) continue;
-      $type = $rule['type'] ?? 'week_day';
-      $matches = $type === 'single_date' ? (($rule['start_date'] ?? '') === $date)
-        : ($type === 'date_range' ? (($rule['start_date'] ?? '') <= $date && ($rule['end_date'] ?? '') >= $date) : false);
-      if ($type === 'week_day') {
-        $parsed = DateTimeImmutable::createFromFormat('!Y-m-d', $date, wp_timezone());
-        $matches = $parsed && (int) $parsed->format('w') === (int) ($rule['weekday'] ?? 0);
-      }
-      if ($matches) return $rule; // get_rules() já ordena por prioridade, como o front.
-    }
-    return null;
-  }
-
   // Pure serialization also used to freeze history; never reads or updates options.
   public static function rules_for_js($rules) {
     $list = [];

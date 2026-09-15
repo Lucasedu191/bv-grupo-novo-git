@@ -21,7 +21,7 @@ class SchemaDB {
   public function get_charset_collate() { return 'DEFAULT CHARACTER SET utf8mb4'; }
   public function get_col($sql) {
     if ($GLOBALS['fail']) return ['id', 'grupo_id'];
-    preg_match_all('/^\s+(\w+) (?:bigint|decimal|date|datetime|varchar|longtext)/m', $GLOBALS['ddl'], $m);
+    preg_match_all('/^\s+(\w+) (?:bigint|decimal|datetime|varchar|longtext)/m', $GLOBALS['ddl'], $m);
     return $m[1];
   }
 }
@@ -34,21 +34,14 @@ function verify($value, $message) {
 }
 try {
   BVGN_TariffHistoryRepository::install();
-<<<<<<< HEAD
-  verify($version === '6', 'Upgrade version only after required columns exist.');
-=======
-  verify($version === '4', 'Upgrade version only after required columns exist.');
->>>>>>> 44824bb56c7f5809fd3d9fd6fc002a086dd114ed
-  verify(strpos($ddl, 'CREATE TABLE tenant_bv_historico_diario_tarifas') !== false, 'Create the separate prefixed daily table.');
-  verify(strpos($ddl, 'UNIQUE KEY grupo_data (grupo_id,data_referencia)') !== false, 'One row per group and reference date.');
+  verify($version === '2', 'Upgrade version only after required columns exist.');
+  verify(strpos($ddl, 'CREATE TABLE tenant_bv_historico_tarifas') !== false, 'Reuse same prefixed table.');
+  verify(strpos($ddl, "tipo varchar(16) NOT NULL DEFAULT 'geral'") !== false, 'Old rows become General via column default.');
+  verify(strpos($ddl, 'contexto longtext DEFAULT NULL') !== false, 'Old rows need no dynamic JSON.');
   verify(!preg_match('/\b(DROP|TRUNCATE|DELETE|REPLACE)\b/i', $ddl), 'No destructive migration commands.');
-  verify(strpos($ddl, 'valor_diaria decimal(18,2) NOT NULL') !== false, 'Store the effective 1-day value.');
-  foreach (['valor_3_dias', 'valor_7_dias', 'valor_15_dias'] as $field) verify(strpos($ddl, "$field decimal(18,2) DEFAULT NULL") !== false, 'Store each requested duration.');
-<<<<<<< HEAD
-  foreach (['protecao_basica', 'protecao_premium'] as $field) verify(strpos($ddl, "$field decimal(18,2) DEFAULT NULL") !== false, 'Store each protection daily value.');
-  verify(strpos($ddl, 'taxa_lavagem decimal(18,2) DEFAULT NULL') !== false, 'Store the one-time washing fee.');
-=======
->>>>>>> 44824bb56c7f5809fd3d9fd6fc002a086dd114ed
+  foreach (BVGN_TariffHistoryRepository::FIELDS as $field) {
+    verify(strpos($ddl, "$field decimal(18,2) DEFAULT NULL") !== false, 'Preserve original monetary columns.');
+  }
   BVGN_TariffHistoryRepository::install();
   verify($calls === 1, 'Already upgraded installation is a no-op.');
   $version = '1';
@@ -58,11 +51,7 @@ try {
   $fail = false;
   $wpdb->last_error = '';
   BVGN_TariffHistoryRepository::install();
-<<<<<<< HEAD
-  verify($version === '6', 'Retry completes upgrade.');
-=======
-  verify($version === '4', 'Retry completes upgrade.');
->>>>>>> 44824bb56c7f5809fd3d9fd6fc002a086dd114ed
+  verify($version === '2', 'Retry completes upgrade.');
   echo $checks . " schema checks passed.\n";
 } finally {
   unlink($temp . '/wp-admin/includes/upgrade.php');
