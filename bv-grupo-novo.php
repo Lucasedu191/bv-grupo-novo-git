@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BV Grupo Novo (Produto Paralelo)
  * Description: Página de produto paralela com shortcodes modulares (Diário/Mensal), taxas, agendamento, totais e cotação (HTML/PDF + WhatsApp).
- * Version: 9.9.121
+ * Version: 9.9.124
  * Author: Lucas
  * Update URI: https://github.com/Lucasedu191/bv-grupo-novo-git
  */
@@ -87,7 +87,8 @@ require_once BVGN_CAMINHO.'inclui/DynamicTariffs.php';
 require_once BVGN_CAMINHO.'inclui/TariffHistoryRepository.php';
 require_once BVGN_CAMINHO.'inclui/TariffHistory.php';
 require_once BVGN_CAMINHO.'inclui/TariffHistoryAdmin.php';
-register_activation_hook(__FILE__, ['BVGN_TariffHistoryRepository', 'install']);
+register_activation_hook(__FILE__, ['BVGN_TariffHistory', 'activate']);
+register_deactivation_hook(__FILE__, ['BVGN_TariffHistory', 'deactivate']);
 require_once BVGN_CAMINHO.'inclui/ApiRest.php';
 
 // === Admin: Registro CPT "Cotações" e colunas ===
