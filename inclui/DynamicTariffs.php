@@ -353,8 +353,13 @@ class BVGN_DynamicTariffs {
   }
 
   public static function for_js() {
+    return self::rules_for_js(self::get_rules());
+  }
+
+  // Pure serialization also used to freeze history; never reads or updates options.
+  public static function rules_for_js($rules) {
     $list = [];
-    foreach (self::get_rules() as $r) {
+    foreach ($rules as $r) {
       $list[] = [
         'id'         => intval($r['id'] ?? 0),
         'type'       => $r['type'],
