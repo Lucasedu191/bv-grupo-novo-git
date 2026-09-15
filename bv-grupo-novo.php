@@ -89,6 +89,8 @@ require_once BVGN_CAMINHO.'inclui/TariffHistory.php';
 require_once BVGN_CAMINHO.'inclui/TariffHistoryAdmin.php';
 register_activation_hook(__FILE__, ['BVGN_TariffHistory', 'activate']);
 register_deactivation_hook(__FILE__, ['BVGN_TariffHistory', 'deactivate']);
+register_activation_hook(__FILE__, ['BVGN_TariffHistory', 'activate']);
+register_deactivation_hook(__FILE__, ['BVGN_TariffHistory', 'deactivate']);
 require_once BVGN_CAMINHO.'inclui/ApiRest.php';
 
 // === Admin: Registro CPT "Cotações" e colunas ===

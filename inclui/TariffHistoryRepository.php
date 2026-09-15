@@ -3,7 +3,11 @@ if (!defined('ABSPATH')) exit;
 
 /** Tabela nova: a tabela legada bv_historico_tarifas não é alterada nem apagada. */
 class BVGN_TariffHistoryRepository {
+<<<<<<< HEAD
   const VERSION = '6';
+=======
+  const VERSION = '4';
+>>>>>>> 44824bb56c7f5809fd3d9fd6fc002a086dd114ed
   const OPTION = 'bvgn_daily_tariff_history_db_version';
   public static function table() { global $wpdb; return $wpdb->prefix . 'bv_historico_diario_tarifas'; }
   public static function install() {
@@ -18,23 +22,35 @@ class BVGN_TariffHistoryRepository {
       valor_3_dias decimal(18,2) DEFAULT NULL,
       valor_7_dias decimal(18,2) DEFAULT NULL,
       valor_15_dias decimal(18,2) DEFAULT NULL,
+<<<<<<< HEAD
       protecao_basica decimal(18,2) DEFAULT NULL,
       protecao_premium decimal(18,2) DEFAULT NULL,
       taxa_lavagem decimal(18,2) DEFAULT NULL,
+=======
+>>>>>>> 44824bb56c7f5809fd3d9fd6fc002a086dd114ed
       data_atualizacao datetime NOT NULL,
       PRIMARY KEY  (id),
       UNIQUE KEY grupo_data (grupo_id,data_referencia),
       KEY data_referencia (data_referencia,grupo_id)
     ) $charset;");
     $columns = $wpdb->get_col("SHOW COLUMNS FROM $table");
+<<<<<<< HEAD
     if (!$wpdb->last_error && !array_diff(['id','grupo_id','data_referencia','valor_diaria','valor_3_dias','valor_7_dias','valor_15_dias','protecao_basica','protecao_premium','taxa_lavagem','data_atualizacao'], $columns ?: [])) update_option(self::OPTION, self::VERSION, false);
+=======
+    if (!$wpdb->last_error && !array_diff(['id','grupo_id','data_referencia','valor_diaria','valor_3_dias','valor_7_dias','valor_15_dias','data_atualizacao'], $columns ?: [])) update_option(self::OPTION, self::VERSION, false);
+>>>>>>> 44824bb56c7f5809fd3d9fd6fc002a086dd114ed
     else error_log('[BVGN] Não foi possível instalar a tabela do histórico diário de tarifas.');
   }
   /** A chave única e este upsert tornam o processo idempotente, inclusive sob concorrência. */
   public static function upsert($group_id, $date, $values) {
     global $wpdb; self::install(); if (get_option(self::OPTION) !== self::VERSION) return false;
+<<<<<<< HEAD
     $sql = "INSERT INTO " . self::table() . " (grupo_id,data_referencia,valor_diaria,valor_3_dias,valor_7_dias,valor_15_dias,protecao_basica,protecao_premium,taxa_lavagem,data_atualizacao) VALUES (%d,%s,%f,%f,%f,%f,%f,%f,%f,%s) ON DUPLICATE KEY UPDATE valor_diaria=VALUES(valor_diaria),valor_3_dias=VALUES(valor_3_dias),valor_7_dias=VALUES(valor_7_dias),valor_15_dias=VALUES(valor_15_dias),protecao_basica=VALUES(protecao_basica),protecao_premium=VALUES(protecao_premium),taxa_lavagem=VALUES(taxa_lavagem),data_atualizacao=VALUES(data_atualizacao)";
     $result = $wpdb->query($wpdb->prepare($sql, absint($group_id), $date, (float)$values['valor_diaria'], (float)$values['valor_3_dias'], (float)$values['valor_7_dias'], (float)$values['valor_15_dias'], (float)$values['protecao_basica'], (float)$values['protecao_premium'], (float)$values['taxa_lavagem'], current_time('mysql', true)));
+=======
+    $sql = "INSERT INTO " . self::table() . " (grupo_id,data_referencia,valor_diaria,valor_3_dias,valor_7_dias,valor_15_dias,data_atualizacao) VALUES (%d,%s,%f,%f,%f,%f,%s) ON DUPLICATE KEY UPDATE valor_diaria=VALUES(valor_diaria),valor_3_dias=VALUES(valor_3_dias),valor_7_dias=VALUES(valor_7_dias),valor_15_dias=VALUES(valor_15_dias),data_atualizacao=VALUES(data_atualizacao)";
+    $result = $wpdb->query($wpdb->prepare($sql, absint($group_id), $date, (float)$values['valor_diaria'], (float)$values['valor_3_dias'], (float)$values['valor_7_dias'], (float)$values['valor_15_dias'], current_time('mysql', true)));
+>>>>>>> 44824bb56c7f5809fd3d9fd6fc002a086dd114ed
     if ($result === false) error_log('[BVGN] Falha ao gravar histórico diário do grupo ' . absint($group_id));
     return $result !== false;
   }
