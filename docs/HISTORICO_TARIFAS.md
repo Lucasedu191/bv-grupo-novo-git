@@ -2,11 +2,7 @@
 
 ## Histórico diário
 
-<<<<<<< HEAD
-A partir da 9.9.125, o relatório é uma fotografia diária: `data + grupo + valores de 1, 3, 7 e 15 dias`, além de Proteção Básica e Premium por diária (sem caução) e a Taxa de limpeza única já configurada no site.
-=======
 A partir da 9.9.122, o relatório é uma fotografia diária: `data + grupo + valores de 1, 3, 7 e 15 dias`.
->>>>>>> 44824bb56c7f5809fd3d9fd6fc002a086dd114ed
 Os eventos técnicos das versões 9.9.120/9.9.121 continuam preservados na tabela antiga
 `{prefix}bv_historico_tarifas`; nada é apagado. A nova tabela é
 `{prefix}bv_historico_diario_tarifas`, com índice único em `(grupo_id, data_referencia)`.
