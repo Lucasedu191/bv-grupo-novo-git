@@ -1,4 +1,23 @@
-# Histórico de Tarifas — 9.9.121
+# Histórico de Tarifas — 9.9.122
+
+## Histórico diário
+
+A partir da 9.9.122, o relatório é uma fotografia diária: `data + grupo + valores de 1, 3, 7 e 15 dias`.
+Os eventos técnicos das versões 9.9.120/9.9.121 continuam preservados na tabela antiga
+`{prefix}bv_historico_tarifas`; nada é apagado. A nova tabela é
+`{prefix}bv_historico_diario_tarifas`, com índice único em `(grupo_id, data_referencia)`.
+
+O WP-Cron agenda `bvgn_registrar_historico_diario_tarifas` para 00:10 no fuso do WordPress.
+Ele processa todos os grupos diários ativos e usa `INSERT ... ON DUPLICATE KEY UPDATE`, portanto
+uma segunda execução ou uma alteração no mesmo dia atualiza a única linha existente. Mudanças de
+preço de variações e da opção de tarifa dinâmica atualizam a fotografia do dia corrente.
+
+Para instalações sem visitas frequentes, configure o cron real do servidor para chamar
+`wp-cron.php`: o WP-Cron só dispara após uma requisição. Ao voltar a executar, o plugin recupera
+as datas pendentes; a regra dinâmica é avaliada para a própria data de retirada, inclusive se a
+regra tiver expirado depois dela. Não é possível reconstruir retrospectivamente uma tarifa-base
+que tenha sido alterada enquanto o site estava sem executar o processo, por isso o cron real é
+recomendado para garantia operacional.
 
 ## Tarifa dinâmica: regra vigente no plugin
 
