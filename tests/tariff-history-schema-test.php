@@ -34,14 +34,19 @@ function verify($value, $message) {
 }
 try {
   BVGN_TariffHistoryRepository::install();
-  verify($version === '4', 'Upgrade version only after required columns exist.');
+  verify($version === '7', 'Upgrade version only after required columns exist.');
   verify(strpos($ddl, 'CREATE TABLE tenant_bv_historico_diario_tarifas') !== false, 'Create the separate prefixed daily table.');
   verify(strpos($ddl, 'UNIQUE KEY grupo_data (grupo_id,data_referencia)') !== false, 'One row per group and reference date.');
   verify(!preg_match('/\b(DROP|TRUNCATE|DELETE|REPLACE)\b/i', $ddl), 'No destructive migration commands.');
   verify(strpos($ddl, 'valor_diaria decimal(18,2) NOT NULL') !== false, 'Store the effective 1-day value.');
-  foreach (['valor_3_dias', 'valor_7_dias', 'valor_15_dias'] as $field) verify(strpos($ddl, "$field decimal(18,2) DEFAULT NULL") !== false, 'Store each requested duration.');
+  foreach (['valor_3_dias', 'valor_7_dias', 'valor_15_dias', 'protecao_basica', 'protecao_premium', 'taxa_lavagem'] as $field) verify(strpos($ddl, "$field decimal(18,2) DEFAULT NULL") !== false, 'Store each requested duration.');
   BVGN_TariffHistoryRepository::install();
   verify($calls === 1, 'Already upgraded installation is a no-op.');
+  foreach (['4', '6'] as $previous) {
+    $version = $previous;
+    BVGN_TariffHistoryRepository::install();
+    verify($version === '7', 'Upgrade from current or previously attempted fee schema.');
+  }
   $version = '1';
   $fail = true;
   BVGN_TariffHistoryRepository::install();
@@ -49,7 +54,7 @@ try {
   $fail = false;
   $wpdb->last_error = '';
   BVGN_TariffHistoryRepository::install();
-  verify($version === '4', 'Retry completes upgrade.');
+  verify($version === '7', 'Retry completes upgrade.');
   echo $checks . " schema checks passed.\n";
 } finally {
   unlink($temp . '/wp-admin/includes/upgrade.php');

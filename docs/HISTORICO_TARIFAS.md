@@ -3,6 +3,42 @@
 ## Histórico diário
 
 A partir da 9.9.122, o relatório é uma fotografia diária: `data + grupo + valores de 1, 3, 7 e 15 dias`.
+
+O relatório também registra Proteção Básica e Premium **por diária**, sem caução,
+e Limpeza como **taxa única**, separadas dos totais de aluguel. As proteções seguem
+a tabela atual de `modelos/partes/taxa-variavel-diaria.php`: A/B/C = 36,90/66,90;
+D/E/F/G/I = 47,90/86,90; H = 68,90/128,90 (básica/premium). Grupo desconhecido
+usa a faixa A. Ao mudar esses preços, atualizar também `protection_rates()` em
+`inclui/TariffHistory.php`. A limpeza reutiliza a função local
+`BVGN_IntegracoesPT::obter_taxas_para_produto()` (atualmente 48,90).
+O percentual dinâmico não incide nessas três colunas.
+
+O esquema 7 acrescenta três colunas opcionais à tabela diária, preservando os
+registros existentes. Valores ausentes/nulos aparecem como “Indisponível”; zero
+aparece como “R$ 0,00”. Não há preenchimento retroativo com preços atuais.
+O botão de geração existente atualiza apenas a fotografia de hoje. A leitura
+continua paginada, sem consultas de taxas por linha ou chamadas HTTP adicionais.
+
+Referência da reimplementação: taxas do commit `e70c71b`, adaptadas sobre
+`ce52456`, sem restaurar o commit inteiro. O merge `6408a55` continha marcadores
+de conflito nos três arquivos PHP do histórico; `php -l` reproduz erro de sintaxe
+em `TariffHistory.php`. Como esses arquivos são carregados pelo plugin, isso é
+uma causa provável da indisponibilidade anterior, sem confirmação por logs do servidor.
+
+Validação local das taxas: `php tests/tariff-history-fees-test.php`,
+`php tests/tariff-history-schema-test.php` e `php tests/tariff-history-test.php`.
+São testes isolados, sem WordPress/MySQL real. Em homologação:
+
+1. Abrir o histórico antes de gerar: conferir registros antigos, filtros,
+   paginação e busca sem resultados, sem erros PHP ou SQL.
+2. Gerar o histórico de hoje e conferir A, D/I e H contra os valores acima;
+   limpeza 48,90, com indicação de diária/única. Gerar novamente sem duplicar linhas.
+3. Conferir 1/3/7/15 dias com e sem tarifa dinâmica: taxas permanecem separadas
+   e não recebem o percentual. Conferir também registros com taxas NULL e zero
+   em uma base de teste.
+4. Abrir páginas diária/mensal e gerar uma cotação/PDF; comparar valores e
+   comportamento com a versão anterior. Verificar logs e tempo de carregamento.
+
 Os eventos técnicos das versões 9.9.120/9.9.121 continuam preservados na tabela antiga
 `{prefix}bv_historico_tarifas`; nada é apagado. A nova tabela é
 `{prefix}bv_historico_diario_tarifas`, com índice único em `(grupo_id, data_referencia)`.
