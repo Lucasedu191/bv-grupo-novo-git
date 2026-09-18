@@ -1,4 +1,4 @@
-# Histórico de Tarifas — 9.9.130
+# Histórico de Tarifas — 9.9.131
 
 ## Histórico diário
 
@@ -14,10 +14,16 @@ A associação é pela franquia, independentemente da ordem das variações ou d
 O esquema 8 permite NULL em `valor_diaria` e reutiliza os campos de 3/7/15 dias
 para as franquias mensais, sem acrescentar colunas. Preço ausente permanece NULL;
 zero permanece zero. Os registros antigos não são preenchidos com preços atuais.
-Filtros, ordenação, paginação, estilos e regras das taxas permanecem iguais.
+Na versão 9.9.131, a coluna **Categoria**, ao lado de Grupo, identifica **Diária**
+ou **Mensal**. A ordenação separa primeiro todas as diárias e depois todas as
+mensais, antes da paginação; dentro de cada categoria, mantém data decrescente
+e ID do grupo crescente. A categoria usa o snapshot: `valor_diaria` numérico
+(inclusive zero) identifica diária; NULL identifica mensal. Isso também vale
+para os registros anteriores e independe de alterações ou remoção do produto.
+Filtros, tamanho das páginas, estilos dos valores e regras das taxas permanecem iguais.
 Os testes em `tests/tariff-history-fees-test.php` incluem grupos mensais manuais e
 automáticos, promoção, franquias fora de ordem, valores ausentes/zero, gravação,
-atualização por evento e renderização com nove colunas.
+atualização por evento, categoria, ordenação na consulta e renderização com dez colunas.
 
 A partir da 9.9.122, o relatório é uma fotografia diária: `data + grupo + valores de 1, 3, 7 e 15 dias`.
 

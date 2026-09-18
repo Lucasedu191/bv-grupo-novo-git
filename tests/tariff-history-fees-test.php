@@ -48,6 +48,7 @@ class FeesDB {
   public $writes = [];
   public $reads = 0;
   public $rows = [];
+  public $lastSearch;
   public function prepare($sql, ...$args) {
     $args = count($args) === 1 && is_array($args[0]) ? $args[0] : $args;
     check(preg_match_all('/%[dfs]/', $sql) === count($args), 'SQL placeholders match arguments.');
@@ -55,7 +56,7 @@ class FeesDB {
   }
   public function query($prepared) { $this->writes[] = $prepared; return 1; }
   public function get_var($sql) { $this->reads++; return count($this->rows); }
-  public function get_results($sql, $format) { $this->reads++; return $this->rows; }
+  public function get_results($sql, $format) { $this->reads++; $this->lastSearch = $sql; return $this->rows; }
   public function get_col($sql) { $this->reads++; return []; }
 }
 $checks = 0;
@@ -148,13 +149,31 @@ check(substr_count($html, 'Indisponível') === 6, 'Legacy and null fees render w
 check(substr_count($html, 'R$ 0,00') === 3, 'Free fees render zero.');
 check($wpdb->reads === 3, 'Report keeps three repository reads regardless of fee columns.');
 check(count($wpdb->writes) === $writesBefore, 'Viewing the report does not generate snapshots.');
+check(substr_count($html, '<td>Diária</td>') === 3, 'Daily rows display their category.');
 $wpdb->rows = [$manual + ['grupo_id'=>2,'data_referencia'=>'2026-09-16'], $automatic + ['grupo_id'=>3,'data_referencia'=>'2026-09-16']];
 ob_start(); BVGN_TariffHistoryAdmin::render(); $html = ob_get_clean();
-check(substr_count($html, '<th>') === 9, 'Monthly report reuses all nine existing columns.');
+check(substr_count($html, '<th>') === 10, 'Report adds only the category column.');
 foreach (['3 dias / 1.000 km','7 dias / 3.000 km','15 dias / 5.000 km'] as $header) check(strpos($html,$header)!==false, 'Combined daily/mileage header: '.$header);
 foreach (['1.999,90','2.499,50','2.999,99','2.899,90','3.399,50','3.899,99'] as $price) check(strpos($html,'R$ '.$price)!==false, 'Monthly group price rendered: '.$price);
 check(strpos($html,'Grupo B Manual Mensal')!==false && strpos($html,'Grupo F Automático Mensal')!==false, 'Both monthly group labels are retained.');
+check(substr_count($html, '<td>Mensal</td>') === 2, 'Manual and automatic monthly rows display their category.');
+check(strpos($html, '<th>Grupo</th><th>Categoria</th>') !== false, 'Category is next to the group.');
+$wpdb->rows = [$base + ['grupo_id'=>999,'data_referencia'=>'2026-09-16']];
+$wpdb->rows[0]['valor_diaria'] = 0;
+ob_start(); BVGN_TariffHistoryAdmin::render(); $html = ob_get_clean();
+check(strpos($html, '<td>Diária</td>') !== false, 'Zero daily price does not classify as monthly.');
+$wpdb->rows[0]['valor_diaria'] = null;
+ob_start(); BVGN_TariffHistoryAdmin::render(); $html = ob_get_clean();
+check(strpos($html, '<td>Mensal</td>') !== false, 'Historical monthly category does not depend on current product terms.');
 $wpdb->rows = [];
 ob_start(); BVGN_TariffHistoryAdmin::render(); $html = ob_get_clean();
-check(strpos($html, 'colspan="9"') !== false, 'Empty report spans all nine columns.');
+check(strpos($html, 'colspan="10"') !== false, 'Empty report spans all ten columns.');
+// Verify grouping happens in SQL before pagination, retaining date/group filters.
+$wpdb->rows = array_fill(0, 120, $row);
+$result = BVGN_TariffHistoryRepository::search(2, '2026-09-01', '2026-09-17', 2);
+check(strpos($wpdb->lastSearch['sql'], 'ORDER BY (valor_diaria IS NULL) ASC,data_referencia DESC,grupo_id ASC LIMIT %d OFFSET %d') !== false, 'Daily and monthly groups stay separated across pages; dates descend within category.');
+check(strpos($wpdb->lastSearch['sql'], 'AND grupo_id=%d AND data_referencia >= %s AND data_referencia <= %s') !== false, 'Existing group/date filters remain in SQL.');
+check($wpdb->lastSearch['args'] === [2,'2026-09-01','2026-09-17',50,50], 'Second page keeps its limit/offset and bound filter arguments.');
+check($result['page'] === 2 && $result['total'] === 120, 'Pagination totals remain unchanged.');
+
 echo $checks . " fee/monthly checks passed.\n";
