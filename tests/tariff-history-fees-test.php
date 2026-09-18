@@ -48,6 +48,7 @@ class FeesDB {
   public $writes = [];
   public $reads = 0;
   public $rows = [];
+  public $total = null;
   public $lastSearch;
   public function prepare($sql, ...$args) {
     $args = count($args) === 1 && is_array($args[0]) ? $args[0] : $args;
@@ -55,7 +56,7 @@ class FeesDB {
     return ['sql'=>$sql, 'args'=>$args];
   }
   public function query($prepared) { $this->writes[] = $prepared; return 1; }
-  public function get_var($sql) { $this->reads++; return count($this->rows); }
+  public function get_var($sql) { $this->reads++; return $this->total ?? count($this->rows); }
   public function get_results($sql, $format) { $this->reads++; $this->lastSearch = $sql; return $this->rows; }
   public function get_col($sql) { $this->reads++; return []; }
 }
@@ -135,9 +136,23 @@ define('ARRAY_A', 'ARRAY_A');
 function current_user_can($cap) { return true; }
 function admin_url($path) { return '/wp-admin/' . $path; }
 function wp_nonce_field($name) {}
+function selected($a, $b) { if ((string)$a === (string)$b) echo 'selected="selected"'; }
 function esc_url($v) { return htmlspecialchars((string)$v, ENT_QUOTES); }
 function esc_attr($v) { return esc_url($v); }
 function esc_html($v) { return esc_url($v); }
+function sanitize_text_field($v) { return trim($v); }
+function wp_unslash($v) { return $v; }
+function wp_timezone() { return new DateTimeZone('America/Sao_Paulo'); }
+function add_query_arg($key, $value, $url = null) {
+  $args = is_array($key) ? $key : [$key=>$value];
+  $url = is_array($key) ? $value : $url;
+  return $url . (strpos($url, '?') === false ? '?' : '&') . http_build_query($args);
+}
+function wp_kses_post($v) { return $v; }
+function paginate_links($args) {
+  $GLOBALS['paginationArgs'] = $args;
+  return '<nav data-test-pagination="1">' . esc_html($args['prev_text'] . ' ' . $args['next_text']) . '</nav>';
+}
 require __DIR__ . '/../inclui/TariffHistoryAdmin.php';
 $row = $base + ['grupo_id'=>1,'data_referencia'=>'2026-09-16'];
 $wpdb->rows = [$row, $row + ['protecao_basica'=>null,'protecao_premium'=>null,'taxa_lavagem'=>null], $row + ['protecao_basica'=>0,'protecao_premium'=>0,'taxa_lavagem'=>0]];
@@ -171,9 +186,25 @@ check(strpos($html, 'colspan="10"') !== false, 'Empty report spans all ten colum
 // Verify grouping happens in SQL before pagination, retaining date/group filters.
 $wpdb->rows = array_fill(0, 120, $row);
 $result = BVGN_TariffHistoryRepository::search(2, '2026-09-01', '2026-09-17', 2);
-check(strpos($wpdb->lastSearch['sql'], 'ORDER BY (valor_diaria IS NULL) ASC,data_referencia DESC,grupo_id ASC LIMIT %d OFFSET %d') !== false, 'Daily and monthly groups stay separated across pages; dates descend within category.');
+check(strpos($wpdb->lastSearch['sql'], 'ORDER BY data_referencia DESC,(valor_diaria IS NULL) ASC,grupo_id ASC LIMIT %d OFFSET %d') !== false, 'Newest date comes first, with daily and monthly grouped within each day before pagination.');
 check(strpos($wpdb->lastSearch['sql'], 'AND grupo_id=%d AND data_referencia >= %s AND data_referencia <= %s') !== false, 'Existing group/date filters remain in SQL.');
 check($wpdb->lastSearch['args'] === [2,'2026-09-01','2026-09-17',50,50], 'Second page keeps its limit/offset and bound filter arguments.');
 check($result['page'] === 2 && $result['total'] === 120, 'Pagination totals remain unchanged.');
+$wpdb->total = 100000;
+$wpdb->rows = array_fill(0, 50, $row);
+$_GET = ['grupo_id'=>'2','data_inicial'=>'2026-09-01','data_final'=>'2026-09-17','pagina'=>'2'];
+ob_start(); BVGN_TariffHistoryAdmin::render(); $html = ob_get_clean();
+check(substr_count($html, 'data-test-pagination="1"') === 2, 'Navigation appears above and below the report.');
+check(strpos($html, 'Exibindo 51 a 100 de 100000 registros (50 por página).') !== false, 'Summary identifies visible range and fixed page size.');
+check($paginationArgs['total'] === 2000 && $paginationArgs['current'] === 2, 'Large history uses numbered pages.');
+check($paginationArgs['show_all'] === false && $paginationArgs['mid_size'] === 2, 'Navigation avoids rendering thousands of page links.');
+check(strpos($paginationArgs['base'], 'grupo_id=2') !== false && strpos($paginationArgs['base'], 'data_inicial=2026-09-01') !== false && strpos($paginationArgs['base'], 'data_final=2026-09-17') !== false, 'Navigation retains group and date filters.');
+check($wpdb->lastSearch['args'] === [2,'2026-09-01','2026-09-17',50,50], 'Rendering large history still requests only fifty rows.');
+$result=BVGN_TariffHistoryRepository::search(0, '', '', 99999);
+check($result['page'] === 2000 && $wpdb->lastSearch['args'] === [50,99950], 'Out-of-range page clamps to last page.');
+$wpdb->total = 0;
+$wpdb->rows = [];
+$result=BVGN_TariffHistoryRepository::search(0, '', '', 99999);
+check($result['page'] === 1 && $wpdb->lastSearch['args'] === [50,0], 'Empty history has a valid first page and nonnegative offset.');
 
 echo $checks . " fee/monthly checks passed.\n";

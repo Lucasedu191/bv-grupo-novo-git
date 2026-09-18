@@ -7,6 +7,17 @@ class BVGN_TariffHistoryAdmin {
   private static function input($key){ return isset($_GET[$key])&&is_string($_GET[$key])?sanitize_text_field(wp_unslash($_GET[$key])):''; }
   public static function date($v){ if(!preg_match('/^\\d{4}-\\d{2}-\\d{2}$/',$v))return null; $d=DateTimeImmutable::createFromFormat('!Y-m-d',$v,wp_timezone());return $d&&$d->format('Y-m-d')===$v?$d:null; }
   private static function label($id){$title=get_the_title($id);return ($title!==''?$title:'Grupo removido').' (#'.absint($id).')';}
+  private static function pagination($result, $base, $group, $start, $end) {
+    $size=BVGN_TariffHistoryRepository::PAGE_SIZE;
+    $pages=(int)ceil($result['total']/$size);
+    if($pages<=1)return '';
+    $url=add_query_arg(['grupo_id'=>$group,'data_inicial'=>$start,'data_final'=>$end],$base);
+    $links=paginate_links([
+      'base'=>add_query_arg('pagina','%#%',$url),'format'=>'','current'=>$result['page'],'total'=>$pages,
+      'show_all'=>false,'end_size'=>1,'mid_size'=>2,'prev_text'=>'« Anterior','next_text'=>'Próxima »',
+    ]);
+    return '<div class="tablenav"><div class="tablenav-pages">'.wp_kses_post($links).'</div></div>';
+  }
   public static function render(){
     if(!current_user_can('manage_options'))wp_die('Sem permissão.'); BVGN_TariffHistoryRepository::install();
     if (isset($_POST['bvgn_generate_daily_history'])) {
@@ -18,6 +29,9 @@ class BVGN_TariffHistoryAdmin {
     $invalid=($startText!==''&&!$start)||($endText!==''&&!$end)||($start&&$end&&$start>$end);
     $result=$invalid?['rows'=>[],'total'=>0,'page'=>1]:BVGN_TariffHistoryRepository::search($group,$start?$start->format('Y-m-d'):'',$end?$end->format('Y-m-d'):'',max(1,absint(self::input('pagina'))));
     $base=admin_url('edit.php?post_type=bvgn_cotacao&page='.self::SLUG);$groups=BVGN_TariffHistoryRepository::groups(); if($group&&!in_array((string)$group,array_map('strval',$groups),true))$groups[]=$group;
+    $pagination=self::pagination($result,$base,$group,$startText,$endText);
+    $first=$result['total']?($result['page']-1)*BVGN_TariffHistoryRepository::PAGE_SIZE+1:0;
+    $last=min($result['total'],$result['page']*BVGN_TariffHistoryRepository::PAGE_SIZE);
     ?>
     <style>
       .bvgn-history-table-scroll { max-width: 100%; overflow-x: auto; }
@@ -36,8 +50,9 @@ class BVGN_TariffHistoryAdmin {
     <label>Grupo <select name="grupo_id"><option value="0">Todos os grupos</option><?php foreach($groups as $id): ?><option value="<?php echo esc_attr($id); ?>" <?php selected($group,$id); ?>><?php echo esc_html(self::label($id)); ?></option><?php endforeach; ?></select></label>
     <label>Data inicial <input type="date" name="data_inicial" value="<?php echo esc_attr($startText); ?>"></label><label>Data final <input type="date" name="data_final" value="<?php echo esc_attr($endText); ?>"></label><button class="button button-primary">Filtrar</button> <a class="button" href="<?php echo esc_url($base); ?>">Limpar filtros</a></form>
     <?php if($invalid): ?><div class="notice notice-error inline"><p>Informe datas válidas, com a inicial anterior ou igual à final.</p></div><?php endif; ?>
-    <p><?php echo esc_html($result['total']); ?> registro(s).</p><div class="bvgn-history-table-scroll" role="region" aria-label="Tabela de tarifas" tabindex="0"><table class="widefat striped bvgn-history-table"><thead><tr><th>Data</th><th>Grupo</th><th>Categoria</th><th>1 diária</th><th>3 dias / 1.000 km</th><th>7 dias / 3.000 km</th><th>15 dias / 5.000 km</th><th>Proteção Básica / diária</th><th>Proteção Premium / diária</th><th>Limpeza / única</th></tr></thead><tbody><?php if(!$result['rows']): ?><tr><td colspan="10">Nenhum histórico encontrado para os filtros informados.</td></tr><?php endif; foreach($result['rows'] as $row): ?><tr><td><?php echo esc_html(DateTimeImmutable::createFromFormat('!Y-m-d',$row['data_referencia'])->format('d/m/Y')); ?></td><td><?php echo esc_html(self::label($row['grupo_id'])); ?></td><td><?php echo esc_html($row['valor_diaria'] === null ? 'Mensal' : 'Diária'); ?></td><?php foreach(['valor_diaria','valor_3_dias','valor_7_dias','valor_15_dias','protecao_basica','protecao_premium','taxa_lavagem'] as $field): ?><td><?php echo esc_html(!is_numeric($row[$field] ?? null)?'Indisponível':'R$ '.number_format((float)$row[$field],2,',','.')); ?></td><?php endforeach; ?></tr><?php endforeach; ?></tbody></table></div>
-    <?php $pages=(int)ceil($result['total']/50);if($pages>1){$url=add_query_arg(['grupo_id'=>$group,'data_inicial'=>$startText,'data_final'=>$endText],$base);echo '<div class="tablenav"><div class="tablenav-pages">'.wp_kses_post(paginate_links(['base'=>add_query_arg('pagina','%#%',$url),'format'=>'','current'=>$result['page'],'total'=>$pages])).'</div></div>';} ?></div><?php
+    <p><?php echo esc_html(sprintf('Exibindo %d a %d de %d registros (%d por página).',$first,$last,$result['total'],BVGN_TariffHistoryRepository::PAGE_SIZE)); ?></p>
+    <?php echo $pagination; ?><div class="bvgn-history-table-scroll" role="region" aria-label="Tabela de tarifas" tabindex="0"><table class="widefat striped bvgn-history-table"><thead><tr><th>Data</th><th>Grupo</th><th>Categoria</th><th>1 diária</th><th>3 dias / 1.000 km</th><th>7 dias / 3.000 km</th><th>15 dias / 5.000 km</th><th>Proteção Básica / diária</th><th>Proteção Premium / diária</th><th>Limpeza / única</th></tr></thead><tbody><?php if(!$result['rows']): ?><tr><td colspan="10">Nenhum histórico encontrado para os filtros informados.</td></tr><?php endif; foreach($result['rows'] as $row): ?><tr><td><?php echo esc_html(DateTimeImmutable::createFromFormat('!Y-m-d',$row['data_referencia'])->format('d/m/Y')); ?></td><td><?php echo esc_html(self::label($row['grupo_id'])); ?></td><td><?php echo esc_html($row['valor_diaria'] === null ? 'Mensal' : 'Diária'); ?></td><?php foreach(['valor_diaria','valor_3_dias','valor_7_dias','valor_15_dias','protecao_basica','protecao_premium','taxa_lavagem'] as $field): ?><td><?php echo esc_html(!is_numeric($row[$field] ?? null)?'Indisponível':'R$ '.number_format((float)$row[$field],2,',','.')); ?></td><?php endforeach; ?></tr><?php endforeach; ?></tbody></table></div>
+    <?php echo $pagination; ?></div><?php
   }
 }
 BVGN_TariffHistoryAdmin::init();

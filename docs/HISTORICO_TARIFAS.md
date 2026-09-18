@@ -1,4 +1,4 @@
-# Histórico de Tarifas — 9.9.131
+# Histórico de Tarifas — 9.9.132
 
 ## Histórico diário
 
@@ -15,12 +15,21 @@ O esquema 8 permite NULL em `valor_diaria` e reutiliza os campos de 3/7/15 dias
 para as franquias mensais, sem acrescentar colunas. Preço ausente permanece NULL;
 zero permanece zero. Os registros antigos não são preenchidos com preços atuais.
 Na versão 9.9.131, a coluna **Categoria**, ao lado de Grupo, identifica **Diária**
-ou **Mensal**. A ordenação separa primeiro todas as diárias e depois todas as
-mensais, antes da paginação; dentro de cada categoria, mantém data decrescente
-e ID do grupo crescente. A categoria usa o snapshot: `valor_diaria` numérico
+ou **Mensal**. Na versão 9.9.132, a ordenação prioriza a data decrescente;
+dentro de cada dia, exibe diárias, depois mensais, com ID do grupo crescente.
+A categoria usa o snapshot: `valor_diaria` numérico
 (inclusive zero) identifica diária; NULL identifica mensal. Isso também vale
 para os registros anteriores e independe de alterações ou remoção do produto.
 Filtros, tamanho das páginas, estilos dos valores e regras das taxas permanecem iguais.
+A paginação permanece no banco, com `LIMIT 50 OFFSET ...`: somente as linhas
+da página solicitada são carregadas. A navegação agora aparece acima e abaixo
+da tabela, com Anterior/Próxima, números compactos e intervalo visível de registros.
+Os filtros acompanham os links. Os índices existentes de data/grupo e grupo/data
+atendem aos filtros; a contagem e a ordenação ainda dependem do volume consultado,
+e páginas muito distantes têm o custo do OFFSET. Não foi medido desempenho em
+MySQL de produção. Para consultas antigas extensas, os filtros de data reduzem
+o conjunto; volumes muito maiores podem exigir paginação por cursor e medição
+do plano de execução antes de novos índices.
 Os testes em `tests/tariff-history-fees-test.php` incluem grupos mensais manuais e
 automáticos, promoção, franquias fora de ordem, valores ausentes/zero, gravação,
 atualização por evento, categoria, ordenação na consulta e renderização com dez colunas.

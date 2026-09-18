@@ -4,6 +4,7 @@ if (!defined('ABSPATH')) exit;
 /** Tabela nova: a tabela legada bv_historico_tarifas não é alterada nem apagada. */
 class BVGN_TariffHistoryRepository {
   const VERSION = '8';
+  const PAGE_SIZE = 50;
   const OPTION = 'bvgn_daily_tariff_history_db_version';
   public static function table() { global $wpdb; return $wpdb->prefix . 'bv_historico_diario_tarifas'; }
   public static function install() {
@@ -59,10 +60,10 @@ class BVGN_TariffHistoryRepository {
     if ($start !== '') { $where.=' AND data_referencia >= %s'; $args[]=$start; }
     if ($end !== '') { $where.=' AND data_referencia <= %s'; $args[]=$end; }
     $total=(int)$wpdb->get_var($args?$wpdb->prepare("SELECT COUNT(*) FROM $table $where",$args):"SELECT COUNT(*) FROM $table $where");
-    $page=min(max(1,(int)$page),max(1,(int)ceil($total/50))); $args[]=50; $args[]=($page-1)*50;
+    $page=min(max(1,(int)$page),max(1,(int)ceil($total/self::PAGE_SIZE))); $args[]=self::PAGE_SIZE; $args[]=($page-1)*self::PAGE_SIZE;
     // Nos snapshots, diária tem valor numérico (inclusive zero); mensal tem NULL.
-    // Agrupa antes de paginar e preserva a categoria mesmo se o produto mudar.
-    $rows=$wpdb->get_results($wpdb->prepare("SELECT * FROM $table $where ORDER BY (valor_diaria IS NULL) ASC,data_referencia DESC,grupo_id ASC LIMIT %d OFFSET %d",$args),ARRAY_A);
+    // A data vem primeiro: diárias e mensais de hoje precedem qualquer dia anterior.
+    $rows=$wpdb->get_results($wpdb->prepare("SELECT * FROM $table $where ORDER BY data_referencia DESC,(valor_diaria IS NULL) ASC,grupo_id ASC LIMIT %d OFFSET %d",$args),ARRAY_A);
     return ['rows'=>$rows?:[],'total'=>$total,'page'=>$page];
   }
   public static function groups() { global $wpdb; return $wpdb->get_col('SELECT DISTINCT grupo_id FROM '.self::table().' ORDER BY grupo_id')?:[]; }
