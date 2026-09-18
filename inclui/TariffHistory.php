@@ -19,14 +19,49 @@ class BVGN_TariffHistory {
   }
   public static function before_save($p){ self::watch($p->is_type('variation')?$p->get_parent_id():$p->get_id()); }
   public static function before_meta($check,$id,$key,$value,$extra){ if($check!==null||(!in_array($key,['_price','_regular_price','_sale_price'],true)&&strpos($key,'attribute_')!==0))return $check; if(get_post_type($id)==='product_variation')self::watch(wp_get_post_parent_id($id)); return $check; }
-  private static function watch($id){ $id=absint($id); if($id&&self::daily_rates($id)!==null)self::$pending[$id]=true; }
+  private static function watch($id){ $id=absint($id); if($id&&self::rates($id)!==null)self::$pending[$id]=true; }
   public static function flush(){ foreach(array_keys(self::$pending) as $id)self::record_group($id,current_time('Y-m-d')); self::$pending=[]; }
   public static function dynamic_changed($old,$new,$option=''){ self::record_date(current_time('Y-m-d')); }
   public static function dynamic_added($option,$new){ self::record_date(current_time('Y-m-d')); }
   public static function dynamic_deleted($option){ if($option==='bvgn_dynamic_tariffs')self::record_date(current_time('Y-m-d')); }
-  public static function groups(){ return get_posts(['post_type'=>'product','post_status'=>['publish','private'],'numberposts'=>-1,'fields'=>'ids','tax_query'=>[['taxonomy'=>'product_cat','field'=>'slug','terms'=>'aluguel-de-carros-diaria']]]); }
+  public static function groups(){ return get_posts(['post_type'=>'product','post_status'=>['publish','private'],'numberposts'=>-1,'fields'=>'ids','tax_query'=>[['taxonomy'=>'product_cat','field'=>'slug','terms'=>['aluguel-de-carros-diaria','aluguel-de-carros-mensal']]]]); }
   public static function record_date($date){ foreach(self::groups() as $id)self::record_group($id,$date); }
-  public static function record_group($id,$date){ $rates=self::daily_rates($id); if($rates===null)return false; $group=strtoupper((string)get_post_meta($id,'_bvgn_grupo',true)); if($group===''&&preg_match('/Grupo\\s+([A-Z])/i',get_the_title($id),$m))$group=strtoupper($m[1]); $rule=class_exists('BVGN_DynamicTariffs')?BVGN_DynamicTariffs::rule_for_date($date,$group):null; foreach($rates as $field=>$rate){$days=$field==='valor_diaria'?1:(int)preg_replace('/\\D/','',$field);$rates[$field]=($rule?round($rate*(1+((float)$rule['percent']/100))):$rate)*$days;} return BVGN_TariffHistoryRepository::upsert($id,$date,array_merge($rates,self::protection_rates($group),['taxa_lavagem'=>self::washing_rate($id)])); }
+  public static function record_group($id,$date){
+    $rates=self::rates($id);
+    if($rates===null)return false;
+    $group=strtoupper((string)get_post_meta($id,'_bvgn_grupo',true));
+    if($group===''&&preg_match('/Grupo\\s+([A-Z])/i',get_the_title($id),$m))$group=strtoupper($m[1]);
+    // O mensal já contém o preço integral do plano, sem tarifa dinâmica.
+    if(!has_term('aluguel-de-carros-mensal','product_cat',$id)) {
+      $rule=class_exists('BVGN_DynamicTariffs')?BVGN_DynamicTariffs::rule_for_date($date,$group):null;
+      foreach($rates as $field=>$rate){
+        $days=$field==='valor_diaria'?1:(int)preg_replace('/\\D/','',$field);
+        $rates[$field]=($rule?round($rate*(1+((float)$rule['percent']/100))):$rate)*$days;
+      }
+    }
+    return BVGN_TariffHistoryRepository::upsert($id,$date,array_merge($rates,self::protection_rates($group),['taxa_lavagem'=>self::washing_rate($id)]));
+  }
+  public static function rates($id) {
+    return has_term('aluguel-de-carros-mensal','product_cat',$id) ? self::monthly_rates($id) : self::daily_rates($id);
+  }
+  /** Reutiliza 3/7/15 dias para 1.000/3.000/5.000 km; a diária não se aplica. */
+  public static function monthly_rates($id) {
+    if(get_post_type($id)!=='product'||!has_term('aluguel-de-carros-mensal','product_cat',$id))return null;
+    $fields=[1000=>'valor_3_dias',3000=>'valor_7_dias',5000=>'valor_15_dias'];
+    $rates=['valor_diaria'=>null,'valor_3_dias'=>null,'valor_7_dias'=>null,'valor_15_dias'=>null];
+    $product=wc_get_product($id);
+    if(!$product||!$product->is_type('variable'))return null;
+    // Mesma fonte de variações e preço vigente usada no formulário mensal.
+    foreach($product->get_available_variations() as $raw) {
+      $label=trim((string)($raw['attributes']['attribute_franquia-de-km'] ?? ''));
+      if(!preg_match('/^(1[.]?000|3[.]?000|5[.]?000)\s*(?:km)?$/i',$label,$match))continue;
+      $field=$fields[(int)str_replace('.','',$match[1])];
+      $variation=wc_get_product($raw['variation_id'] ?? 0);
+      $price=$variation?$variation->get_price():null;
+      if($rates[$field]===null&&is_numeric($price))$rates[$field]=(float)$price;
+    }
+    return count(array_filter($rates,'is_numeric')) ? $rates : null;
+  }
   /** Valores por diária do template taxa-variavel-diaria.php, sem caução. */
   public static function protection_rates($group) {
     $colors = ['A'=>'verde','B'=>'verde','C'=>'verde','D'=>'azul','E'=>'azul','F'=>'azul','G'=>'azul','H'=>'laranja','I'=>'azul'];

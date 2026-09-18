@@ -1,6 +1,23 @@
-# Histórico de Tarifas — 9.9.122
+# Histórico de Tarifas — 9.9.130
 
 ## Histórico diário
+
+O relatório inclui também os produtos da categoria `aluguel-de-carros-mensal`,
+na geração agendada, no botão existente e nas alterações de preço.
+As colunas são compartilhadas: **3 dias / 1.000 km**, **7 dias / 3.000 km**
+e **15 dias / 5.000 km**. A coluna de 1 diária fica indisponível nas linhas mensais.
+Os preços mensais vêm das variações disponíveis do próprio produto, pelo atributo
+`attribute_franquia-de-km`, usando o preço vigente, inclusive promocional.
+Não há multiplicação por dias nem aplicação de tarifa dinâmica ao mensal.
+A associação é pela franquia, independentemente da ordem das variações ou do câmbio.
+
+O esquema 8 permite NULL em `valor_diaria` e reutiliza os campos de 3/7/15 dias
+para as franquias mensais, sem acrescentar colunas. Preço ausente permanece NULL;
+zero permanece zero. Os registros antigos não são preenchidos com preços atuais.
+Filtros, ordenação, paginação, estilos e regras das taxas permanecem iguais.
+Os testes em `tests/tariff-history-fees-test.php` incluem grupos mensais manuais e
+automáticos, promoção, franquias fora de ordem, valores ausentes/zero, gravação,
+atualização por evento e renderização com nove colunas.
 
 A partir da 9.9.122, o relatório é uma fotografia diária: `data + grupo + valores de 1, 3, 7 e 15 dias`.
 

@@ -8,10 +8,33 @@ function absint($v) { return abs((int)$v); }
 function get_option($key) { return BVGN_TariffHistoryRepository::VERSION; }
 function current_time($format, $gmt = false) { return $format === 'Y-m-d' ? '2026-09-16' : '2026-09-16 12:00:00'; }
 function get_post_type($id) { return 'product'; }
-function has_term($term, $taxonomy, $id) { return $term === 'aluguel-de-carros-diaria'; }
-function get_posts($args) { return [11]; }
+function has_term($term, $taxonomy, $id) { return $term === (isset($GLOBALS['monthly'][$id]) ? 'aluguel-de-carros-mensal' : 'aluguel-de-carros-diaria'); }
+function get_posts($args) {
+  if ($args['post_type'] === 'product') {
+    check($args['tax_query'][0]['terms'] === ['aluguel-de-carros-diaria','aluguel-de-carros-mensal'], 'Scheduled/manual generation selects both categories.');
+    return [1,2,3];
+  }
+  return [11];
+}
 function get_post_meta($id, $key, $single) { return $key === '_price' ? 100 : 'H'; }
-function get_the_title($id) { return 'Grupo H'; }
+function get_the_title($id) { return $GLOBALS['monthly'][$id]['title'] ?? 'Grupo H'; }
+function wc_get_product($id) {
+  if (isset($GLOBALS['monthly'][$id])) return new MonthlyProduct($id);
+  return isset($GLOBALS['monthlyPrices'][$id]) ? new MonthlyVariation($id) : false;
+}
+class MonthlyProduct {
+  private $id;
+  public function __construct($id) { $this->id = $id; }
+  public function is_type($type) { return $type === 'variable'; }
+  public function get_available_variations() { return $GLOBALS['monthly'][$this->id]['variations']; }
+  public function get_id() { return $this->id; }
+}
+class MonthlyVariation {
+  private $id;
+  public function __construct($id) { $this->id = $id; }
+  public function get_price() { return $GLOBALS['monthlyPrices'][$this->id]['current']; }
+  public function get_regular_price() { return $GLOBALS['monthlyPrices'][$this->id]['regular']; }
+}
 function wc_get_formatted_variation($attrs, $a, $b, $c) { return '1 a 30 Dias'; }
 class WC_Product_Variation {
   public function __construct($id) {}
@@ -61,6 +84,51 @@ BVGN_TariffHistoryRepository::upsert(1, '2026-09-16', $base + ['protecao_basica'
 $write = end($wpdb->writes);
 check(array_slice($write['args'], 6, 3) === [0.0,0.0,0.0], 'Zero fees remain numeric zero.');
 
+// Monthly manual/automatic groups have distinct prices, deliberately shuffled.
+function monthlyVariation($id, $km) {
+  return ['variation_id'=>$id, 'attributes'=>['attribute_franquia-de-km'=>$km]];
+}
+$monthly = [
+  2=>['title'=>'Grupo B Manual Mensal', 'variations'=>[monthlyVariation(25,'5.000 km'),monthlyVariation(21,'1.000 km'),monthlyVariation(23,'3.000 km')]],
+  3=>['title'=>'Grupo F Automático Mensal', 'variations'=>[monthlyVariation(33,'3000 km'),monthlyVariation(35,'5000 KM'),monthlyVariation(31,'1000 km')]],
+];
+$monthlyPrices = [
+  21=>['current'=>'1999.90','regular'=>'2199.90'],23=>['current'=>'2499.50','regular'=>'2499.50'],25=>['current'=>'2999.99','regular'=>'2999.99'],
+  31=>['current'=>'2899.90','regular'=>'2899.90'],33=>['current'=>'3399.50','regular'=>'3399.50'],35=>['current'=>'3899.99','regular'=>'3899.99'],
+];
+$manual = ['valor_diaria'=>null,'valor_3_dias'=>1999.90,'valor_7_dias'=>2499.50,'valor_15_dias'=>2999.99];
+$automatic = ['valor_diaria'=>null,'valor_3_dias'=>2899.90,'valor_7_dias'=>3399.50,'valor_15_dias'=>3899.99];
+check(BVGN_TariffHistory::rates(2) === $manual, 'Manual monthly prices match mileage, including sale price.');
+check(BVGN_TariffHistory::rates(3) === $automatic, 'Automatic monthly prices match mileage regardless of order.');
+check(BVGN_TariffHistory::daily_rates(2) === null, 'Monthly variations never use daily range parsing.');
+foreach ([2=>$manual,3=>$automatic] as $id=>$expected) {
+  check(BVGN_TariffHistory::record_group($id,'2026-09-16'), 'Monthly snapshot succeeds.');
+  $write = end($wpdb->writes);
+  check(array_slice($write['args'],2,3) === array_slice(array_values($expected),1), 'Monthly totals have no day multiplier or dynamic markup.');
+  check(strpos($write['sql'], 'VALUES (%d,%s,NULL,%f,%f,%f,') !== false, 'Daily value is NULL for monthly rows.');
+  check(strpos($write['sql'], 'ON DUPLICATE KEY UPDATE') !== false, 'Repeated generation updates the existing group/date.');
+}
+$monthly[2]['variations'][] = monthlyVariation(29,'10.000 km');
+$monthlyPrices[29] = ['current'=>'9999','regular'=>'9999'];
+check(BVGN_TariffHistory::rates(2) === $manual, 'Unsupported mileage never populates a known plan.');
+$monthlyPrices[33]['current'] = '';
+$monthlyPrices[35]['current'] = '0';
+$partial = BVGN_TariffHistory::rates(3);
+check($partial['valor_7_dias'] === null && $partial['valor_15_dias'] === 0.0, 'Missing prices stay unavailable; zero remains zero.');
+BVGN_TariffHistory::record_group(3,'2026-09-16');
+$write = end($wpdb->writes);
+check(strpos($write['sql'], 'VALUES (%d,%s,NULL,%f,NULL,%f,') !== false, 'Unavailable monthly plans persist NULL, not zero.');
+$beforeWrites = count($wpdb->writes);
+BVGN_TariffHistory::before_save(new MonthlyProduct(2));
+$monthlyPrices[21]['current'] = '2099.90';
+BVGN_TariffHistory::flush();
+check(count($wpdb->writes) === $beforeWrites + 1, 'Monthly product changes schedule a snapshot on flush.');
+$write = end($wpdb->writes);
+check($write['args'][2] === 2099.90, 'Flush captures the updated monthly price.');
+$beforeWrites = count($wpdb->writes);
+BVGN_TariffHistory::record_date('2026-09-16');
+check(count($wpdb->writes) === $beforeWrites + 3, 'Daily generation includes daily, manual monthly and automatic monthly groups.');
+
 // Render the real report with legacy, NULL and zero-valued rows.
 define('ARRAY_A', 'ARRAY_A');
 function current_user_can($cap) { return true; }
@@ -80,7 +148,13 @@ check(substr_count($html, 'Indisponível') === 6, 'Legacy and null fees render w
 check(substr_count($html, 'R$ 0,00') === 3, 'Free fees render zero.');
 check($wpdb->reads === 3, 'Report keeps three repository reads regardless of fee columns.');
 check(count($wpdb->writes) === $writesBefore, 'Viewing the report does not generate snapshots.');
+$wpdb->rows = [$manual + ['grupo_id'=>2,'data_referencia'=>'2026-09-16'], $automatic + ['grupo_id'=>3,'data_referencia'=>'2026-09-16']];
+ob_start(); BVGN_TariffHistoryAdmin::render(); $html = ob_get_clean();
+check(substr_count($html, '<th>') === 9, 'Monthly report reuses all nine existing columns.');
+foreach (['3 dias / 1.000 km','7 dias / 3.000 km','15 dias / 5.000 km'] as $header) check(strpos($html,$header)!==false, 'Combined daily/mileage header: '.$header);
+foreach (['1.999,90','2.499,50','2.999,99','2.899,90','3.399,50','3.899,99'] as $price) check(strpos($html,'R$ '.$price)!==false, 'Monthly group price rendered: '.$price);
+check(strpos($html,'Grupo B Manual Mensal')!==false && strpos($html,'Grupo F Automático Mensal')!==false, 'Both monthly group labels are retained.');
 $wpdb->rows = [];
 ob_start(); BVGN_TariffHistoryAdmin::render(); $html = ob_get_clean();
 check(strpos($html, 'colspan="9"') !== false, 'Empty report spans all nine columns.');
-echo $checks . " fee checks passed.\n";
+echo $checks . " fee/monthly checks passed.\n";
